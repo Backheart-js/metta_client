@@ -6,6 +6,8 @@ import clsx from 'clsx';
 
 import Banner from '../../assets/image/login-banner.png';
 import './top.scss';
+import LoginForm from './components/LoginForm';
+import SignupForm from './components/SignupForm';
 
 function Top() {
     const [statusScreen, setStatusScreen] = useState(0);
@@ -63,10 +65,14 @@ function Top() {
                         </div>
                     )}
                     {statusScreen === 1 && (
-                        <form className="top__login-form"></form>
+                        <form className="top__login-form">
+                            <LoginForm />
+                        </form>
                     )}
                     {statusScreen === 2 && (
-                        <form className="top__signup-form"></form>
+                        <form className="top__signup-form">
+                            <SignupForm />
+                        </form>
                     )}
                 </div>
             </div>
