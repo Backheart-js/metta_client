@@ -73,6 +73,7 @@ function SignupForm() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                     <Button
+                        className="bg-bluePrimary mt-4"
                         type="button"
                         fullWidth
                         variant="contained"

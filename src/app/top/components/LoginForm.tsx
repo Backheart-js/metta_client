@@ -1,18 +1,34 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Container, Typography } from '@mui/material';
+import { ILoginData } from '@/types/authType';
+import auth from '@/utils/auth';
 
 function LoginForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleLogin = () => {
+    const handleSubmit = () => {
         if (!email || !password) {
             setError('Vui lòng nhập đầy đủ email và mật khẩu.');
         } else {
             // Xử lý đăng nhập thành công
+            const dataForm = {
+                email,
+                password,
+            };
+            handleLogin(dataForm);
+        }
+    };
+
+    const handleLogin = async (data: ILoginData) => {
+        try {
+            const res = await auth.login(data);
+            console.log('login res: ', res);
             setError('');
+        } catch (error) {
+            setError('Đăng nhập không thành công');
         }
     };
 
@@ -47,11 +63,12 @@ function LoginForm() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     <Button
+                        className="bg-bluePrimary mt-4"
                         type="button"
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={handleLogin}
+                        onClick={handleSubmit}
                     >
                         Đăng nhập
                     </Button>
