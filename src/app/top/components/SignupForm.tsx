@@ -1,24 +1,92 @@
 import React, { useState } from 'react';
-import { TextField, Button, Container, Typography } from '@mui/material';
+import {
+    TextField,
+    Button,
+    Container,
+    Typography,
+    CircularProgress,
+    IconButton,
+    InputAdornment,
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { ISignupData } from '@/types/authType';
+import auth from '@/utils/auth';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+interface IFormData {
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
 
 function SignupForm() {
-    const [fullName, setFullName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isProgress, setIsProgress] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleSignup = () => {
-        // Kiểm tra điều kiện đăng ký ở đây
-        if (!fullName || !email || !password || !confirmPassword) {
-            setError('Vui lòng điền đầy đủ thông tin.');
-        } else if (password !== confirmPassword) {
-            setError('Mật khẩu và xác nhận mật khẩu không khớp.');
-        } else {
-            // Xử lý đăng ký thành công
-            setError('');
-            console.log('Đăng ký thành công!');
+    const validationSchema = Yup.object().shape({
+        username: Yup.string().required('Vui lòng nhập tên người dùng'),
+        email: Yup.string()
+            .email('Email không hợp lệ')
+            .required('Vui lòng nhập email'),
+        password: Yup.string()
+            .required('Vui lòng nhập mật khẩu')
+            .matches(
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,24}$/,
+                'Mật khẩu không hợp lệ',
+            ),
+        confirmPassword: Yup.string()
+            .oneOf([Yup.ref('password'), ''], 'Mật khẩu xác nhận không hợp lệ')
+            .required('Vui lòng xác nhận mật khẩu'),
+    });
+
+    const formik = useFormik<IFormData>({
+        initialValues: {
+            username: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+        },
+        validationSchema,
+        onSubmit: async (values: IFormData) => {
+            const { confirmPassword, ...neededData } = values;
+            handleSignup(neededData);
+        },
+    });
+
+    const handleSignup = async function (data: ISignupData) {
+        try {
+            setIsProgress(true);
+            const res = await auth.signup(data);
+
+            if (res.status === 201) {
+                setErrorMessage('');
+            }
+        } catch (error) {
+            const { status, data } = error.response;
+            if (status === 409) {
+                setErrorMessage(
+                    'Email đã tồn tại, vui lòng sử dụng email khác!',
+                );
+            } else if (status === 401) {
+                setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+            } else if (status === 500) {
+                console.assert('Có lỗi xảy ra');
+            }
+        } finally {
+            setIsProgress(false);
         }
+    };
+
+    const toggleShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const toggleShowConfirmPassword = () => {
+        setShowConfirmPassword(!showConfirmPassword);
     };
 
     return (
@@ -27,60 +95,115 @@ function SignupForm() {
                 <Typography component="h1" variant="h5">
                     Đăng ký
                 </Typography>
-                {error && <Typography color="error">{error}</Typography>}
-                <form>
+                <form onSubmit={formik.handleSubmit}>
                     <TextField
                         margin="normal"
                         fullWidth
-                        id="fullName"
-                        label="Họ và tên"
-                        name="fullName"
+                        id="username"
+                        label="Tên người dùng"
                         autoComplete="name"
                         autoFocus
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
+                        {...formik.getFieldProps('username')}
+                        error={
+                            formik.touched.username &&
+                            Boolean(formik.errors.username)
+                        }
+                        helperText={
+                            formik.touched.username && formik.errors.username
+                        }
                     />
                     <TextField
                         margin="normal"
                         fullWidth
                         id="email"
                         label="Email"
-                        name="email"
                         autoComplete="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        {...formik.getFieldProps('email')}
+                        error={
+                            formik.touched.email && Boolean(formik.errors.email)
+                        }
+                        helperText={formik.touched.email && formik.errors.email}
                     />
                     <TextField
                         margin="normal"
                         fullWidth
-                        name="password"
                         label="Mật khẩu"
-                        type="password"
-                        id="password"
+                        type={showPassword ? 'text' : 'password'}
                         autoComplete="new-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        {...formik.getFieldProps('password')}
+                        error={
+                            formik.touched.password &&
+                            Boolean(formik.errors.password)
+                        }
+                        helperText={
+                            formik.touched.password && formik.errors.password
+                        }
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={toggleShowPassword}
+                                        edge="end"
+                                    >
+                                        {showPassword ? (
+                                            <Visibility />
+                                        ) : (
+                                            <VisibilityOff />
+                                        )}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
                     <TextField
                         margin="normal"
                         fullWidth
-                        name="confirmPassword"
                         label="Nhập lại mật khẩu"
-                        type="password"
-                        id="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         autoComplete="new-password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        {...formik.getFieldProps('confirmPassword')}
+                        error={
+                            formik.touched.confirmPassword &&
+                            Boolean(formik.errors.confirmPassword)
+                        }
+                        helperText={
+                            formik.touched.confirmPassword &&
+                            formik.errors.confirmPassword
+                        }
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={toggleShowConfirmPassword}
+                                        edge="end"
+                                    >
+                                        {showConfirmPassword ? (
+                                            <Visibility />
+                                        ) : (
+                                            <VisibilityOff />
+                                        )}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
+                    {errorMessage && formik.isValid && (
+                        <Typography color="error">{errorMessage}</Typography>
+                    )}
                     <Button
                         className="bg-bluePrimary mt-4"
-                        type="button"
+                        type="submit"
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={handleSignup}
                     >
-                        Đăng ký
+                        {isProgress ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            'Đăng ký'
+                        )}
                     </Button>
                 </form>
             </div>

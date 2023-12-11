@@ -65,14 +65,14 @@ function Top() {
                         </div>
                     )}
                     {statusScreen === 1 && (
-                        <form className="top__login-form">
+                        <div className="top__login-form">
                             <LoginForm />
-                        </form>
+                        </div>
                     )}
                     {statusScreen === 2 && (
-                        <form className="top__signup-form">
+                        <div className="top__signup-form">
                             <SignupForm />
-                        </form>
+                        </div>
                     )}
                 </div>
             </div>
