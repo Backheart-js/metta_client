@@ -1,34 +1,56 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { TextField, Button, Container, Typography } from '@mui/material';
+import React, { useState } from 'react';
+import {
+    TextField,
+    Button,
+    Container,
+    Typography,
+    CircularProgress,
+} from '@mui/material';
 import { ILoginData } from '@/types/authType';
 import auth from '@/utils/auth';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 function LoginForm() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isProgress, setIsProgress] = useState(false);
 
-    const handleSubmit = () => {
-        if (!email || !password) {
-            setError('Vui lòng nhập đầy đủ email và mật khẩu.');
-        } else {
-            // Xử lý đăng nhập thành công
-            const dataForm = {
-                email,
-                password,
-            };
-            handleLogin(dataForm);
-        }
-    };
+    const validationSchema = Yup.object().shape({
+        email: Yup.string()
+            .email('Email không hợp lệ')
+            .required('Vui lòng nhập email'),
+        password: Yup.string().required('Vui lòng nhập mật khẩu'),
+    });
+    const formik = useFormik({
+        initialValues: {
+            email: '',
+            password: '',
+        },
+        validationSchema,
+        onSubmit: (values) => {
+            handleLogin(values);
+        },
+    });
 
     const handleLogin = async (data: ILoginData) => {
         try {
+            setIsProgress(true);
             const res = await auth.login(data);
-            console.log('login res: ', res);
-            setError('');
+
+            if (res.status === 200) {
+                setErrorMessage('');
+            }
         } catch (error) {
-            setError('Đăng nhập không thành công');
+            // Handle error
+            const { status, data } = error.response;
+            if (status === 404) {
+                setErrorMessage('Email không đúng, vui lòng thử lại!');
+            } else if (status === 401) {
+                setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+            }
+        } finally {
+            setIsProgress(false);
         }
     };
 
@@ -38,7 +60,6 @@ function LoginForm() {
                 <Typography component="h1" variant="h5">
                     Đăng nhập
                 </Typography>
-                {error && <Typography color="error">{error}</Typography>}
                 <form>
                     <TextField
                         margin="normal"
@@ -48,8 +69,13 @@ function LoginForm() {
                         name="email"
                         autoComplete="email"
                         autoFocus
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.email && Boolean(formik.errors.email)
+                        }
+                        helperText={formik.touched.email && formik.errors.email}
                     />
                     <TextField
                         margin="normal"
@@ -59,18 +85,34 @@ function LoginForm() {
                         type="password"
                         id="password"
                         autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={
+                            formik.touched.password &&
+                            Boolean(formik.errors.password)
+                        }
+                        helperText={
+                            formik.touched.password && formik.errors.password
+                        }
                     />
+                    {errorMessage && formik.isValid && (
+                        <Typography color="error">{errorMessage}</Typography>
+                    )}
                     <Button
                         className="bg-bluePrimary mt-4"
                         type="button"
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={handleSubmit}
+                        disabled={!formik.isValid}
+                        onClick={() => formik.handleSubmit()}
                     >
-                        Đăng nhập
+                        {isProgress ? (
+                            <CircularProgress size={24} color="inherit" />
+                        ) : (
+                            'Đăng nhập'
+                        )}
                     </Button>
                 </form>
             </div>
