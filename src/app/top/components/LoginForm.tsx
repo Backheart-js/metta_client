@@ -12,7 +12,7 @@ import auth from '@/utils/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-function LoginForm() {
+function LoginForm({ handleNavigate }) {
     const [errorMessage, setErrorMessage] = useState('');
     const [isProgress, setIsProgress] = useState(false);
 
@@ -37,6 +37,7 @@ function LoginForm() {
         try {
             setIsProgress(true);
             const res = await auth.login(data);
+            handleNavigate();
 
             if (res.status === 200) {
                 setErrorMessage('');

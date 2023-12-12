@@ -8,6 +8,9 @@ const auth = {
     signup: (data: ISignupData) => {
         return axios.post('/auth/signup', data);
     },
+    isLogin: () => {
+        return axios.get('/auth/is-login');
+    },
 };
 
 export default auth;

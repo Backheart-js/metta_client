@@ -3,6 +3,7 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import clsx from 'clsx';
+import { useRouter } from 'next/navigation';
 
 import Banner from '../../assets/image/login-banner.png';
 import './top.scss';
@@ -11,6 +12,11 @@ import SignupForm from './components/SignupForm';
 
 function Top() {
     const [statusScreen, setStatusScreen] = useState(0);
+    const router = useRouter();
+
+    const navigateAfterLogin = () => {
+        router.push('/');
+    };
 
     return (
         <main className="h-screen flex items-center">
@@ -66,7 +72,7 @@ function Top() {
                     )}
                     {statusScreen === 1 && (
                         <div className="top__login-form">
-                            <LoginForm />
+                            <LoginForm handleNavigate={navigateAfterLogin} />
                         </div>
                     )}
                     {statusScreen === 2 && (

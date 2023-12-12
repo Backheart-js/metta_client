@@ -3,21 +3,12 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, // Sử dụng biến môi trường
+    withCredentials: true, // Cho phép sử dụng cookies
 });
 
 instance.interceptors.request.use(
-    (config: AxiosRequestConfig) => {
-        // Thêm token hoặc headers cần thiết
-        const token =
-            typeof window !== 'undefined'
-                ? localStorage.getItem('token')
-                : null;
-        if (token) {
-            config.headers = {
-                ...config.headers,
-                Authorization: `Bearer ${token}`,
-            };
-        }
+    async (config: AxiosRequestConfig) => {
+        // Không cần thêm token vào headers ở đây
         return config;
     },
     (error: AxiosError) => {
@@ -30,8 +21,12 @@ instance.interceptors.response.use(
         // Xử lý kết quả trả về
         return response;
     },
-    (error: AxiosError) => {
+    async (error: AxiosError) => {
         // Xử lý lỗi
+        if (error.response?.status === 401) {
+            // Xử lý khi token hết hạn hoặc không hợp lệ
+            // Đặt logic xử lý ở đây, ví dụ: đăng xuất người dùng
+        }
         return Promise.reject(error);
     },
 );
