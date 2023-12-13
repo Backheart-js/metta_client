@@ -9,14 +9,9 @@ import {
     ListItemIcon,
     ListItemText,
 } from '@mui/material';
-import {
-    HomeOutlined,
-    MonitorHeartOutlined,
-    PsychologyAltOutlined,
-    CalendarMonthOutlined,
-    PersonOutlineOutlined,
-    LogoutOutlined,
-} from '@mui/icons-material';
+import MobileHeader from '@/components/MobileHeader/MobileHeader';
+import MobileNavbar from '@/components/MobileNavbar/MobileNavbar';
+import { category } from '@/types/category';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,65 +25,43 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const navbarList = [
-        {
-            text: 'Trang chủ',
-            Icon: HomeOutlined,
-            path: '/',
-        },
-        {
-            text: 'Công cụ sức khỏe',
-            Icon: MonitorHeartOutlined,
-            path: '/',
-        },
-        {
-            text: 'Trợ lý ảo',
-            Icon: PsychologyAltOutlined,
-            path: '/ai-assistant',
-        },
-        {
-            text: 'Kế hoạch',
-            Icon: CalendarMonthOutlined,
-            path: '/plan',
-        },
-        {
-            text: 'Thông tin người dùng',
-            Icon: PersonOutlineOutlined,
-            path: '/profile',
-        },
-        {
-            text: 'Đăng xuất',
-            Icon: LogoutOutlined,
-            path: '/',
-        },
-    ];
-
     return (
         <html lang="en">
             <body className={inter.className}>
-                <header className="flex md:hidden"></header>
-                <nav className="hidden md:block">
-                    <List>
-                        {navbarList.map((nav, index) => {
-                            const { Icon } = nav;
-                            return (
-                                <div key={index}>
-                                    <ListItem disablePadding>
-                                        <ListItemButton>
-                                            <ListItemIcon>
-                                                <Icon />
-                                            </ListItemIcon>
-                                            <ListItemText primary={nav.text} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                    {index === 3 && <Divider />}
-                                </div>
-                            );
-                        })}
-                    </List>
+                <header className="md:hidden fixed top-0 left-0 right-0">
+                    <MobileHeader />
+                </header>
+                <nav className="hidden md:block fixed top-0 left-0 bottom-0 min-w-[280px] w-[16%] max-w-[330px] py-10 border-r-2 border-borderLightTheme shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+                    <div className="flex justify-center items-center h-[120px] w-full">
+                        Logo
+                    </div>
+                    <div className="mt-6">
+                        <List>
+                            {category.map((nav, index) => {
+                                const { Icon } = nav;
+                                return (
+                                    <div key={index}>
+                                        <ListItem disablePadding>
+                                            <ListItemButton>
+                                                <ListItemIcon>
+                                                    <Icon />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={nav.text}
+                                                />
+                                            </ListItemButton>
+                                        </ListItem>
+                                        {index === 3 && <Divider />}
+                                    </div>
+                                );
+                            })}
+                        </List>
+                    </div>
                 </nav>
-                <nav className="flex md:hidden"></nav>
-                <main>{children}</main>
+                <nav className="flex md:hidden fixed bottom-0 left-0 right-0">
+                    <MobileNavbar />
+                </nav>
+                <main className="mt-14 sm:mt-16 md:mt-0">{children}</main>
             </body>
         </html>
     );
