@@ -1,6 +1,22 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import {
+    Divider,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+} from '@mui/material';
+import {
+    HomeOutlined,
+    MonitorHeartOutlined,
+    PsychologyAltOutlined,
+    CalendarMonthOutlined,
+    PersonOutlineOutlined,
+    LogoutOutlined,
+} from '@mui/icons-material';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,9 +30,66 @@ export default function RootLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const navbarList = [
+        {
+            text: 'Trang chủ',
+            Icon: HomeOutlined,
+            path: '/',
+        },
+        {
+            text: 'Công cụ sức khỏe',
+            Icon: MonitorHeartOutlined,
+            path: '/',
+        },
+        {
+            text: 'Trợ lý ảo',
+            Icon: PsychologyAltOutlined,
+            path: '/ai-assistant',
+        },
+        {
+            text: 'Kế hoạch',
+            Icon: CalendarMonthOutlined,
+            path: '/plan',
+        },
+        {
+            text: 'Thông tin người dùng',
+            Icon: PersonOutlineOutlined,
+            path: '/profile',
+        },
+        {
+            text: 'Đăng xuất',
+            Icon: LogoutOutlined,
+            path: '/',
+        },
+    ];
+
     return (
         <html lang="en">
-            <body className={inter.className}>{children}</body>
+            <body className={inter.className}>
+                <header className="flex md:hidden"></header>
+                <nav className="hidden md:block">
+                    <List>
+                        {navbarList.map((nav, index) => {
+                            const { Icon } = nav;
+                            return (
+                                <div key={index}>
+                                    <ListItem disablePadding>
+                                        <ListItemButton>
+                                            <ListItemIcon>
+                                                <Icon />
+                                            </ListItemIcon>
+                                            <ListItemText primary={nav.text} />
+                                        </ListItemButton>
+                                    </ListItem>
+                                    {index === 3 && <Divider />}
+                                </div>
+                            );
+                        })}
+                    </List>
+                </nav>
+                <nav className="flex md:hidden"></nav>
+                <main>{children}</main>
+            </body>
         </html>
     );
 }
