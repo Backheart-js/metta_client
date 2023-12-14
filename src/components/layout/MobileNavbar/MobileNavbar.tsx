@@ -1,4 +1,6 @@
+'use client';
 import { category } from '@/types/category';
+import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
@@ -20,9 +22,20 @@ function MobileNavbar() {
                     >
                         <Link href={category.path} className="h-full w-full">
                             <div className="mb-1 text-center">
-                                <Icon style={{ color: '#666' }} />
+                                <Icon
+                                    style={
+                                        isActive
+                                            ? { color: '#407CE2' }
+                                            : { color: '#666' }
+                                    }
+                                />
                             </div>
-                            <p className="text-xs text-center">
+                            <p
+                                className={clsx(
+                                    isActive ? 'text-bluePrimary' : '',
+                                    'text-xs text-center',
+                                )}
+                            >
                                 {category.short_text}
                             </p>
                         </Link>

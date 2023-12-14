@@ -9,9 +9,10 @@ import {
     ListItemIcon,
     ListItemText,
 } from '@mui/material';
-import MobileHeader from '@/components/MobileHeader/MobileHeader';
-import MobileNavbar from '@/components/MobileNavbar/MobileNavbar';
+import MobileHeader from '@/components/layout/MobileHeader/MobileHeader';
+import MobileNavbar from '@/components/layout/MobileNavbar/MobileNavbar';
 import { category } from '@/types/category';
+import PCHeader from '@/components/layout/PCHeader/PCHeader';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,37 +32,13 @@ export default function RootLayout({
                 <header className="md:hidden fixed top-0 left-0 right-0">
                     <MobileHeader />
                 </header>
-                <nav className="hidden md:block fixed top-0 left-0 bottom-0 min-w-[280px] w-[16%] max-w-[330px] py-10 border-r-2 border-borderLightTheme shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-                    <div className="flex justify-center items-center h-[120px] w-full">
-                        Logo
-                    </div>
-                    <div className="mt-6">
-                        <List>
-                            {category.map((nav, index) => {
-                                const { Icon } = nav;
-                                return (
-                                    <div key={index}>
-                                        <ListItem disablePadding>
-                                            <ListItemButton>
-                                                <ListItemIcon>
-                                                    <Icon />
-                                                </ListItemIcon>
-                                                <ListItemText
-                                                    primary={nav.text}
-                                                />
-                                            </ListItemButton>
-                                        </ListItem>
-                                        {index === 3 && <Divider />}
-                                    </div>
-                                );
-                            })}
-                        </List>
-                    </div>
+                <nav className="hidden md:block fixed top-0 left-0 right-0 bg-white border-b-2 border-borderLightTheme shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+                    <PCHeader />
                 </nav>
                 <nav className="flex md:hidden fixed bottom-0 left-0 right-0">
                     <MobileNavbar />
                 </nav>
-                <main className="mt-14 sm:mt-16 md:mt-0">{children}</main>
+                <main className="mt-14 sm:mt-16 md:mt-[125px]">{children}</main>
             </body>
         </html>
     );
