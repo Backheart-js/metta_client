@@ -38,7 +38,9 @@ export default function RootLayout({
                 <nav className="flex md:hidden fixed bottom-0 left-0 right-0">
                     <MobileNavbar />
                 </nav>
-                <main className="mt-14 sm:mt-16 md:mt-[125px]">{children}</main>
+                <main className="container mt-14 sm:mt-16 md:mt-[125px]">
+                    {children}
+                </main>
             </body>
         </html>
     );
