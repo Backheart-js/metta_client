@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 interface ICardArticle {
     path: string;
     articleData: IData;
+    noThumbnail?: boolean;
 }
 
 interface IData {
@@ -21,17 +22,20 @@ interface IData {
     date: string;
 }
 
-function CardArticle({ path, articleData }: ICardArticle) {
+function CardArticle({ path, articleData, noThumbnail = false }: ICardArticle) {
     const { thumbnailUrl, mainTitle, author, description, date } = articleData;
 
     return (
         <Link href={path}>
-            <Card sx={{ maxWidth: 345 }}>
-                <CardMedia
-                    sx={{ height: 140 }}
-                    image={thumbnailUrl}
-                    title="thumbnail"
-                />
+            <Card>
+                {!noThumbnail && (
+                    <CardMedia
+                        component="img"
+                        sx={{ width: '100%', paddingTop: '66.666%' }}
+                        image={thumbnailUrl}
+                        alt={mainTitle}
+                    />
+                )}
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                         {mainTitle}
