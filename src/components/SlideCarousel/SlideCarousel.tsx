@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import CardArticle from '../CardArticle/CardArticle';
-import { IArticleType } from '@/types/articleType';
 
 interface ISlideCarouselProps {
-    articles: IArticleType[];
+    children: ReactNode;
 }
 
-const SlideCarousel = ({ articles }: ISlideCarouselProps) => {
+const SlideCarousel = ({ children }: ISlideCarouselProps) => {
     const settings = {
         dots: true,
         infinite: true,
@@ -18,17 +16,7 @@ const SlideCarousel = ({ articles }: ISlideCarouselProps) => {
         slidesToScroll: 1,
     };
 
-    return (
-        <Slider {...settings}>
-            {articles.map((article, index) => (
-                <CardArticle
-                    path={`/news/${article.slug}`}
-                    articleData={article}
-                    key={index}
-                />
-            ))}
-        </Slider>
-    );
+    return <Slider {...settings}>{children}</Slider>;
 };
 
 export default SlideCarousel;

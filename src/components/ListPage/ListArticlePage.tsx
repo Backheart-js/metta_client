@@ -1,21 +1,25 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import TitleList from './TitleList';
+import TitleList from './common/TitleList';
 import { Button } from '@mui/material';
-import CardArticle from '../CardArticle/CardArticle';
+import CardItem from '../CardItem/CardItem';
 import { IArticleType } from '@/types/articleType';
 import urlSlug from 'url-slug';
 import SlideCarousel from '../SlideCarousel/SlideCarousel';
 
-interface IListPage {
+interface IListArticlePage {
     layout: string;
-    id: string;
     title: string;
     showAllPath: string;
     data: IArticleType[];
 }
 
-function ListPage({ layout, id, title, showAllPath = '/', data }: IListPage) {
+function ListArticlePage({
+    layout,
+    title,
+    showAllPath = '/',
+    data,
+}: IListArticlePage) {
     const [hotNews, setHotNews] = useState<IArticleType[]>([]);
     const [dailyNews, setDailyNews] = useState<IArticleType[]>([]);
     const [otherNews, setOtherNews] = useState<IArticleType[]>([]);
@@ -45,7 +49,7 @@ function ListPage({ layout, id, title, showAllPath = '/', data }: IListPage) {
     }, []);
 
     return (
-        <div id={id}>
+        <div>
             {layout === 'slide' ? (
                 <TitleList title={title} showAllPath={showAllPath} />
             ) : (
@@ -58,17 +62,23 @@ function ListPage({ layout, id, title, showAllPath = '/', data }: IListPage) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                         <div id="main-content" className="sm:col-span-2">
                             <div className="">
-                                <SlideCarousel articles={hotNews} />
+                                <SlideCarousel>
+                                    {hotNews.map((article, index) => (
+                                        <CardItem
+                                            path={`/news/${article.slug}`}
+                                            articleData={article}
+                                            key={index}
+                                        />
+                                    ))}
+                                </SlideCarousel>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 mt-14 gap-4">
                                 {dailyNews.slice(0, 2).map((news, index) => (
-                                    <CardArticle
+                                    <CardItem
                                         path={showAllPath}
                                         articleData={news}
                                         key={index}
                                     />
-                                    // <div className='col-span-1' key={index}>
-                                    // </div>
                                 ))}
                             </div>
                         </div>
@@ -81,7 +91,7 @@ function ListPage({ layout, id, title, showAllPath = '/', data }: IListPage) {
                                     className={index > 0 ? 'mt-5' : ''}
                                     key={index}
                                 >
-                                    <CardArticle
+                                    <CardItem
                                         path={showAllPath}
                                         articleData={news}
                                         noThumbnail
@@ -105,4 +115,4 @@ function ListPage({ layout, id, title, showAllPath = '/', data }: IListPage) {
     );
 }
 
-export default ListPage;
+export default ListArticlePage;
