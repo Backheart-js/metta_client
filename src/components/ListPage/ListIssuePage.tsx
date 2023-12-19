@@ -54,24 +54,27 @@ function ListIssuePage({ title, showAllPath }: IListIssuePage) {
                     Nữ giới
                 </Button>
             </div>
-            <div className="">
+            <div className="flex flex-col gap-5">
                 {dataToShow.map((data) => {
                     const { listData } = data;
 
                     return (
-                        <div key={data.categoryId}>
+                        <div key={data.categoryId} className="">
                             <Typography variant="h6" gutterBottom>
                                 {data.title}
                             </Typography>
                             <SlideCarousel numberOfSlides={3}>
                                 {listData.map((issue: IIssue) => {
                                     return (
-                                        <CardItem
-                                            path=""
-                                            thumbnailUrl={issue.backgroundUrl}
-                                            mainTitle={issue.title}
-                                            key={issue.id}
-                                        />
+                                        <div key={issue.id}>
+                                            <CardItem
+                                                path=""
+                                                thumbnailUrl={
+                                                    issue.backgroundUrl
+                                                }
+                                                mainTitle={issue.title}
+                                            />
+                                        </div>
                                     );
                                 })}
                             </SlideCarousel>
@@ -79,9 +82,9 @@ function ListIssuePage({ title, showAllPath }: IListIssuePage) {
                     );
                 })}
             </div>
-            <SlideCarousel>
+            {/* <SlideCarousel>
                 <div></div>
-            </SlideCarousel>
+            </SlideCarousel> */}
         </div>
     );
 }

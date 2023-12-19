@@ -76,7 +76,7 @@ function ListArticlePage({
                                     ))}
                                 </SlideCarousel>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 mt-14 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 mt-16 gap-4">
                                 {dailyNews.slice(0, 2).map((news, index) => (
                                     <CardItem
                                         path={showAllPath}
