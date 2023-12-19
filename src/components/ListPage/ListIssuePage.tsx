@@ -22,7 +22,6 @@ function ListIssuePage({ title, showAllPath }: IListIssuePage) {
             return item.type === type;
         });
         setDataToShow(newData);
-        console.log('newData', newData);
     };
 
     useEffect(() => {
@@ -57,17 +56,20 @@ function ListIssuePage({ title, showAllPath }: IListIssuePage) {
             </div>
             <div className="">
                 {dataToShow.map((data) => {
+                    const { listData } = data;
+
                     return (
                         <div key={data.categoryId}>
                             <Typography variant="h6" gutterBottom>
                                 {data.title}
                             </Typography>
-                            <SlideCarousel>
-                                {data.listData.map((issue: IIssue) => {
+                            <SlideCarousel numberOfSlides={3}>
+                                {listData.map((issue: IIssue) => {
                                     return (
                                         <CardItem
                                             path=""
-                                            compact
+                                            thumbnailUrl={issue.backgroundUrl}
+                                            mainTitle={issue.title}
                                             key={issue.id}
                                         />
                                     );

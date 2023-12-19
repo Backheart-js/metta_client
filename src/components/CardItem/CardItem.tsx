@@ -10,53 +10,39 @@ import Typography from '@mui/material/Typography';
 
 interface ICardItem {
     path: string;
-    articleData: IData;
-    noThumbnail?: boolean;
-    compact?: boolean;
-}
-
-interface IData {
-    thumbnailUrl: string;
+    thumbnailUrl?: string;
     mainTitle?: string;
-    author?: string;
+    subText1?: string;
     description?: string;
-    date?: string;
+    subText2?: string;
 }
 
 function CardItem({
     path,
-    articleData,
-    noThumbnail = false,
-    compact = false,
+    thumbnailUrl,
+    mainTitle,
+    subText1,
+    description,
+    subText2,
 }: ICardItem) {
-    const { thumbnailUrl, mainTitle, author, description, date } = articleData;
-
     return (
         <Link href={path}>
             <Card>
-                {!noThumbnail && (
+                {thumbnailUrl && (
                     <CardMedia
                         component="img"
                         sx={{ width: '100%', paddingTop: '66.666%' }}
-                        image={thumbnailUrl}
+                        image="../../assets/image/fakethumbnail.jpg"
                         alt={mainTitle}
                     />
                 )}
-                {compact ? (
-                    <CardContent>
-                        <Typography
-                            variant="body2"
-                            paragraph
-                            color="text.secondary"
-                        >
-                            {mainTitle}
-                        </Typography>
-                    </CardContent>
-                ) : (
-                    <CardContent>
+                <CardContent>
+                    {mainTitle && (
                         <Typography gutterBottom variant="h5" component="div">
                             {mainTitle}
                         </Typography>
+                    )}
+                    {description && (
                         <Typography
                             variant="body2"
                             paragraph
@@ -64,14 +50,18 @@ function CardItem({
                         >
                             {description}
                         </Typography>
+                    )}
+                    {subText1 && (
                         <Typography variant="body2" color="#999">
-                            {author}
+                            {subText1}
                         </Typography>
+                    )}
+                    {subText2 && (
                         <Typography variant="body2" color="text.secondary">
-                            {date}
+                            {subText2}
                         </Typography>
-                    </CardContent>
-                )}
+                    )}
+                </CardContent>
             </Card>
         </Link>
     );

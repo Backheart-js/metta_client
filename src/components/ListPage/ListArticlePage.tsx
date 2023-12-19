@@ -66,7 +66,11 @@ function ListArticlePage({
                                     {hotNews.map((article, index) => (
                                         <CardItem
                                             path={`/news/${article.slug}`}
-                                            articleData={article}
+                                            thumbnailUrl={article.thumbnailUrl}
+                                            mainTitle={article.mainTitle}
+                                            description={article.description}
+                                            subText1={article.author}
+                                            subText2={article.date}
                                             key={index}
                                         />
                                     ))}
@@ -76,7 +80,11 @@ function ListArticlePage({
                                 {dailyNews.slice(0, 2).map((news, index) => (
                                     <CardItem
                                         path={showAllPath}
-                                        articleData={news}
+                                        thumbnailUrl={news.thumbnailUrl}
+                                        mainTitle={news.mainTitle}
+                                        description={news.description}
+                                        subText1={news.author}
+                                        subText2={news.date}
                                         key={index}
                                     />
                                 ))}
@@ -93,8 +101,10 @@ function ListArticlePage({
                                 >
                                     <CardItem
                                         path={showAllPath}
-                                        articleData={news}
-                                        noThumbnail
+                                        mainTitle={news.mainTitle}
+                                        description={news.description}
+                                        subText1={news.author}
+                                        subText2={news.date}
                                     />
                                 </div>
                             ))}
