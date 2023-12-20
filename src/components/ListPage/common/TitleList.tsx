@@ -19,7 +19,7 @@ function TitleList({ title, showAllPath }: IListPage) {
             <button onClick={handleShowAll}>
                 <h3 className="text-lg">{title}</h3>
             </button>
-            <Link className="text-bluePrimary text-sm" href={showAllPath}>
+            <Link className="text-greenPrimary text-sm" href={showAllPath}>
                 Xem thêm
             </Link>
         </div>

@@ -7,7 +7,7 @@ interface IMainTitle {
 function MainTitle({ mainTitle }: IMainTitle) {
     return (
         <div className="w-full text-center">
-            <h2 className="text-2xl font-semibold">{mainTitle}</h2>
+            <h2 className="text-3xl font-semibold">{mainTitle}</h2>
         </div>
     );
 }

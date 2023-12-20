@@ -32,7 +32,7 @@ function MobileNavbar() {
                             </div>
                             <p
                                 className={clsx(
-                                    isActive ? 'text-bluePrimary' : '',
+                                    isActive ? 'text-greenPrimary' : '',
                                     'text-xs text-center',
                                 )}
                             >

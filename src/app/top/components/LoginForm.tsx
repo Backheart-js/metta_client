@@ -101,7 +101,7 @@ function LoginForm({ handleNavigate }) {
                         <Typography color="error">{errorMessage}</Typography>
                     )}
                     <Button
-                        className="bg-bluePrimary mt-4"
+                        className="bg-greenPrimary mt-4"
                         type="button"
                         fullWidth
                         variant="contained"

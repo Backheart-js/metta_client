@@ -41,13 +41,13 @@ function PCHeader() {
                         <>
                             <Button
                                 variant="contained"
-                                className="bg-bluePrimary"
+                                className="bg-greenPrimary"
                             >
                                 Đăng nhập
                             </Button>
                             <Button
                                 variant="outlined"
-                                className="text-bluePrimary"
+                                className="text-greenPrimary"
                             >
                                 Đăng ký
                             </Button>
@@ -55,7 +55,7 @@ function PCHeader() {
                     )}
                 </div>
             </header>
-            <nav className="center w-full px-6 pt-2 gap-10">
+            <nav className="center w-full px-6 pt-2 gap-10 bg-greenPrimary">
                 {category.map((category, index) => {
                     const { Icon, path, short_text } = category;
                     const isActive = pathname.includes(category.path);
@@ -77,15 +77,17 @@ function PCHeader() {
                                     <Icon
                                         style={
                                             isActive
-                                                ? { color: '#407CE2' }
-                                                : { color: '#666' }
+                                                ? { color: '#111' }
+                                                : { color: '#fff' }
                                         }
                                     />
                                 </div>
                                 <div className="center mt-1 mb-2">
                                     <p
                                         className={clsx(
-                                            isActive ? 'text-bluePrimary' : '',
+                                            isActive
+                                                ? 'text-[#111]'
+                                                : 'text-white',
                                             'text-sm',
                                         )}
                                     >
