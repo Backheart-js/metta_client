@@ -17,15 +17,10 @@ import { useFormControlContext } from '@mui/base/FormControl';
 import { styled } from '@mui/system';
 import clsx from 'clsx';
 import React, { useState } from 'react';
+import { calcBMI } from '@/utils/tools/calcBMI';
+import { FormData, IBMIData } from '@/types/tool';
+import { calcTDEE } from '@/utils/tools/calcTDEE';
 
-interface FormData {
-    gender: number;
-    age: number | null;
-    height: number | null;
-    weight: number | null;
-    activityLevel: string;
-    goal: string;
-}
 interface FormError {
     age: string;
     height: string;
@@ -53,6 +48,14 @@ const ToolForm: React.FC = ({}: Props) => {
         if (validateFormData()) {
             // Nếu dữ liệu hợp lệ, log dữ liệu
             console.log('Dữ liệu hợp lệ:', formData);
+            const dataForBMI: IBMIData = {
+                weight: formData.weight,
+                height: formData.height,
+            };
+            const resultBMI = calcBMI(dataForBMI);
+            const resultTDEE = calcTDEE(formData);
+            console.log(resultBMI);
+            console.log(resultTDEE);
         } else {
             // Nếu dữ liệu không hợp lệ, cập nhật trạng thái lỗi và xử lý theo ý của bạn
             console.log('Dữ liệu không hợp lệ');
