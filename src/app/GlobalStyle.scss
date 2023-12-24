@@ -3,3 +3,35 @@
 @import '@fontsource/roboto/400.css';
 @import '@fontsource/roboto/500.css';
 @import '@fontsource/roboto/700.css';
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-x {
+    display: flex;
+    justify-content: center;
+}
+
+.center-y {
+    display: flex;
+    align-items: center;
+}
+
+.container {
+    max-width: 1020px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container-sp {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.smooth {
+    transition: all 0.2s ease;
+}

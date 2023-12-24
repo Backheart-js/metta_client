@@ -32,9 +32,10 @@ const config: Config = {
         },
         extend: {
             colors: {
-                bluePrimary: '#407CE2',
+                greenPrimary: '#00c6a9',
                 boldBlue: '#223A6A',
                 lightBlue: '#ebeff5',
+                borderLightTheme: '#e9ecef',
             },
             backgroundImage: {},
         },

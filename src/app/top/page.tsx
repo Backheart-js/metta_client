@@ -51,7 +51,7 @@ function Top() {
                             <div className="">
                                 <div className="">
                                     <Button
-                                        className="bg-bluePrimary text-white w-[250px] h-14 rounded-[50px] font-semibold"
+                                        className="bg-greenPrimary text-white w-[250px] h-14 rounded-[50px] font-semibold"
                                         variant="contained"
                                         onClick={() => setStatusScreen(1)}
                                     >
@@ -60,7 +60,7 @@ function Top() {
                                 </div>
                                 <div className="mt-4">
                                     <Button
-                                        className="w-[250px] h-14 text-bluePrimary rounded-[50px] font-semibold"
+                                        className="w-[250px] h-14 text-greenPrimary rounded-[50px] font-semibold"
                                         variant="outlined"
                                         onClick={() => setStatusScreen(2)}
                                     >

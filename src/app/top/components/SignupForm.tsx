@@ -193,7 +193,7 @@ function SignupForm() {
                         <Typography color="error">{errorMessage}</Typography>
                     )}
                     <Button
-                        className="bg-bluePrimary mt-4"
+                        className="bg-greenPrimary mt-4"
                         type="submit"
                         fullWidth
                         variant="contained"
