@@ -1,17 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import {
-    Divider,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
-    ListItemText,
-} from '@mui/material';
+import './GlobalStyle.scss';
+import './_variables.scss';
 import MobileHeader from '@/components/layout/MobileHeader/MobileHeader';
 import MobileNavbar from '@/components/layout/MobileNavbar/MobileNavbar';
-import { category } from '@/types/category';
 import PCHeader from '@/components/layout/PCHeader/PCHeader';
 
 const inter = Inter({ subsets: ['latin'] });

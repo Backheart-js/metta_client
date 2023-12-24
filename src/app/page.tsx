@@ -1,7 +1,5 @@
 'use client';
 import { NextPage } from 'next';
-import './GlobalStyle.scss';
-import './_variables.scss';
 import { checkLoginStatus } from '@/middlewares/checkLogin.middleware';
 import { useEffect } from 'react';
 import { articleData } from '../mock/mock-article';
