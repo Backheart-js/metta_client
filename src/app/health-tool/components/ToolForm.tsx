@@ -13,13 +13,14 @@ import {
     InputLabel,
     FormLabel,
 } from '@mui/material';
-import { useFormControlContext } from '@mui/base/FormControl';
-import { styled } from '@mui/system';
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { calcBMI } from '@/utils/tools/calcBMI';
 import { FormData, IBMIData } from '@/types/tool';
 import { calcTDEE } from '@/utils/tools/calcTDEE';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/lib/store';
+import { updateLoading } from '@/lib/features/loading/loadingSlice';
 
 interface FormError {
     age: string;
@@ -32,6 +33,8 @@ interface FormError {
 type Props = {};
 
 const ToolForm: React.FC = ({}: Props) => {
+    const dispatch = useDispatch<AppDispatch>();
+
     const [formData, setFormData] = useState<FormData>({
         gender: 0,
         age: null,
@@ -44,10 +47,8 @@ const ToolForm: React.FC = ({}: Props) => {
     const [formErrors, setFormErrors] = useState<Partial<FormError>>({});
 
     const handleCalculate = () => {
-        console.log(formData);
         if (validateFormData()) {
             // Nếu dữ liệu hợp lệ, log dữ liệu
-            console.log('Dữ liệu hợp lệ:', formData);
             const dataForBMI: IBMIData = {
                 weight: formData.weight,
                 height: formData.height,
@@ -56,6 +57,12 @@ const ToolForm: React.FC = ({}: Props) => {
             const resultTDEE = calcTDEE(formData);
             console.log(resultBMI);
             console.log(resultTDEE);
+            dispatch(
+                updateLoading({
+                    isProgress: true,
+                    text: 'Đang tính toán',
+                }),
+            );
         } else {
             // Nếu dữ liệu không hợp lệ, cập nhật trạng thái lỗi và xử lý theo ý của bạn
             console.log('Dữ liệu không hợp lệ');
@@ -323,49 +330,3 @@ const ToolForm: React.FC = ({}: Props) => {
 };
 
 export default ToolForm;
-
-const Label = styled(
-    ({
-        children,
-        className,
-    }: {
-        children?: React.ReactNode;
-        className?: string;
-    }) => {
-        const formControlContext = useFormControlContext();
-        const [dirty, setDirty] = React.useState(false);
-
-        React.useEffect(() => {
-            if (formControlContext?.filled) {
-                setDirty(true);
-            }
-        }, [formControlContext]);
-
-        if (formControlContext === undefined) {
-            return <p>{children}</p>;
-        }
-
-        const { error, required, filled } = formControlContext;
-        const showRequiredError = dirty && required && !filled;
-
-        return (
-            <p
-                className={clsx(
-                    className,
-                    error || showRequiredError ? 'invalid' : '',
-                )}
-            >
-                {children}
-                {required ? ' *' : ''}
-            </p>
-        );
-    },
-)`
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    margin-bottom: 4px;
-
-    &.invalid {
-        color: red;
-    }
-`;
