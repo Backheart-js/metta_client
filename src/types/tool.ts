@@ -4,6 +4,7 @@ export interface IBMIData {
 }
 
 export interface IBMIResult {
+    bmi: number;
     minWeight: number;
     maxWeight: number;
     idealWeight: number;
@@ -25,6 +26,10 @@ export interface TDEEResult {
     tdee: number;
     workoutDayCalo: number;
     restDayCalo: number;
+}
+
+export interface ICombineData extends IBMIResult, TDEEResult, FormData {
+    message?: string;
 }
 
 export const bmiRangeData = {

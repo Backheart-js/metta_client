@@ -22,6 +22,7 @@ export const calcBMI = function (data: IBMIData): IBMIResult {
     const idealWeight = (maxWeight + minWeight) / 2;
 
     return {
+        bmi: parseFloat(bmi.toFixed(1)),
         minWeight: parseFloat(minWeight.toFixed(1)),
         maxWeight: parseFloat(maxWeight.toFixed(1)),
         idealWeight: parseFloat(idealWeight.toFixed(1)),

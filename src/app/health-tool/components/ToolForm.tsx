@@ -16,11 +16,13 @@ import {
 import clsx from 'clsx';
 import React, { useState } from 'react';
 import { calcBMI } from '@/utils/tools/calcBMI';
-import { FormData, IBMIData } from '@/types/tool';
+import { FormData, IBMIData, ICombineData } from '@/types/tool';
 import { calcTDEE } from '@/utils/tools/calcTDEE';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '@/lib/store';
 import { updateLoading } from '@/lib/features/loading/loadingSlice';
+import { useRouter } from 'next/navigation';
+import toolSync from '@/utils/axios/tool';
 
 interface FormError {
     age: string;
@@ -33,6 +35,7 @@ interface FormError {
 type Props = {};
 
 const ToolForm: React.FC = ({}: Props) => {
+    const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
 
     const [formData, setFormData] = useState<FormData>({
@@ -46,23 +49,48 @@ const ToolForm: React.FC = ({}: Props) => {
 
     const [formErrors, setFormErrors] = useState<Partial<FormError>>({});
 
-    const handleCalculate = () => {
+    const handleCalculate = async () => {
         if (validateFormData()) {
-            // Nếu dữ liệu hợp lệ, log dữ liệu
-            const dataForBMI: IBMIData = {
-                weight: formData.weight,
-                height: formData.height,
-            };
-            const resultBMI = calcBMI(dataForBMI);
-            const resultTDEE = calcTDEE(formData);
-            console.log(resultBMI);
-            console.log(resultTDEE);
-            dispatch(
-                updateLoading({
-                    isProgress: true,
-                    text: 'Đang tính toán',
-                }),
-            );
+            try {
+                // Show loading
+                dispatch(
+                    updateLoading({
+                        isProgress: true,
+                        text: 'Đang tính toán',
+                    }),
+                );
+
+                // Nếu dữ liệu hợp lệ, log dữ liệu
+                const dataForBMI: IBMIData = {
+                    weight: formData.weight,
+                    height: formData.height,
+                };
+                const resultBMI = calcBMI(dataForBMI);
+                const resultTDEE = calcTDEE(formData);
+                console.log(resultBMI);
+                console.log(resultTDEE);
+
+                let combineData: ICombineData = {
+                    ...resultBMI,
+                    ...resultTDEE,
+                    ...formData,
+                    message: '',
+                };
+
+                const messageFromAI = await toolSync.getResult(combineData);
+                console.log('messageFromAI: ', messageFromAI);
+                // combineData[message] = messageFromAI
+
+                // router.push('/health-tool/result/1');
+            } catch (error) {
+            } finally {
+                dispatch(
+                    updateLoading({
+                        isProgress: false,
+                        text: '',
+                    }),
+                );
+            }
         } else {
             // Nếu dữ liệu không hợp lệ, cập nhật trạng thái lỗi và xử lý theo ý của bạn
             console.log('Dữ liệu không hợp lệ');
