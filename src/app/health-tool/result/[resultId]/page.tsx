@@ -7,18 +7,12 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import BMI_Chart_image from '../../../../assets/image/bmi-chart.jpg';
 
-import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
-import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
 
 export interface IResultProps {}
 
@@ -36,6 +30,7 @@ export default function Result({}: IResultProps) {
             'Phương pháp tập luyện',
         ];
         const formatedMessage = formatText(toolData.message, categoryList);
+        console.log(formatedMessage);
         setMessage(formatedMessage);
         setResultData(toolData);
         return () => {};
@@ -259,39 +254,24 @@ export default function Result({}: IResultProps) {
                     Lời khuyên
                 </h1>
                 <div className="">
-                    {Object.keys(message).map((category) => (
-                        <div key={category} className="">
+                    {Object.keys(message).map((category, index) => (
+                        <div key={index} className="">
                             <h5 className="">{category}</h5>
                             <ul className="">
                                 {message[category].map(
-                                    (content, index: number) => (
-                                        <li key={index} className="">
-                                            {content}
-                                        </li>
-                                    ),
+                                    (content, index: number) => {
+                                        if (index > 0) {
+                                            return (
+                                                <li key={index} className="">
+                                                    {content}
+                                                </li>
+                                            );
+                                        }
+                                    },
                                 )}
                             </ul>
                         </div>
                     ))}
-
-                    {/* <div className="">
-                        <h5 className="">Chế độ sinh hoạt</h5>
-                        <ul className="">
-                            <li className=""></li>
-                        </ul>
-                    </div>
-                    <div className="">
-                        <h5 className="">Chế độ dinh dưỡng</h5>
-                        <ul className="">
-                            
-                        </ul>
-                    </div>
-                    <div className="">
-                        <h5 className="">Phương pháp tập luyện</h5>
-                        <ul className="">
-                            
-                        </ul>
-                    </div> */}
                 </div>
             </section>
             <section className=""></section>
