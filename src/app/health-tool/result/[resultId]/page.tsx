@@ -13,6 +13,14 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import clsx from 'clsx';
+import { Box, Button, IconButton } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import LinkIcon from '@mui/icons-material/Link';
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 
 export interface IResultProps {}
 
@@ -21,7 +29,18 @@ export default function Result({}: IResultProps) {
     const [openTDEE, setOpenTDEE] = useState(false);
     const [openBRM, setOpenBRM] = useState(false);
     const [message, setMessage] = useState({});
+    const [rating, setRating] = useState<IRating>({
+        isRated: false,
+        status: 0,
+    });
     const router = useRouter();
+
+    const handleRating = (status: number): void => {
+        setRating({
+            isRated: true,
+            status,
+        });
+    };
 
     useEffect(() => {
         const categoryList = [
@@ -37,13 +56,13 @@ export default function Result({}: IResultProps) {
     }, []);
 
     return (
-        <div className="container-sp">
+        <div className="container-sp pt-6 md:pt-10">
             <div className="">
                 <h1 className="text-center font-semibold text-gray-700">
                     Kết quả đo
                 </h1>
             </div>
-            <section className="mt-10 mb-14">
+            <section className="mt-4 mb-6 md:mt-10 md:mb-14 px-5 md:px-0">
                 <div className="flex items-end justify-between">
                     <div className="flex items-end">
                         <p className="text-boldGreen font-semibold text-xl">
@@ -53,11 +72,11 @@ export default function Result({}: IResultProps) {
                             {resultData?.bmi}
                         </p>
                     </div>
-                    <div className="ml-10 text-sm font-semibold text-gray-700">
+                    <div className="md:ml-10 text-sm font-semibold text-gray-700">
                         {resultData?.status}
                     </div>
                 </div>
-                <div className="flex md:justify-between mb-10 mt-12">
+                <div className="flex flex-col md:flex-row md:justify-between mb-8 md:mb-10 mt-6 md:mt-12">
                     <div className="text-center">
                         <p className="text-boldGreen font-semibold text-lg">
                             Cân nặng tối thiểu
@@ -67,14 +86,14 @@ export default function Result({}: IResultProps) {
                                 {resultData?.minWeight}
                             </span>
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-1 md:mt-2">
                             <span className="text-gray-400 text-sm">
                                 kilogram
                             </span>
                         </div>
                     </div>
                     <div className="text-center">
-                        <p className="text-boldGreen font-semibold text-lg">
+                        <p className="text-boldGreen font-semibold text-lg mt-4 md:mt-0">
                             Cân nặng lý tưởng
                         </p>
                         <div className="text-center mt-2">
@@ -82,14 +101,14 @@ export default function Result({}: IResultProps) {
                                 {resultData?.idealWeight}
                             </span>
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-1 md:mt-2">
                             <span className="text-gray-400 text-sm">
                                 kilogram
                             </span>
                         </div>
                     </div>
                     <div className="text-center">
-                        <p className="text-boldGreen font-semibold text-lg">
+                        <p className="text-boldGreen font-semibold text-lg mt-4 md:mt-0">
                             Cân nặng tối đa
                         </p>
                         <div className="text-center mt-2">
@@ -97,7 +116,7 @@ export default function Result({}: IResultProps) {
                                 {resultData?.maxWeight}
                             </span>
                         </div>
-                        <div className="mt-2">
+                        <div className="mt-1 md:mt-2">
                             <span className="text-gray-400 text-sm">
                                 kilogram
                             </span>
@@ -109,7 +128,7 @@ export default function Result({}: IResultProps) {
                         Đánh giá:
                     </p>
                     <div className="mt-2">
-                        <span className="text-gray-500 text-sm">
+                        <span className="text-gray-500 text-base">
                             {resultData?.advice}
                         </span>
                     </div>
@@ -125,7 +144,8 @@ export default function Result({}: IResultProps) {
                     </p>
                 </div>
             </section>
-            <section className="my-14">
+            <div className="border-t-[1px] border-gray-300"></div>
+            <section className="my-14 px-5 md:px-0">
                 <List
                     sx={{ width: '100%', bgcolor: 'background.paper', p: 0 }}
                     component="nav"
@@ -148,33 +168,37 @@ export default function Result({}: IResultProps) {
                         />
                         {openTDEE ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
-                    <Collapse
-                        in={openTDEE}
-                        timeout="auto"
-                        unmountOnExit
-                        sx={{ px: 5, pt: 2 }}
-                    >
-                        <div className="mb-5">
-                            <h4 className="text-boldGreen font-medium text-lg">
-                                TDEE là gì? Tính TDEE giảm cân lành mạnh
-                            </h4>
-                        </div>
-                        <div className="text-gray-400 font-normal text-base">
-                            <p>
-                                TDEE (Total Daily Energy Expenditure) là tất cả
-                                năng lượng cần thiết cho hoạt động mỗi ngày của
-                                bạn. Tính TDEE giúp bạn đạt được mục tiêu dinh
-                                dưỡng (giảm cân, tăng cân) của bạn.
-                                <div className="h-4"></div>
-                                Xác định chỉ số TDEE sẽ giúp bạn biết rõ lượng
-                                calo nên tăng hoặc giảm để đạt hiệu quả cutting
-                                (giảm cân) hay bulking (tăng cân). Nói cách
-                                khác, TDEE giúp cân bằng năng lượng để đạt được
-                                hiệu quả giảm cân nhưng không gây ra những tác
-                                động tiêu cực đến sức khỏe.
-                            </p>
-                        </div>
-                    </Collapse>
+                    <Box sx={{ transition: 'height 0.3s ease-in-out' }}>
+                        <Collapse
+                            in={openTDEE}
+                            timeout="auto"
+                            unmountOnExit
+                            sx={{ px: 5, pt: 2 }}
+                        >
+                            <div className="">
+                                <div className="mb-5">
+                                    <h4 className="text-boldGreen font-medium text-lg">
+                                        TDEE là gì? Tính TDEE giảm cân lành mạnh
+                                    </h4>
+                                </div>
+                                <p className="text-gray-400 font-normal text-base">
+                                    TDEE (Total Daily Energy Expenditure) là tất
+                                    cả năng lượng cần thiết cho hoạt động mỗi
+                                    ngày của bạn. Tính TDEE giúp bạn đạt được
+                                    mục tiêu dinh dưỡng (giảm cân, tăng cân) của
+                                    bạn.
+                                    <div className="h-4"></div>
+                                    Xác định chỉ số TDEE sẽ giúp bạn biết rõ
+                                    lượng calo nên tăng hoặc giảm để đạt hiệu
+                                    quả cutting (giảm cân) hay bulking (tăng
+                                    cân). Nói cách khác, TDEE giúp cân bằng năng
+                                    lượng để đạt được hiệu quả giảm cân nhưng
+                                    không gây ra những tác động tiêu cực đến sức
+                                    khỏe.
+                                </p>
+                            </div>
+                        </Collapse>
+                    </Box>
                     <div className="h-5 w-full"></div>
                     <ListItemButton onClick={() => setOpenBRM((prev) => !prev)}>
                         <ListItemText
@@ -198,13 +222,13 @@ export default function Result({}: IResultProps) {
                         unmountOnExit
                         sx={{ px: 5, pt: 2 }}
                     >
-                        <div className="mb-5">
-                            <h4 className="text-boldGreen font-medium text-lg">
-                                BRM là gì?
-                            </h4>
-                        </div>
-                        <div className="text-gray-400 font-normal text-base">
-                            <p>
+                        <div className="">
+                            <div className="mb-5">
+                                <h4 className="text-boldGreen font-medium text-lg">
+                                    BRM là gì?
+                                </h4>
+                            </div>
+                            <p className="text-gray-400 font-normal text-base">
                                 Chỉ số BMR (Basal Metabolic Rate) là tỷ lệ trao
                                 đổi chất cơ bản trong cơ thể con người,cho biết
                                 mức năng lượng tối thiểu mà cơ thể cần, để thực
@@ -215,9 +239,9 @@ export default function Result({}: IResultProps) {
                         </div>
                     </Collapse>
                 </List>
-                <div className="flex md:justify-between md:flex-col mb-10 mt-8 md:gap-4 px-4">
-                    <div className="flex md:flex-row md:items-end">
-                        <p className="text-boldGreen font-semibold text-lg">
+                <div className="flex md:justify-between flex-col md:flex-col mb-10 mt-10 md:mt-8 md:gap-4 px-4">
+                    <div className="flex flex-col md:flex-row items-center md:items-end ">
+                        <p className="text-boldGreen font-semibold text-lg text-center">
                             Lượng calo cần thiết cho ngày tập luyện là:
                         </p>
                         <div className="text-center mt-2 md: mx-4">
@@ -225,14 +249,14 @@ export default function Result({}: IResultProps) {
                                 {resultData?.workoutDayCalo}
                             </span>
                         </div>
-                        <div className="mt-2 md:mt-0 md:mb-1">
+                        <div className="mt-1 md:mt-0 md:mb-1">
                             <span className="text-gray-400 text-sm md:leading-6">
                                 calories
                             </span>
                         </div>
                     </div>
-                    <div className="flex md:flex-row md:items-end">
-                        <p className="text-boldGreen font-semibold text-lg">
+                    <div className="flex flex-col md:flex-row items-center md:items-end mt-4 md:mt-0">
+                        <p className="text-boldGreen font-semibold text-lg text-center">
                             Lượng calo cần thiết cho ngày nghỉ là:
                         </p>
                         <div className="text-center mt-2 md: mx-4">
@@ -240,7 +264,7 @@ export default function Result({}: IResultProps) {
                                 {resultData?.restDayCalo}
                             </span>
                         </div>
-                        <div className="mt-2 md:mt-0 md:mb-1">
+                        <div className="mt-1 md:mt-0 md:mb-1">
                             <span className="text-gray-400 text-sm md:leading-6">
                                 calories
                             </span>
@@ -248,21 +272,29 @@ export default function Result({}: IResultProps) {
                     </div>
                 </div>
             </section>
-            <div className="max-w-[80%] border-b-1"></div>
-            <section className="my-14">
+
+            <section className="mt-14 bg-lightgreen px-5 md:px-0 py-8 md:rounded-2xl">
                 <h1 className="text-center font-semibold text-gray-700">
                     Lời khuyên
                 </h1>
-                <div className="">
+                <div className="md:px-4">
                     {Object.keys(message).map((category, index) => (
-                        <div key={index} className="">
-                            <h5 className="">{category}</h5>
-                            <ul className="">
+                        <div key={index} className={index > 0 ? 'mt-8' : ''}>
+                            <h5 className="text-boldGreen font-semibold text-lg">
+                                {index + 1}. {category}
+                            </h5>
+                            <ul className="mt-4 md:pl-4">
                                 {message[category].map(
                                     (content, index: number) => {
                                         if (index > 0) {
                                             return (
-                                                <li key={index} className="">
+                                                <li
+                                                    key={index}
+                                                    className={clsx(
+                                                        index > 0 ? 'mt-2' : '',
+                                                        'text-gray-500 text-base leading-6',
+                                                    )}
+                                                >
                                                     {content}
                                                 </li>
                                             );
@@ -274,7 +306,54 @@ export default function Result({}: IResultProps) {
                     ))}
                 </div>
             </section>
-            <section className=""></section>
+            <section className="mt-4">
+                <div className="flex flex-col md:flex-row justify-center items-center">
+                    <p className="text-gray-500">
+                        {rating.isRated
+                            ? 'Cảm ơn bạn đã đánh giá'
+                            : 'Bạn có hài lòng với lời khuyên?'}
+                    </p>
+                    <div className="flex mt-3 md:mt-0 md:ml-6 gap-4 md:gap-3">
+                        <IconButton onClick={() => handleRating(0)}>
+                            {rating.isRated && rating.status === 0 ? (
+                                <ThumbUpIcon className="text-boldGreen scale-[1.2]" />
+                            ) : (
+                                <ThumbUpOutlinedIcon className="text-gray-500 hover:text-boldGreen" />
+                            )}
+                        </IconButton>
+                        <IconButton onClick={() => handleRating(1)}>
+                            {rating.isRated && rating.status === 1 ? (
+                                <ThumbDownIcon className="text-boldGreen scale-[1.2]" />
+                            ) : (
+                                <ThumbDownAltOutlinedIcon className="text-gray-500 hover:text-boldGreen" />
+                            )}
+                        </IconButton>
+                    </div>
+                </div>
+            </section>
+            <section className="my-14 px-5 md:px-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
+                    <Button
+                        variant="contained"
+                        className="bg-boldGreen hover:bg-boldGreen text-white h-10 rounded-2xl"
+                    >
+                        <SaveIcon />
+                        <span className="ml-2">Lưu dữ liệu</span>
+                    </Button>
+                    <Button
+                        variant="contained"
+                        className="bg-yellowPrimary hover:bg-yellowPrimary h-10 rounded-2xl"
+                    >
+                        <LinkIcon />
+                        <p className="ml-2">Sao chép đường dẫn</p>
+                    </Button>
+                </div>
+            </section>
         </div>
     );
+}
+
+interface IRating {
+    isRated: boolean;
+    status: number;
 }

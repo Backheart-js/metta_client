@@ -35,7 +35,7 @@ const config: Config = {
                 greenPrimary: '#00c6a9',
                 yellowPrimary: '#FFB82E',
                 boldGreen: '#097770',
-                lightBlue: '#ebeff5',
+                lightgreen: '#d1e7dd',
                 borderLightTheme: '#e9ecef',
             },
             backgroundImage: {},
