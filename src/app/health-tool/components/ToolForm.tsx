@@ -10,7 +10,6 @@ import {
     FilledInput,
     InputAdornment,
     FormHelperText,
-    InputLabel,
     FormLabel,
 } from '@mui/material';
 import clsx from 'clsx';
@@ -78,7 +77,6 @@ const ToolForm: React.FC = ({}: Props) => {
                 };
 
                 const messageFromAI = await toolSync.getResult(combineData);
-                console.log('messageFromAI: ', messageFromAI);
                 // combineData[message] = messageFromAI
 
                 // router.push('/health-tool/result/1');
@@ -96,6 +94,21 @@ const ToolForm: React.FC = ({}: Props) => {
             console.log('Dữ liệu không hợp lệ');
             return;
         }
+    };
+
+    const handleClearData = (): void => {
+        console.log('clear data');
+        setFormData({
+            gender: 0,
+            age: null,
+            height: null,
+            weight: null,
+            activityLevel: '',
+            goal: '',
+        });
+
+        // reset error message
+        setFormErrors({});
     };
 
     const validateFormData = (): boolean => {
@@ -157,11 +170,12 @@ const ToolForm: React.FC = ({}: Props) => {
     return (
         <form>
             <FormControl component="fieldset" fullWidth required>
-                <div className="center-y gap-5">
+                <div className="center-y gap-2 md:gap-5">
                     <div className="basis-1/3">
                         <FormLabel>Giới tính</FormLabel>
                     </div>
                     <RadioGroup
+                        value={formData.gender}
                         defaultValue={formData.gender}
                         name="gender"
                         row
@@ -181,7 +195,7 @@ const ToolForm: React.FC = ({}: Props) => {
                 </div>
             </FormControl>
 
-            <div className="flex items-start gap-5 mt-7">
+            <div className="flex flex-col md:flex-row items-start gap-4 md:gap-5 mt-4 md:mt-7">
                 <FormControl className="" fullWidth>
                     <div className="center-x gap-2 flex-col">
                         <FormLabel>Tuổi</FormLabel>
@@ -201,6 +215,7 @@ const ToolForm: React.FC = ({}: Props) => {
                             required
                             size="small"
                             type="number"
+                            value={formData.age || ''}
                             error={!!formErrors.age}
                             onChange={handleInputChange}
                         />
@@ -211,8 +226,7 @@ const ToolForm: React.FC = ({}: Props) => {
                         )}
                     </div>
                 </FormControl>
-
-                <FormControl className="" fullWidth>
+                <FormControl className="hidden md:block" fullWidth>
                     <div className="center-x gap-2 flex-col">
                         <FormLabel>Chiều cao</FormLabel>
                         <FilledInput
@@ -231,6 +245,7 @@ const ToolForm: React.FC = ({}: Props) => {
                             required
                             size="small"
                             type="number"
+                            value={formData.height || ''}
                             error={!!formErrors.height}
                             onChange={handleInputChange}
                         />
@@ -242,7 +257,7 @@ const ToolForm: React.FC = ({}: Props) => {
                     </div>
                 </FormControl>
 
-                <FormControl className="" fullWidth>
+                <FormControl className="hidden md:block" fullWidth>
                     <div className="center-x gap-2 flex-col">
                         <FormLabel>Cân nặng</FormLabel>
                         <FilledInput
@@ -261,6 +276,7 @@ const ToolForm: React.FC = ({}: Props) => {
                             required
                             size="small"
                             type="number"
+                            value={formData.weight || ''}
                             error={!!formErrors.weight}
                             onChange={handleInputChange}
                         />
@@ -271,9 +287,72 @@ const ToolForm: React.FC = ({}: Props) => {
                         )}
                     </div>
                 </FormControl>
+                <div className="md:hidden grid grid-cols-2 gap-4 md:gap-5">
+                    <FormControl className="" fullWidth>
+                        <div className="center-x gap-2 flex-col">
+                            <FormLabel>Chiều cao</FormLabel>
+                            <FilledInput
+                                id="filled-adornment-height"
+                                name="height"
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        cm
+                                    </InputAdornment>
+                                }
+                                aria-describedby="filled-height-helper-text"
+                                inputProps={{
+                                    'aria-label': 'height',
+                                }}
+                                fullWidth
+                                required
+                                size="small"
+                                type="number"
+                                value={formData.height || ''}
+                                error={!!formErrors.height}
+                                onChange={handleInputChange}
+                            />
+                            {formErrors.height && (
+                                <FormHelperText error>
+                                    {formErrors.height}
+                                </FormHelperText>
+                            )}
+                        </div>
+                    </FormControl>
+
+                    <FormControl className="" fullWidth>
+                        <div className="center-x gap-2 flex-col">
+                            <FormLabel>Cân nặng</FormLabel>
+                            <FilledInput
+                                id="filled-adornment-weight"
+                                name="weight"
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        kg
+                                    </InputAdornment>
+                                }
+                                aria-describedby="filled-weight-helper-text"
+                                inputProps={{
+                                    'aria-label': 'weight',
+                                }}
+                                fullWidth
+                                required
+                                size="small"
+                                type="number"
+                                value={formData.weight || ''}
+                                error={!!formErrors.weight}
+                                onChange={handleInputChange}
+                            />
+                            {formErrors.weight && (
+                                <FormHelperText error>
+                                    {formErrors.weight}
+                                </FormHelperText>
+                            )}
+                        </div>
+                    </FormControl>
+                </div>
             </div>
 
-            <div className="center mt-7 gap-5">
+            <div className="center flex-col md:flex-row mt-4 md:mt-7 gap-6 md:gap-5">
                 <FormControl variant="filled" className="" fullWidth>
                     <div className="center-x flex-col gap-2">
                         <div className="basis-1/3">
@@ -284,19 +363,27 @@ const ToolForm: React.FC = ({}: Props) => {
                                 fullWidth
                                 required
                                 size="small"
+                                value={formData.activityLevel}
                                 onChange={(e) =>
                                     handleSelectChange(e, 'activityLevel')
                                 }
                                 error={!!formErrors.activityLevel}
                             >
                                 <MenuItem value="sedentary">
-                                    Ít vận động
+                                    Ít vận động (Nhân viên văn phòng)
                                 </MenuItem>
-                                <MenuItem value="low">Vận động nhẹ</MenuItem>
-                                <MenuItem value="medium">Vận động vừa</MenuItem>
-                                <MenuItem value="high">Vận động nhiều</MenuItem>
+                                <MenuItem value="low">
+                                    Tập luyện nhẹ (1-3 buổi/tuần)
+                                </MenuItem>
+                                <MenuItem value="medium">
+                                    Tập luyện vừa (3-5 buổi/tuần)
+                                </MenuItem>
+                                <MenuItem value="high">
+                                    Tập luyện nhiều (6-7 buổi/tuần)
+                                </MenuItem>
                                 <MenuItem value="athlete">
-                                    Vận động cực nhiều
+                                    Tập luyện cực nhiều (Ngày 2 lần/Vận động
+                                    viên)
                                 </MenuItem>
                             </Select>
                             {formErrors.activityLevel && (
@@ -318,6 +405,7 @@ const ToolForm: React.FC = ({}: Props) => {
                                 fullWidth
                                 required
                                 size="small"
+                                value={formData.goal}
                                 onChange={(e) => handleSelectChange(e, 'goal')}
                                 error={!!formErrors.goal}
                             >
@@ -335,11 +423,12 @@ const ToolForm: React.FC = ({}: Props) => {
                 </FormControl>
             </div>
 
-            <div className="center-y gap-5 mt-10 md:w-[70%] mx-auto">
+            <div className="center-y flex-col-reverse md:flex-row gap-5 mt-8 md:mt-10 md:w-[70%] mx-auto">
                 <Button
                     className="text-gray-700 hover:underline smooth"
                     variant="text"
                     fullWidth
+                    onClick={handleClearData}
                 >
                     Xóa dữ liệu
                 </Button>

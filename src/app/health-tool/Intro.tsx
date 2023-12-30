@@ -4,13 +4,15 @@ import Image from 'next/image';
 import React, { useState } from 'react';
 import ToolImage from '../../assets/image/tools.png';
 import { Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
 
-type Props = {
-    handleNextPage: (page: string) => void;
-};
+type Props = {};
 
-function Intro({ handleNextPage }: Props) {
+function Intro({}: Props) {
+    const router = useRouter();
     const [step, setStep] = useState<number>(1);
+
+    const handleNextPage = (): void => {};
 
     return (
         <div>
@@ -44,7 +46,7 @@ function Intro({ handleNextPage }: Props) {
                     <div className="">
                         <Button
                             variant="contained"
-                            onClick={() => handleNextPage('tool')}
+                            onClick={() => handleNextPage()}
                         >
                             Tới trang công cụ
                         </Button>
