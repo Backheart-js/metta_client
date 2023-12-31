@@ -28,8 +28,14 @@ export interface TDEEResult {
     restDayCalo: number;
 }
 
+export interface IRating {
+    isRated: boolean;
+    status: number;
+}
+
 export interface ICombineData extends IBMIResult, TDEEResult, FormData {
     message?: string;
+    userLike?: IRating;
 }
 
 export const bmiRangeData = {
@@ -60,20 +66,35 @@ export const bmiRangeData = {
     },
 };
 
-export const formatText = (message: string, categories: string[]) => {
-    const sections = message.split('\n\n');
-    const result = {};
+// export const formatText = (message: string, categories: string[]) => {
+//     const sections = message.split('\n\n');
+//     const result = {};
 
-    categories.forEach((category) => {
-        const sectionIndex = sections.findIndex((section) =>
-            section.includes(category),
-        );
-        if (sectionIndex !== -1) {
-            result[category] = sections[sectionIndex]
-                .split('\n')
-                .filter((line) => line.trim() !== '');
-        }
+//     categories.forEach((category) => {
+//         const sectionIndex = sections.findIndex((section) =>
+//             section.includes(category),
+//         );
+//         if (sectionIndex !== -1) {
+//             result[category] = sections[sectionIndex]
+//                 .split('\n')
+//                 .filter((line) => line.trim() !== '');
+//         }
+//     });
+
+//     return result;
+// };
+
+export function formatInput(inputString: string) {
+    const sections = inputString.split('\n\n');
+    const output = {};
+
+    sections.forEach((section) => {
+        const lines = section.split('\n');
+        const category = lines[0].trim().replace(':', '');
+        const content = lines.slice(1).map((line) => line.trim());
+
+        output[category] = content;
     });
 
-    return result;
-};
+    return output;
+}

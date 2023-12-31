@@ -17,8 +17,8 @@ export const calcBMI = function (data: IBMIData): IBMIResult {
 
     const bmi = weight / (height / 100) ** 2;
     const calcData = getBMIData(bmi);
-    const minWeight = calcData.range[0] * Math.pow(height / 100, 2);
-    const maxWeight = calcData.range[1] * Math.pow(height / 100, 2);
+    const minWeight = 18.5 * Math.pow(height / 100, 2);
+    const maxWeight = 24.9 * Math.pow(height / 100, 2);
     const idealWeight = (maxWeight + minWeight) / 2;
 
     return {

@@ -5,6 +5,9 @@ const toolSync = {
     getResult: (data: ICombineData) => {
         return axios.post('/openai/tool', data);
     },
+    saveResult: (data: ICombineData) => {
+        return axios.post('/body-index/create-data-tool', data);
+    },
 };
 
 export default toolSync;

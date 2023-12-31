@@ -12,7 +12,7 @@ import {
     FormHelperText,
     FormLabel,
 } from '@mui/material';
-import clsx from 'clsx';
+
 import React, { useState } from 'react';
 import { calcBMI } from '@/utils/tools/calcBMI';
 import { FormData, IBMIData, ICombineData } from '@/types/tool';
@@ -22,6 +22,7 @@ import { AppDispatch } from '@/lib/store';
 import { updateLoading } from '@/lib/features/loading/loadingSlice';
 import { useRouter } from 'next/navigation';
 import toolSync from '@/utils/axios/tool';
+import { updateToolData } from '@/lib/features/tool/toolSlice';
 
 interface FormError {
     age: string;
@@ -58,28 +59,36 @@ const ToolForm: React.FC = ({}: Props) => {
                         text: 'Đang tính toán',
                     }),
                 );
-
+                console.log('formData: ', formData);
                 // Nếu dữ liệu hợp lệ, log dữ liệu
                 const dataForBMI: IBMIData = {
                     weight: formData.weight,
                     height: formData.height,
                 };
+                console.log(formData);
                 const resultBMI = calcBMI(dataForBMI);
                 const resultTDEE = calcTDEE(formData);
-                console.log(resultBMI);
-                console.log(resultTDEE);
 
                 let combineData: ICombineData = {
                     ...resultBMI,
                     ...resultTDEE,
                     ...formData,
                     message: '',
+                    userLike: {
+                        isRated: false,
+                        status: 0,
+                    },
                 };
 
-                const messageFromAI = await toolSync.getResult(combineData);
-                // combineData[message] = messageFromAI
+                const resFromAI = await toolSync.getResult(combineData);
+                console.log('resFromAI: ', resFromAI);
+                combineData.message = resFromAI.data.results.content;
 
-                // router.push('/health-tool/result/1');
+                const { status, data } = await toolSync.saveResult(combineData);
+                if (status === 200) {
+                    dispatch(updateToolData(combineData));
+                    router.push(`/health-tool/result/${data.id}`);
+                }
             } catch (error) {
             } finally {
                 dispatch(
@@ -97,7 +106,6 @@ const ToolForm: React.FC = ({}: Props) => {
     };
 
     const handleClearData = (): void => {
-        console.log('clear data');
         setFormData({
             gender: 0,
             age: null,
@@ -141,12 +149,11 @@ const ToolForm: React.FC = ({}: Props) => {
             HTMLInputElement | { name?: string; value: unknown }
         >,
     ): void => {
+        const { name, value } = event.target;
+        const formatValue = !isNaN(value) ? Number(value) : value;
         setFormData({
             ...formData,
-            [event.target.name as string]:
-                typeof event.target.value === 'number'
-                    ? event.target.value
-                    : (event.target.value as string),
+            [name as string]: formatValue,
         });
     };
 

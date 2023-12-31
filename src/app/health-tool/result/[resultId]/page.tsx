@@ -1,7 +1,7 @@
 'use client';
 
 import { toolData } from '@/mock/mock-toolData';
-import { ICombineData, formatText } from '@/types/tool';
+import { ICombineData, IRating, formatInput, formatText } from '@/types/tool';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -21,10 +21,13 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import { useSelector } from 'react-redux';
 
 export interface IResultProps {}
 
 export default function Result({}: IResultProps) {
+    const calcData = useSelector((state) => state.tool);
+
     const [resultData, setResultData] = useState<ICombineData>();
     const [openTDEE, setOpenTDEE] = useState(false);
     const [openBRM, setOpenBRM] = useState(false);
@@ -37,23 +40,18 @@ export default function Result({}: IResultProps) {
 
     const handleRating = (status: number): void => {
         setRating({
-            isRated: true,
+            isRated: false,
             status,
         });
     };
 
     useEffect(() => {
-        const categoryList = [
-            'Chế độ sinh hoạt',
-            'Chế độ dinh dưỡng',
-            'Phương pháp tập luyện',
-        ];
-        const formatedMessage = formatText(toolData.message, categoryList);
-        console.log(formatedMessage);
+        const formatedMessage = formatInput(calcData.message);
+        console.log('formatedMessage: ', formatedMessage);
         setMessage(formatedMessage);
-        setResultData(toolData);
+        setResultData(calcData);
         return () => {};
-    }, []);
+    }, [calcData]);
 
     return (
         <div className="container-sp pt-6 md:pt-10">
@@ -181,21 +179,25 @@ export default function Result({}: IResultProps) {
                                         TDEE là gì? Tính TDEE giảm cân lành mạnh
                                     </h4>
                                 </div>
-                                <p className="text-gray-400 font-normal text-base">
-                                    TDEE (Total Daily Energy Expenditure) là tất
-                                    cả năng lượng cần thiết cho hoạt động mỗi
-                                    ngày của bạn. Tính TDEE giúp bạn đạt được
-                                    mục tiêu dinh dưỡng (giảm cân, tăng cân) của
-                                    bạn.
+                                <div className="text-gray-400 font-normal text-base">
+                                    <p>
+                                        TDEE (Total Daily Energy Expenditure) là
+                                        tất cả năng lượng cần thiết cho hoạt
+                                        động mỗi ngày của bạn. Tính TDEE giúp
+                                        bạn đạt được mục tiêu dinh dưỡng (giảm
+                                        cân, tăng cân) của bạn.
+                                    </p>
                                     <div className="h-4"></div>
-                                    Xác định chỉ số TDEE sẽ giúp bạn biết rõ
-                                    lượng calo nên tăng hoặc giảm để đạt hiệu
-                                    quả cutting (giảm cân) hay bulking (tăng
-                                    cân). Nói cách khác, TDEE giúp cân bằng năng
-                                    lượng để đạt được hiệu quả giảm cân nhưng
-                                    không gây ra những tác động tiêu cực đến sức
-                                    khỏe.
-                                </p>
+                                    <p>
+                                        Xác định chỉ số TDEE sẽ giúp bạn biết rõ
+                                        lượng calo nên tăng hoặc giảm để đạt
+                                        hiệu quả cutting (giảm cân) hay bulking
+                                        (tăng cân). Nói cách khác, TDEE giúp cân
+                                        bằng năng lượng để đạt được hiệu quả
+                                        giảm cân nhưng không gây ra những tác
+                                        động tiêu cực đến sức khỏe.
+                                    </p>
+                                </div>
                             </div>
                         </Collapse>
                     </Box>
@@ -285,21 +287,17 @@ export default function Result({}: IResultProps) {
                             </h5>
                             <ul className="mt-4 md:pl-4">
                                 {message[category].map(
-                                    (content, index: number) => {
-                                        if (index > 0) {
-                                            return (
-                                                <li
-                                                    key={index}
-                                                    className={clsx(
-                                                        index > 0 ? 'mt-2' : '',
-                                                        'text-gray-500 text-base leading-6',
-                                                    )}
-                                                >
-                                                    {content}
-                                                </li>
-                                            );
-                                        }
-                                    },
+                                    (content, index: number) => (
+                                        <li
+                                            key={index}
+                                            className={clsx(
+                                                index > 0 ? 'mt-2' : '',
+                                                'text-gray-500 text-base leading-6',
+                                            )}
+                                        >
+                                            {content}
+                                        </li>
+                                    ),
                                 )}
                             </ul>
                         </div>
@@ -351,9 +349,4 @@ export default function Result({}: IResultProps) {
             </section>
         </div>
     );
-}
-
-interface IRating {
-    isRated: boolean;
-    status: number;
 }
