@@ -40,7 +40,7 @@ export default function Result({}: IResultProps) {
 
     const handleRating = (status: number): void => {
         setRating({
-            isRated: false,
+            isRated: true,
             status,
         });
     };
@@ -61,8 +61,8 @@ export default function Result({}: IResultProps) {
                 </h1>
             </div>
             <section className="mt-4 mb-6 md:mt-10 md:mb-14 px-5 md:px-0">
-                <div className="flex items-end justify-between">
-                    <div className="flex items-end">
+                <div className="flex flex-col md:flex-row items-center md:items-end justify-center md:justify-between">
+                    <div className="flex flex-col md:flex-row items-center md:items-end">
                         <p className="text-boldGreen font-semibold text-xl">
                             Chỉ số BMI hiện tại:
                         </p>
@@ -70,7 +70,7 @@ export default function Result({}: IResultProps) {
                             {resultData?.bmi}
                         </p>
                     </div>
-                    <div className="md:ml-10 text-sm font-semibold text-gray-700">
+                    <div className="mt-4 md:mt-0 md:ml-10 text-sm font-semibold text-gray-700">
                         {resultData?.status}
                     </div>
                 </div>
@@ -143,22 +143,23 @@ export default function Result({}: IResultProps) {
                 </div>
             </section>
             <div className="border-t-[1px] border-gray-300"></div>
-            <section className="my-14 px-5 md:px-0">
+            <section className="mt-8 mb-14 px-5 md:px-0">
                 <List
                     sx={{ width: '100%', bgcolor: 'background.paper', p: 0 }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
                 >
                     <ListItemButton
+                        className="px-0"
                         onClick={() => setOpenTDEE((prev) => !prev)}
                     >
                         <ListItemText
                             primary={
-                                <div className="flex items-end">
+                                <div className="flex flex-col md:flex-row items-start md:items-end">
                                     <p className="text-boldGreen font-semibold text-xl">
                                         Chỉ số TDEE hiện tại:
                                     </p>
-                                    <p className="text-yellowPrimary text-4xl ml-2 font-bold">
+                                    <p className="text-yellowPrimary text-3xl md:text-4xl md:ml-2 font-bold">
                                         {resultData?.tdee}
                                     </p>
                                 </div>
@@ -171,7 +172,7 @@ export default function Result({}: IResultProps) {
                             in={openTDEE}
                             timeout="auto"
                             unmountOnExit
-                            sx={{ px: 5, pt: 2 }}
+                            className="pl-0 pr-4 md:px-5 pt-2"
                         >
                             <div className="">
                                 <div className="mb-5">
@@ -202,14 +203,17 @@ export default function Result({}: IResultProps) {
                         </Collapse>
                     </Box>
                     <div className="h-5 w-full"></div>
-                    <ListItemButton onClick={() => setOpenBRM((prev) => !prev)}>
+                    <ListItemButton
+                        className="px-0"
+                        onClick={() => setOpenBRM((prev) => !prev)}
+                    >
                         <ListItemText
                             primary={
-                                <div className="flex items-end">
+                                <div className="flex flex-col md:flex-row items-start md:items-end">
                                     <p className="text-boldGreen font-semibold text-xl">
                                         Chỉ số BRM hiện tại:
                                     </p>
-                                    <p className="text-yellowPrimary text-4xl ml-2 font-bold">
+                                    <p className="text-yellowPrimary text-3xl md:text-4xl md:ml-2 font-bold">
                                         {resultData?.brm}
                                     </p>
                                 </div>
@@ -222,7 +226,7 @@ export default function Result({}: IResultProps) {
                         in={openBRM}
                         timeout="auto"
                         unmountOnExit
-                        sx={{ px: 5, pt: 2 }}
+                        className="pl-0 pr-4 md:px-5 pt-2"
                     >
                         <div className="">
                             <div className="mb-5">
@@ -241,7 +245,7 @@ export default function Result({}: IResultProps) {
                         </div>
                     </Collapse>
                 </List>
-                <div className="flex md:justify-between flex-col md:flex-col mb-10 mt-10 md:mt-8 md:gap-4 px-4">
+                <div className="flex md:justify-between flex-col md:flex-col mb-10 mt-10 md:mt-8 md:gap-10 px-6 md:px-0">
                     <div className="flex flex-col md:flex-row items-center md:items-end ">
                         <p className="text-boldGreen font-semibold text-lg text-center">
                             Lượng calo cần thiết cho ngày tập luyện là:
@@ -275,7 +279,7 @@ export default function Result({}: IResultProps) {
                 </div>
             </section>
 
-            <section className="mt-14 bg-lightgreen px-5 md:px-0 py-8 md:rounded-2xl">
+            <section className="mt-14 bg-lightgreen px-5 md:px-0 py-8 rounded-2xl">
                 <h1 className="text-center font-semibold text-gray-700">
                     Lời khuyên
                 </h1>
@@ -329,7 +333,7 @@ export default function Result({}: IResultProps) {
                     </div>
                 </div>
             </section>
-            <section className="my-14 px-5 md:px-10">
+            <section className="mt-10 mb-20 pb-10 md:my-14 px-5 md:px-10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
                     <Button
                         variant="contained"
