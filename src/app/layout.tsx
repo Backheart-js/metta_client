@@ -6,6 +6,8 @@ import './_variables.scss';
 import MobileHeader from '@/components/layout/MobileHeader/MobileHeader';
 import MobileNavbar from '@/components/layout/MobileNavbar/MobileNavbar';
 import PCHeader from '@/components/layout/PCHeader/PCHeader';
+import StoreProvider from './StoreProvider';
+import Wrapper from './wrapper/WrapperApp';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,7 +33,11 @@ export default function RootLayout({
                 <nav className="flex md:hidden fixed bottom-0 left-0 right-0 z-50">
                     <MobileNavbar />
                 </nav>
-                <main className="mt-14 sm:mt-16 md:mt-[125px]">{children}</main>
+                <main className="mt-14 sm:mt-16 md:mt-[125px]">
+                    <StoreProvider>
+                        <Wrapper>{children}</Wrapper>
+                    </StoreProvider>
+                </main>
             </body>
         </html>
     );
