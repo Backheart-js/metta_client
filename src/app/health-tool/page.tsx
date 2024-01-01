@@ -28,11 +28,6 @@ function Tool({}: Props) {
                     <HealthTool handleNextPage={nextPageFunc} />
                 </section>
             )}
-            {status === 'result' && (
-                <section>
-                    <Result />
-                </section>
-            )}
         </div>
     );
 }

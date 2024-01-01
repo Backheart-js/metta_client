@@ -23,7 +23,7 @@ export const category = [
     {
         text: 'Trợ lý ảo',
         Icon: PsychologyAltOutlined,
-        path: '/ai-assistant',
+        path: '/virtual-assistant',
         short_text: 'Trợ lý',
     },
     {
