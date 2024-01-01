@@ -22,11 +22,17 @@ import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { useSelector } from 'react-redux';
+import toolSync from '@/utils/axios/tool';
 
-export interface IResultProps {}
+export interface IResultProps {
+    params: {
+        resultId: string;
+    };
+}
 
-export default function Result({}: IResultProps) {
+export default function Result({ params }: IResultProps) {
     const calcData = useSelector((state) => state.tool);
+    const { resultId } = params;
 
     const [resultData, setResultData] = useState<ICombineData>();
     const [openTDEE, setOpenTDEE] = useState(false);
@@ -36,7 +42,6 @@ export default function Result({}: IResultProps) {
         isRated: false,
         status: 0,
     });
-    const router = useRouter();
 
     const handleRating = (status: number): void => {
         setRating({
@@ -46,12 +51,26 @@ export default function Result({}: IResultProps) {
     };
 
     useEffect(() => {
-        const formatedMessage = formatInput(calcData.message);
-        console.log('formatedMessage: ', formatedMessage);
-        setMessage(formatedMessage);
-        setResultData(calcData);
+        if (!calcData.bmi) {
+            (async function () {
+                try {
+                    const res = await toolSync.getResult(resultId);
+                    console.log(res.data.toolData);
+                    if (res.status === 200) {
+                        setResultData(res.data.toolData);
+                        setMessage(formatInput(res.data.toolData.message));
+                    }
+                } catch (error) {
+                    console.log(error.message);
+                }
+            })();
+        } else {
+            setResultData(calcData);
+            setMessage(formatInput(calcData.message));
+        }
+
         return () => {};
-    }, [calcData]);
+    }, [calcData, resultId]);
 
     return (
         <div className="container-sp pt-6 md:pt-10">

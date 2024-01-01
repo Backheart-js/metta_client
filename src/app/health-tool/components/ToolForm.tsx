@@ -59,13 +59,11 @@ const ToolForm: React.FC = ({}: Props) => {
                         text: 'Đang tính toán',
                     }),
                 );
-                console.log('formData: ', formData);
                 // Nếu dữ liệu hợp lệ, log dữ liệu
                 const dataForBMI: IBMIData = {
                     weight: formData.weight,
                     height: formData.height,
                 };
-                console.log(formData);
                 const resultBMI = calcBMI(dataForBMI);
                 const resultTDEE = calcTDEE(formData);
 
@@ -80,7 +78,7 @@ const ToolForm: React.FC = ({}: Props) => {
                     },
                 };
 
-                const resFromAI = await toolSync.getResult(combineData);
+                const resFromAI = await toolSync.getMessageAI(combineData);
                 console.log('resFromAI: ', resFromAI);
                 combineData.message = resFromAI.data.results.content;
 
