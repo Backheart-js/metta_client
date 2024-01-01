@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { ISignupData } from '@/types/authType';
-import auth from '@/utils/auth';
+import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 

@@ -1,38 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
-import styles from './HealthTool.module.scss';
-import clsx from 'clsx';
+import React, { useEffect, useState } from 'react';
 import Intro from './Intro';
-import HealthTool from './HealthTool';
-import Result from './Result';
 
 type Props = {};
 
 function Tool({}: Props) {
-    const [status, setStatus] = useState('intro');
-
-    const nextPageFunc = (page: string) => {
-        setStatus(page);
-    };
+    useEffect(() => {}, []);
 
     return (
-        <div className="container-sp pt-10">
-            {status === 'intro' && (
-                <section>
-                    <Intro handleNextPage={nextPageFunc} />
-                </section>
-            )}
-            {status === 'tool' && (
-                <section>
-                    <HealthTool handleNextPage={nextPageFunc} />
-                </section>
-            )}
-            {status === 'result' && (
-                <section>
-                    <Result />
-                </section>
-            )}
+        <div className="container-sp pt-16 sm:pt-10 md:pt-0">
+            <Intro />
         </div>
     );
 }

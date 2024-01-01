@@ -1,5 +1,5 @@
 // middleware.ts
-import auth from '../utils/auth';
+import auth from '../utils/axios/auth';
 
 export async function checkLoginStatus() {
     // Kiểm tra SessionStorage để xem liệu có isLogin hay không
