@@ -4,13 +4,18 @@ import React, { useState } from 'react';
 import Assistant from '../../assets/image/assistant-doctor.jpg';
 import Image from 'next/image';
 import { Button } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-type Props = {
-    handleNextPage: (page: string) => void;
-};
+type Props = {};
 
-const Intro = ({ handleNextPage }: Props) => {
+const Intro = ({}: Props) => {
+    const router = useRouter();
     const [introStep, setIntroStep] = useState<number>(1);
+
+    const handleNextPage = (): void => {
+        router.push('/virtual-assistant/chat/1');
+    };
 
     return (
         <>
@@ -32,13 +37,14 @@ const Intro = ({ handleNextPage }: Props) => {
                             </p>
                         </div>
                     </div>
-                    <div className="center-y justify-end sm:justify-center">
+                    <div className="px-10 sm:px-20 md:px-5 mt-12 md:flex md:items-center justify-center">
                         <Button
                             variant="contained"
-                            className="bg-greenPrimary min-w-[130px]"
+                            className="flex-y relative w-full md:w-[70%] bg-boldGreen hover:bg-boldGreen text-white text-lg md:text-base h-14 sm:h-12 md:h-10 rounded-2xl"
                             onClick={() => setIntroStep(2)}
                         >
                             Tiếp
+                            <ArrowForwardIosIcon className="absolute top-[50%] translate-y-[-50%] right-6 text-base" />
                         </Button>
                     </div>
                 </div>
@@ -66,11 +72,11 @@ const Intro = ({ handleNextPage }: Props) => {
                                 Tôi đồng ý với điều khoản sử dụng
                             </label>
                         </div>
-                        <div className="center-y justify-end sm:justify-center mt-5">
+                        <div className="px-10 sm:px-20 md:px-5 mt-12 md:flex md:items-center justify-center">
                             <Button
                                 variant="contained"
-                                className="bg-greenPrimary min-w-[130px]"
-                                onClick={() => handleNextPage('assistant')}
+                                className="flex-y relative w-full md:w-[70%] bg-boldGreen hover:bg-boldGreen text-white text-lg md:text-base h-14 sm:h-12 md:h-10 rounded-2xl"
+                                onClick={handleNextPage}
                             >
                                 Khám phá thôi
                             </Button>
