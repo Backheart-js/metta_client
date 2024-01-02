@@ -3,18 +3,48 @@ import Search from '@/components/Search/Search';
 import { category } from '@/types/category';
 import { Button, IconButton } from '@mui/material';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './PCHeader.module.scss';
 import clsx from 'clsx';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
     AccountCircleOutlined,
     NotificationsNoneOutlined,
 } from '@mui/icons-material';
+import useSessionStorage from '@/hooks/useSessionStorage';
+import Dropdown from '@/components/Dropdown/Dropdown';
+import auth from '@/utils/axios/auth';
 
 function PCHeader() {
     const pathname = usePathname();
-    const [isLogin, setIsLogin] = useState(true);
+    const router = useRouter();
+    const isLoginFromSession = useSessionStorage('isLogin');
+    const [isLogin, setIsLogin] = useState<boolean>(isLoginFromSession);
+    const options = [{ value: 'logout', label: 'Đăng xuất' }];
+
+    const handleLogout = async () => {
+        try {
+            const res = await auth.logout();
+            console.log('log: ', res);
+            if (res.status === 200) {
+                sessionStorage.setItem('isLogin', false.toString());
+                setIsLogin(false);
+            }
+        } catch (error) {
+            // Thông báo lỗi
+        }
+    };
+
+    const handleSelectDropdown = (option: string): void => {
+        switch (option) {
+            case 'logout':
+                handleLogout();
+        }
+    };
+
+    useEffect(() => {
+        setIsLogin(isLoginFromSession);
+    }, [isLoginFromSession]);
 
     return (
         <div className="">
@@ -31,17 +61,23 @@ function PCHeader() {
                                     style={{ fontSize: 28, color: '#555' }}
                                 />
                             </IconButton>
-                            <IconButton aria-label="profile">
-                                <AccountCircleOutlined
-                                    style={{ fontSize: 28, color: '#555' }}
-                                />
-                            </IconButton>
+                            <Dropdown
+                                options={options}
+                                onSelect={handleSelectDropdown}
+                            >
+                                <IconButton aria-label="profile">
+                                    <AccountCircleOutlined
+                                        style={{ fontSize: 28, color: '#555' }}
+                                    />
+                                </IconButton>
+                            </Dropdown>
                         </>
                     ) : (
                         <>
                             <Button
                                 variant="contained"
                                 className="bg-greenPrimary"
+                                onClick={() => router.push('/auth')}
                             >
                                 Đăng nhập
                             </Button>
