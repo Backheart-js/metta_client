@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import React, { useState } from 'react';
-import ToolImage from '../../assets/image/tools.png';
+import ToolImage from '@/assets/image/tools.png';
 import { Button } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';

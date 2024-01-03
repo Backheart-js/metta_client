@@ -5,9 +5,9 @@ const useSessionStorage = (name: string): any => {
 
     useEffect(() => {
         setValue(JSON.parse(sessionStorage.getItem(name)));
-    }, []);
+    }, [name]);
 
     return value;
 };
-
+// Không sử dụng được
 export default useSessionStorage;

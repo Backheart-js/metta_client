@@ -20,12 +20,15 @@ function PCHeader() {
     const router = useRouter();
     const isLoginFromSession = useSessionStorage('isLogin');
     const [isLogin, setIsLogin] = useState<boolean>(isLoginFromSession);
-    const options = [{ value: 'logout', label: 'Đăng xuất' }];
+    const options = [
+        { value: 'profile', label: 'Thông tin cá nhân' },
+        { value: 'settings', label: 'Cài đặt' },
+        { value: 'logout', label: 'Đăng xuất' },
+    ];
 
     const handleLogout = async () => {
         try {
             const res = await auth.logout();
-            console.log('log: ', res);
             if (res.status === 200) {
                 sessionStorage.setItem('isLogin', false.toString());
                 setIsLogin(false);
@@ -48,10 +51,35 @@ function PCHeader() {
 
     return (
         <div className="">
-            <header className="center-y justify-between h-[54px] px-6 border-b-2 border-borderLightTheme">
+            <header className="center-y justify-between h-[56px] px-6 bg-lightgreen">
                 <div className="w-[120px]">Logo</div>
-                <div className="w-[300px]">
-                    <Search />
+                <div className="center-y justify-between container-sp">
+                    {category.slice(0, -1).map((category, index) => {
+                        const { Icon, path, short_text } = category;
+                        const isActive = pathname.includes(category.path);
+
+                        return (
+                            <div
+                                className={clsx('h-full center-y')}
+                                key={index}
+                            >
+                                <Link
+                                    className="center h-[48px] w-[120px] rounded-lg transition-all"
+                                    href={path}
+                                    prefetch
+                                >
+                                    <Icon
+                                        className={clsx(
+                                            isActive
+                                                ? 'text-boldGreen text-4xl'
+                                                : 'text-black',
+                                            'text-3xl',
+                                        )}
+                                    />
+                                </Link>
+                            </div>
+                        );
+                    })}
                 </div>
                 <div className="center gap-3">
                     {isLogin ? (
@@ -91,50 +119,6 @@ function PCHeader() {
                     )}
                 </div>
             </header>
-            <nav className="center w-full px-6 pt-2 gap-10 bg-greenPrimary">
-                {category.map((category, index) => {
-                    const { Icon, path, short_text } = category;
-                    const isActive = pathname.includes(category.path);
-
-                    return (
-                        <div
-                            className={clsx(
-                                isActive ? styles.active : null,
-                                styles.category_item,
-                                'h-[62px] center-y',
-                            )}
-                            key={index}
-                        >
-                            <Link
-                                className="flex flex-col justify-center min-w-[80px]"
-                                href={path}
-                            >
-                                <div className="center">
-                                    <Icon
-                                        style={
-                                            isActive
-                                                ? { color: '#111' }
-                                                : { color: '#fff' }
-                                        }
-                                    />
-                                </div>
-                                <div className="center mt-1 mb-2">
-                                    <p
-                                        className={clsx(
-                                            isActive
-                                                ? 'text-[#111]'
-                                                : 'text-white',
-                                            'text-sm',
-                                        )}
-                                    >
-                                        {short_text}
-                                    </p>
-                                </div>
-                            </Link>
-                        </div>
-                    );
-                })}
-            </nav>
         </div>
     );
 }
