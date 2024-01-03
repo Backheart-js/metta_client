@@ -3,9 +3,11 @@ import auth from '../utils/axios/auth';
 
 export async function checkLoginStatus() {
     // Kiểm tra SessionStorage để xem liệu có isLogin hay không
-    const isLogin = sessionStorage.getItem('isLogin');
-
-    if (!isLogin) {
+    const isLogin =
+        sessionStorage.getItem('isLogin') !== null
+            ? JSON.parse(sessionStorage.getItem('isLogin'))
+            : null;
+    if (isLogin === null) {
         // Gọi API isLogin từ server
         try {
             const response = await auth.isLogin();
@@ -22,6 +24,6 @@ export async function checkLoginStatus() {
             console.log(error);
         }
     } else {
-        return isLogin;
+        return { isLogin };
     }
 }

@@ -15,7 +15,7 @@ function Top() {
     const router = useRouter();
 
     const navigateAfterLogin = () => {
-        router.push('/');
+        router.push('/home');
     };
 
     return (

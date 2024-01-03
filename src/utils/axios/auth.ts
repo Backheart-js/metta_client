@@ -8,6 +8,9 @@ const auth = {
     signup: (data: ISignupData) => {
         return axios.post('/auth/signup', data);
     },
+    logout: () => {
+        return axios.post('/auth/logout');
+    },
     isLogin: () => {
         return axios.get('/auth/is-login');
     },
