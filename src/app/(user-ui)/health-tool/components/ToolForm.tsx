@@ -13,7 +13,7 @@ import {
     FormLabel,
 } from '@mui/material';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { calcBMI } from '@/utils/tools/calcBMI';
 import { FormData, IBMIData, ICombineData } from '@/types/tool';
 import { calcTDEE } from '@/utils/tools/calcTDEE';
@@ -38,6 +38,7 @@ const ToolForm: React.FC = ({}: Props) => {
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
 
+    const [userId, setUserId] = useState<string | null>('');
     const [formData, setFormData] = useState<FormData>({
         gender: 0,
         age: null,
@@ -71,6 +72,7 @@ const ToolForm: React.FC = ({}: Props) => {
                     ...resultBMI,
                     ...resultTDEE,
                     ...formData,
+                    userId,
                     message: '',
                     userLike: {
                         isRated: false,
@@ -79,7 +81,7 @@ const ToolForm: React.FC = ({}: Props) => {
                 };
 
                 const resFromAI = await toolSync.getMessageAI(combineData);
-                console.log('resFromAI: ', resFromAI);
+
                 combineData.message = resFromAI.data.results.content;
 
                 const { status, data } = await toolSync.saveResult(combineData);
@@ -171,6 +173,10 @@ const ToolForm: React.FC = ({}: Props) => {
             [field]: event.target.value as string,
         });
     };
+
+    useEffect(() => {
+        setUserId(localStorage.getItem('userId'));
+    }, []);
 
     return (
         <form>

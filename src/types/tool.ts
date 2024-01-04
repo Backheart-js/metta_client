@@ -34,6 +34,7 @@ export interface IRating {
 }
 
 export interface ICombineData extends IBMIResult, TDEEResult, FormData {
+    userId?: string;
     message?: string;
     userLike?: IRating;
 }

@@ -1,11 +1,11 @@
 'use client';
 
 import { toolData } from '@/mock/mock-toolData';
-import { ICombineData, IRating, formatInput, formatText } from '@/types/tool';
+import { ICombineData, IRating, formatInput } from '@/types/tool';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import BMI_Chart_image from '../../../../assets/image/bmi-chart.jpg';
+import BMI_Chart_image from '@/assets/image/bmi-chart.jpg';
 
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -42,12 +42,27 @@ export default function Result({ params }: IResultProps) {
         isRated: false,
         status: 0,
     });
+    const [isSaved, setIsSaved] = useState<boolean>(false);
 
     const handleRating = (status: number): void => {
         setRating({
             isRated: true,
             status,
         });
+    };
+
+    const handleSaveDataToSchedule = async (): Promise<void> => {
+        try {
+            const res = await toolSync.saveToSchedule(resultId);
+
+            // Show thông báo lưu thành công
+            if (res.status === 200) {
+                console.log('Thành công');
+                setIsSaved(true);
+            }
+        } catch (error) {
+            console.log((error as Error).message);
+        }
     };
 
     useEffect(() => {
@@ -61,7 +76,7 @@ export default function Result({ params }: IResultProps) {
                         setMessage(formatInput(res.data.toolData.message));
                     }
                 } catch (error) {
-                    console.log(error.message);
+                    console.log((error as Error).message);
                 }
             })();
         } else {
@@ -357,6 +372,7 @@ export default function Result({ params }: IResultProps) {
                     <Button
                         variant="contained"
                         className="bg-boldGreen hover:bg-boldGreen text-white h-10 rounded-2xl"
+                        onClick={handleSaveDataToSchedule}
                     >
                         <SaveIcon />
                         <span className="ml-2">Lưu dữ liệu</span>

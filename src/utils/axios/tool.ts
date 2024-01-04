@@ -11,6 +11,9 @@ const toolSync = {
     saveResult: (data: ICombineData) => {
         return axios.post('/body-index/create-data-tool', data);
     },
+    saveToSchedule: (id: string) => {
+        return axios.post('/body-index/save-schedule', { id });
+    },
 };
 
 export default toolSync;
