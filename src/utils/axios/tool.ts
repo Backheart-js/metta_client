@@ -1,4 +1,4 @@
-import { ICombineData } from '@/types/tool';
+import { ICombineData, IRating } from '@/types/tool';
 import axios from './axios';
 
 const toolSync = {
@@ -13,6 +13,9 @@ const toolSync = {
     },
     saveToSchedule: (id: string) => {
         return axios.post('/body-index/save-schedule', { id });
+    },
+    updateRating: ({ id, data }: { id: string; data: IRating }) => {
+        return axios.post('/body-index/update-rating', { id, userLike: data });
     },
 };
 

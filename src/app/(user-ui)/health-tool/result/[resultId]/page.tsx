@@ -1,7 +1,6 @@
 'use client';
 
-import { toolData } from '@/mock/mock-toolData';
-import { ICombineData, IRating, formatInput } from '@/types/tool';
+import { ICombineData, IRating } from '@/types/tool';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +22,7 @@ import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { useSelector } from 'react-redux';
 import toolSync from '@/utils/axios/tool';
+import { formatInput } from '@/utils/tools/formatMessage';
 
 export interface IResultProps {
     params: {
@@ -42,13 +42,36 @@ export default function Result({ params }: IResultProps) {
         isRated: false,
         status: 0,
     });
+    const [progress, setProgress] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
 
-    const handleRating = (status: number): void => {
-        setRating({
-            isRated: true,
-            status,
-        });
+    const handleRating = async (status: number): Promise<void> => {
+        if ((rating.status !== status && rating.isRated) || !rating.isRated) {
+            console.log('rating', status);
+            try {
+                setProgress(true);
+                setRating({
+                    isRated: true,
+                    status,
+                });
+
+                const res = await toolSync.updateRating({
+                    id: resultId,
+                    data: {
+                        isRated: true,
+                        status,
+                    },
+                });
+
+                if (res.status === 200) {
+                    // Show snackbar cảm ơn
+                }
+            } catch (error) {
+                console.log('error', (error as Error).message);
+            } finally {
+                setProgress(false);
+            }
+        } else return;
     };
 
     const handleSaveDataToSchedule = async (): Promise<void> => {
@@ -73,6 +96,7 @@ export default function Result({ params }: IResultProps) {
                     console.log(res.data.toolData);
                     if (res.status === 200) {
                         setResultData(res.data.toolData);
+                        setRating(res.data.toolData.userLike);
                         setMessage(formatInput(res.data.toolData.message));
                     }
                 } catch (error) {
@@ -350,14 +374,20 @@ export default function Result({ params }: IResultProps) {
                             : 'Bạn có hài lòng với lời khuyên?'}
                     </p>
                     <div className="flex mt-3 md:mt-0 md:ml-6 gap-4 md:gap-3">
-                        <IconButton onClick={() => handleRating(0)}>
+                        <IconButton
+                            disabled={progress}
+                            onClick={() => handleRating(0)}
+                        >
                             {rating.isRated && rating.status === 0 ? (
                                 <ThumbUpIcon className="text-boldGreen scale-[1.2]" />
                             ) : (
                                 <ThumbUpOutlinedIcon className="text-gray-500 hover:text-boldGreen" />
                             )}
                         </IconButton>
-                        <IconButton onClick={() => handleRating(1)}>
+                        <IconButton
+                            disabled={progress}
+                            onClick={() => handleRating(1)}
+                        >
                             {rating.isRated && rating.status === 1 ? (
                                 <ThumbDownIcon className="text-boldGreen scale-[1.2]" />
                             ) : (
@@ -372,10 +402,13 @@ export default function Result({ params }: IResultProps) {
                     <Button
                         variant="contained"
                         className="bg-boldGreen hover:bg-boldGreen text-white h-10 rounded-2xl"
+                        disabled={isSaved}
                         onClick={handleSaveDataToSchedule}
                     >
                         <SaveIcon />
-                        <span className="ml-2">Lưu dữ liệu</span>
+                        <span className="ml-2">
+                            {isSaved ? 'Đã lưu' : 'Lưu dữ liệu'}
+                        </span>
                     </Button>
                     <Button
                         variant="contained"
