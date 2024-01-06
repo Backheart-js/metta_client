@@ -1,5 +1,6 @@
-import { ICombineData } from '@/types/tool';
+import { ICombineData, IRating } from '@/types/tool';
 import axios from './axios';
+import { ShareSharp } from '@mui/icons-material';
 
 const toolSync = {
     getMessageAI: (data: ICombineData) => {
@@ -10,6 +11,15 @@ const toolSync = {
     },
     saveResult: (data: ICombineData) => {
         return axios.post('/body-index/create-data-tool', data);
+    },
+    saveToSchedule: (id: string) => {
+        return axios.post('/body-index/save-schedule', { id });
+    },
+    updateRating: ({ id, data }: { id: string; data: IRating }) => {
+        return axios.post('/body-index/update-rating', { id, userLike: data });
+    },
+    sharingData: ({ id, shareString }: { id: string; shareString: string }) => {
+        return axios.post('/body-index/public-data', { id, shareString });
     },
 };
 
