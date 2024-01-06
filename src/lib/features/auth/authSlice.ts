@@ -4,18 +4,10 @@ interface IPayloadIsLogin {
     state: boolean;
 }
 
-const getInitialIsLoginState = (): boolean => {
-    if (typeof window !== 'undefined') {
-        const storedValue = sessionStorage.getItem('isLogin');
-        return storedValue ? JSON.parse(storedValue) : false;
-    }
-    return false;
-};
-
 export const authSlice = createSlice({
     name: 'auth',
     initialState: {
-        isLoginState: getInitialIsLoginState(),
+        isLoginState: false,
     },
     reducers: {
         updateIsLogin: (state, action: PayloadAction<IPayloadIsLogin>) => {
