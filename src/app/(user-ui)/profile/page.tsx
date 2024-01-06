@@ -16,7 +16,6 @@ function Profile({}: Props) {
                 name="Name"
                 nickname="Nickname"
                 avatar="https://w0.peakpx.com/wallpaper/121/921/HD-wallpaper-blood-pixiv-beauty-samurai-new-anime-bg-wall-pixiv-fantasia-beauty-samrai-girl-colour-warrior.jpg"
-                avatar_alt="example"
             />
             <ProfileInfo />
             <div className="h-[2px] bg-gray-300 w-full rounded-2xl"></div>

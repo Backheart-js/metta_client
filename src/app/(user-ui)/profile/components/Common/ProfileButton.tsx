@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -9,14 +11,20 @@ import { Collapse } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import clsx from 'clsx';
 
+interface IItem {
+    label: string;
+    value: string | number;
+    id: number | string;
+}
+
 interface ProfileButtonProps {
     label?: string;
     startIcon: string | StaticImport;
     endIcon?: React.ReactNode;
     href?: string;
     isSelect?: boolean;
-    selectedItem?: any;
-    items?: Array<any>;
+    selectedItem?: IItem;
+    items?: Array<IItem>;
     onSelect?: (item: string) => void;
 }
 
@@ -73,17 +81,17 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({
                         <div
                             key={item.id}
                             className={clsx(
-                                selectedItem.id === item.id
+                                selectedItem?.id === item.id
                                     ? 'bg-gray-200'
                                     : '',
-                                'hover:bg-gray-200 center-y justify-between cursor-pointer p-[8px_12px] text-[14px] md:text-[16px] transition-all',
+                                'hover:bg-gray-200 h-10 center-y justify-between cursor-pointer p-[8px_12px] text-[14px] md:text-[16px] transition-all',
                             )}
                             onClick={() => handleSelectItem(item)}
                         >
-                            <p className="">{item}</p>
+                            <p className="">{item.label}</p>
                             <div
                                 className={clsx(
-                                    selectedItem.id === item.id
+                                    selectedItem?.id === item.id
                                         ? 'block'
                                         : 'hidden',
                                 )}

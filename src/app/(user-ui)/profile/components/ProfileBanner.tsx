@@ -4,13 +4,12 @@ import React from 'react';
 
 interface ProfileBannerProps {
     avatar: string;
-    avatar_alt: string;
     name: string;
     nickname: string;
 }
 
 const ProfileBanner: React.FC<ProfileBannerProps> = (props) => {
-    const { avatar, avatar_alt, name, nickname } = props;
+    const { avatar, name, nickname } = props;
 
     return (
         <div className="flex flex-col items-center gap-3">

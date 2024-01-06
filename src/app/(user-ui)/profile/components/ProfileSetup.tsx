@@ -8,8 +8,8 @@ interface ProfileInfoProps {}
 const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
     const [isToggled, setToggled] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState({
-        languageLabel: 'Tiếng Việt',
-        langCode: 'vi',
+        label: 'Tiếng Việt',
+        value: 'vi',
         id: 1,
     });
 
@@ -17,19 +17,19 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
         setToggled(!isToggled);
     };
 
-    const handleLanguageSelect = (selectedLanguage: any): void => {
-        setSelectedLanguage(selectedLanguage);
+    const handleLanguageSelect = (item: any): void => {
+        setSelectedLanguage(item);
     };
 
     const langList = [
         {
-            languageLabel: 'Tiếng Việt',
-            langCode: 'vi',
+            label: 'Tiếng Việt',
+            value: 'vi',
             id: 1,
         },
         {
-            languageLabel: 'English (US)',
-            langCode: 'en',
+            label: 'English (US)',
+            value: 'en',
             id: 2,
         },
     ];
@@ -43,7 +43,7 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
             />
             <ProfileButton
                 startIcon="/icons/setting/language-icon.svg"
-                label={selectedLanguage.languageLabel || 'Ngôn ngữ'}
+                label={selectedLanguage.label || 'Ngôn ngữ'}
                 isSelect={true}
                 selectedItem={selectedLanguage}
                 items={langList}
