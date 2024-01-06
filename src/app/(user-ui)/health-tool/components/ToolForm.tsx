@@ -10,22 +10,20 @@ import {
     FilledInput,
     InputAdornment,
     FormHelperText,
-    InputLabel,
     FormLabel,
 } from '@mui/material';
-import { useFormControlContext } from '@mui/base/FormControl';
-import { styled } from '@mui/system';
-import clsx from 'clsx';
-import React, { useState } from 'react';
 
-interface FormData {
-    gender: number;
-    age: number | null;
-    height: number | null;
-    weight: number | null;
-    activityLevel: string;
-    goal: string;
-}
+import React, { useEffect, useState } from 'react';
+import { calcBMI } from '@/utils/tools/calcBMI';
+import { FormData, IBMIData, ICombineData } from '@/types/tool';
+import { calcTDEE } from '@/utils/tools/calcTDEE';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/lib/store';
+import { updateLoading } from '@/lib/features/loading/loadingSlice';
+import { useRouter } from 'next/navigation';
+import toolSync from '@/utils/axios/tool';
+import { updateToolData } from '@/lib/features/tool/toolSlice';
+
 interface FormError {
     age: string;
     height: string;
@@ -37,6 +35,10 @@ interface FormError {
 type Props = {};
 
 const ToolForm: React.FC = ({}: Props) => {
+    const router = useRouter();
+    const dispatch = useDispatch<AppDispatch>();
+
+    const [userId, setUserId] = useState<string | null>('');
     const [formData, setFormData] = useState<FormData>({
         gender: 0,
         age: null,
@@ -48,16 +50,73 @@ const ToolForm: React.FC = ({}: Props) => {
 
     const [formErrors, setFormErrors] = useState<Partial<FormError>>({});
 
-    const handleCalculate = () => {
-        console.log(formData);
+    const handleCalculate = async () => {
         if (validateFormData()) {
-            // Nếu dữ liệu hợp lệ, log dữ liệu
-            console.log('Dữ liệu hợp lệ:', formData);
+            try {
+                // Show loading
+                dispatch(
+                    updateLoading({
+                        isProgress: true,
+                        text: 'Đang tính toán',
+                    }),
+                );
+                // Nếu dữ liệu hợp lệ, log dữ liệu
+                const dataForBMI: IBMIData = {
+                    weight: formData.weight,
+                    height: formData.height,
+                };
+                const resultBMI = calcBMI(dataForBMI);
+                const resultTDEE = calcTDEE(formData);
+
+                let combineData: ICombineData = {
+                    ...resultBMI,
+                    ...resultTDEE,
+                    ...formData,
+                    userId,
+                    message: '',
+                    userLike: {
+                        isRated: false,
+                        status: 0,
+                    },
+                };
+
+                const resFromAI = await toolSync.getMessageAI(combineData);
+
+                combineData.message = resFromAI.data.results.content;
+
+                const { status, data } = await toolSync.saveResult(combineData);
+                if (status === 200) {
+                    dispatch(updateToolData(combineData));
+                    router.push(`/health-tool/result/${data.id}`);
+                }
+            } catch (error) {
+            } finally {
+                dispatch(
+                    updateLoading({
+                        isProgress: false,
+                        text: '',
+                    }),
+                );
+            }
         } else {
             // Nếu dữ liệu không hợp lệ, cập nhật trạng thái lỗi và xử lý theo ý của bạn
             console.log('Dữ liệu không hợp lệ');
             return;
         }
+    };
+
+    const handleClearData = (): void => {
+        setFormData({
+            gender: 0,
+            age: null,
+            height: null,
+            weight: null,
+            activityLevel: '',
+            goal: '',
+        });
+
+        // reset error message
+        setFormErrors({});
     };
 
     const validateFormData = (): boolean => {
@@ -90,12 +149,11 @@ const ToolForm: React.FC = ({}: Props) => {
             HTMLInputElement | { name?: string; value: unknown }
         >,
     ): void => {
+        const { name, value } = event.target;
+        const formatValue = !isNaN(value) ? Number(value) : value;
         setFormData({
             ...formData,
-            [event.target.name as string]:
-                typeof event.target.value === 'number'
-                    ? event.target.value
-                    : (event.target.value as string),
+            [name as string]: formatValue,
         });
     };
 
@@ -116,14 +174,19 @@ const ToolForm: React.FC = ({}: Props) => {
         });
     };
 
+    useEffect(() => {
+        setUserId(localStorage.getItem('userId'));
+    }, []);
+
     return (
         <form>
             <FormControl component="fieldset" fullWidth required>
-                <div className="center-y gap-5">
+                <div className="center-y gap-2 md:gap-5">
                     <div className="basis-1/3">
                         <FormLabel>Giới tính</FormLabel>
                     </div>
                     <RadioGroup
+                        value={formData.gender}
                         defaultValue={formData.gender}
                         name="gender"
                         row
@@ -143,7 +206,7 @@ const ToolForm: React.FC = ({}: Props) => {
                 </div>
             </FormControl>
 
-            <div className="flex items-start gap-5 mt-7">
+            <div className="flex flex-col md:flex-row items-start gap-4 md:gap-5 mt-4 md:mt-7">
                 <FormControl className="" fullWidth>
                     <div className="center-x gap-2 flex-col">
                         <FormLabel>Tuổi</FormLabel>
@@ -163,6 +226,7 @@ const ToolForm: React.FC = ({}: Props) => {
                             required
                             size="small"
                             type="number"
+                            value={formData.age || ''}
                             error={!!formErrors.age}
                             onChange={handleInputChange}
                         />
@@ -173,8 +237,7 @@ const ToolForm: React.FC = ({}: Props) => {
                         )}
                     </div>
                 </FormControl>
-
-                <FormControl className="" fullWidth>
+                <FormControl className="hidden md:block" fullWidth>
                     <div className="center-x gap-2 flex-col">
                         <FormLabel>Chiều cao</FormLabel>
                         <FilledInput
@@ -193,6 +256,7 @@ const ToolForm: React.FC = ({}: Props) => {
                             required
                             size="small"
                             type="number"
+                            value={formData.height || ''}
                             error={!!formErrors.height}
                             onChange={handleInputChange}
                         />
@@ -204,7 +268,7 @@ const ToolForm: React.FC = ({}: Props) => {
                     </div>
                 </FormControl>
 
-                <FormControl className="" fullWidth>
+                <FormControl className="hidden md:block" fullWidth>
                     <div className="center-x gap-2 flex-col">
                         <FormLabel>Cân nặng</FormLabel>
                         <FilledInput
@@ -223,6 +287,7 @@ const ToolForm: React.FC = ({}: Props) => {
                             required
                             size="small"
                             type="number"
+                            value={formData.weight || ''}
                             error={!!formErrors.weight}
                             onChange={handleInputChange}
                         />
@@ -233,9 +298,72 @@ const ToolForm: React.FC = ({}: Props) => {
                         )}
                     </div>
                 </FormControl>
+                <div className="md:hidden grid grid-cols-2 gap-4 md:gap-5">
+                    <FormControl className="" fullWidth>
+                        <div className="center-x gap-2 flex-col">
+                            <FormLabel>Chiều cao</FormLabel>
+                            <FilledInput
+                                id="filled-adornment-height"
+                                name="height"
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        cm
+                                    </InputAdornment>
+                                }
+                                aria-describedby="filled-height-helper-text"
+                                inputProps={{
+                                    'aria-label': 'height',
+                                }}
+                                fullWidth
+                                required
+                                size="small"
+                                type="number"
+                                value={formData.height || ''}
+                                error={!!formErrors.height}
+                                onChange={handleInputChange}
+                            />
+                            {formErrors.height && (
+                                <FormHelperText error>
+                                    {formErrors.height}
+                                </FormHelperText>
+                            )}
+                        </div>
+                    </FormControl>
+
+                    <FormControl className="" fullWidth>
+                        <div className="center-x gap-2 flex-col">
+                            <FormLabel>Cân nặng</FormLabel>
+                            <FilledInput
+                                id="filled-adornment-weight"
+                                name="weight"
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        kg
+                                    </InputAdornment>
+                                }
+                                aria-describedby="filled-weight-helper-text"
+                                inputProps={{
+                                    'aria-label': 'weight',
+                                }}
+                                fullWidth
+                                required
+                                size="small"
+                                type="number"
+                                value={formData.weight || ''}
+                                error={!!formErrors.weight}
+                                onChange={handleInputChange}
+                            />
+                            {formErrors.weight && (
+                                <FormHelperText error>
+                                    {formErrors.weight}
+                                </FormHelperText>
+                            )}
+                        </div>
+                    </FormControl>
+                </div>
             </div>
 
-            <div className="center mt-7 gap-5">
+            <div className="center flex-col md:flex-row mt-4 md:mt-7 gap-6 md:gap-5">
                 <FormControl variant="filled" className="" fullWidth>
                     <div className="center-x flex-col gap-2">
                         <div className="basis-1/3">
@@ -246,19 +374,27 @@ const ToolForm: React.FC = ({}: Props) => {
                                 fullWidth
                                 required
                                 size="small"
+                                value={formData.activityLevel}
                                 onChange={(e) =>
                                     handleSelectChange(e, 'activityLevel')
                                 }
                                 error={!!formErrors.activityLevel}
                             >
                                 <MenuItem value="sedentary">
-                                    Ít vận động
+                                    Ít vận động (Nhân viên văn phòng)
                                 </MenuItem>
-                                <MenuItem value="low">Vận động nhẹ</MenuItem>
-                                <MenuItem value="medium">Vận động vừa</MenuItem>
-                                <MenuItem value="high">Vận động nhiều</MenuItem>
+                                <MenuItem value="low">
+                                    Tập luyện nhẹ (1-3 buổi/tuần)
+                                </MenuItem>
+                                <MenuItem value="medium">
+                                    Tập luyện vừa (3-5 buổi/tuần)
+                                </MenuItem>
+                                <MenuItem value="high">
+                                    Tập luyện nhiều (6-7 buổi/tuần)
+                                </MenuItem>
                                 <MenuItem value="athlete">
-                                    Vận động cực nhiều
+                                    Tập luyện cực nhiều (Ngày 2 lần/Vận động
+                                    viên)
                                 </MenuItem>
                             </Select>
                             {formErrors.activityLevel && (
@@ -280,6 +416,7 @@ const ToolForm: React.FC = ({}: Props) => {
                                 fullWidth
                                 required
                                 size="small"
+                                value={formData.goal}
                                 onChange={(e) => handleSelectChange(e, 'goal')}
                                 error={!!formErrors.goal}
                             >
@@ -297,11 +434,12 @@ const ToolForm: React.FC = ({}: Props) => {
                 </FormControl>
             </div>
 
-            <div className="center-y gap-5 mt-10 md:w-[70%] mx-auto">
+            <div className="center-y flex-col-reverse md:flex-row gap-5 mt-8 md:mt-10 md:w-[70%] mx-auto">
                 <Button
                     className="text-gray-700 hover:underline smooth"
                     variant="text"
                     fullWidth
+                    onClick={handleClearData}
                 >
                     Xóa dữ liệu
                 </Button>
@@ -320,49 +458,3 @@ const ToolForm: React.FC = ({}: Props) => {
 };
 
 export default ToolForm;
-
-const Label = styled(
-    ({
-        children,
-        className,
-    }: {
-        children?: React.ReactNode;
-        className?: string;
-    }) => {
-        const formControlContext = useFormControlContext();
-        const [dirty, setDirty] = React.useState(false);
-
-        React.useEffect(() => {
-            if (formControlContext?.filled) {
-                setDirty(true);
-            }
-        }, [formControlContext]);
-
-        if (formControlContext === undefined) {
-            return <p>{children}</p>;
-        }
-
-        const { error, required, filled } = formControlContext;
-        const showRequiredError = dirty && required && !filled;
-
-        return (
-            <p
-                className={clsx(
-                    className,
-                    error || showRequiredError ? 'invalid' : '',
-                )}
-            >
-                {children}
-                {required ? ' *' : ''}
-            </p>
-        );
-    },
-)`
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 0.875rem;
-    margin-bottom: 4px;
-
-    &.invalid {
-        color: red;
-    }
-`;

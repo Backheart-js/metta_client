@@ -8,11 +8,15 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { ILoginData } from '@/types/authType';
-import auth from '@/utils/auth';
+import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
-function LoginForm({ handleNavigate }) {
+interface ILoginForm {
+    handleNavigate: () => void;
+}
+
+function LoginForm({ handleNavigate }: ILoginForm) {
     const [errorMessage, setErrorMessage] = useState('');
     const [isProgress, setIsProgress] = useState(false);
 
@@ -37,10 +41,12 @@ function LoginForm({ handleNavigate }) {
         try {
             setIsProgress(true);
             const res = await auth.login(data);
-            handleNavigate();
 
             if (res.status === 200) {
+                localStorage.setItem('userId', res.data.userId);
+                sessionStorage.setItem('isLogin', true.toString());
                 setErrorMessage('');
+                handleNavigate();
             }
         } catch (error) {
             // Handle error

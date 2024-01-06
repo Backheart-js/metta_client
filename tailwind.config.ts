@@ -33,8 +33,9 @@ const config: Config = {
         extend: {
             colors: {
                 greenPrimary: '#00c6a9',
-                boldBlue: '#223A6A',
-                lightBlue: '#ebeff5',
+                yellowPrimary: '#FFB82E',
+                boldGreen: '#097770',
+                lightgreen: '#d1e7dd',
                 borderLightTheme: '#e9ecef',
             },
             backgroundImage: {},

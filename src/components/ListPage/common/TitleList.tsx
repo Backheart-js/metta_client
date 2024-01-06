@@ -19,7 +19,11 @@ function TitleList({ title, showAllPath }: IListPage) {
             <button onClick={handleShowAll}>
                 <h3 className="text-lg">{title}</h3>
             </button>
-            <Link className="text-greenPrimary text-sm" href={showAllPath}>
+            <Link
+                className="text-greenPrimary text-sm"
+                href={showAllPath}
+                prefetch
+            >
                 Xem thêm
             </Link>
         </div>

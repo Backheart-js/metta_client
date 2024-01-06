@@ -26,7 +26,7 @@ function CardItem({
     subText2,
 }: ICardItem) {
     return (
-        <Link href={path}>
+        <Link href={path} prefetch>
             <Card>
                 {thumbnailUrl && (
                     <CardMedia

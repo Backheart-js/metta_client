@@ -7,11 +7,10 @@ import React from 'react';
 
 function MobileNavbar() {
     const pathname = usePathname();
-    const mobileCategory = category.slice(0, -1);
 
     return (
         <div className="flex items-center h-[72px] w-full px-4 bg-white border-t-2 border-borderLightTheme shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-            {mobileCategory.map((category, index) => {
+            {category.map((category, index) => {
                 const { Icon } = category;
                 const isActive = pathname.includes(category.path);
 
