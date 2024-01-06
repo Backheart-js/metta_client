@@ -2,10 +2,10 @@
 
 import { ICombineData, IRating } from '@/types/tool';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import BMI_Chart_image from '@/assets/image/bmi-chart.jpg';
+import { v4 } from 'uuid';
 
+import BMI_Chart_image from '@/assets/image/bmi-chart.jpg';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -23,6 +23,10 @@ import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import { useSelector } from 'react-redux';
 import toolSync from '@/utils/axios/tool';
 import { formatInput } from '@/utils/tools/formatMessage';
+import Dialog from '@/components/Dialog/Dialog';
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { usePathname } from 'next/navigation';
 
 export interface IResultProps {
     params: {
@@ -33,7 +37,7 @@ export interface IResultProps {
 export default function Result({ params }: IResultProps) {
     const calcData = useSelector((state) => state.tool);
     const { resultId } = params;
-
+    const pathname = usePathname();
     const [resultData, setResultData] = useState<ICombineData>();
     const [openTDEE, setOpenTDEE] = useState(false);
     const [openBRM, setOpenBRM] = useState(false);
@@ -44,6 +48,13 @@ export default function Result({ params }: IResultProps) {
     });
     const [progress, setProgress] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [openShare, setOpenShare] = useState<boolean>(false);
+    const [shareLink, setShareLink] = useState('');
+    const [isGeneratedLink, setIsGeneratedLink] = useState<boolean>(false);
+
+    const handleCloseShare = (): void => {
+        setOpenShare(false);
+    };
 
     const handleRating = async (status: number): Promise<void> => {
         if ((rating.status !== status && rating.isRated) || !rating.isRated) {
@@ -88,16 +99,56 @@ export default function Result({ params }: IResultProps) {
         }
     };
 
+    const getUrl = (id: string): string => {
+        return `${window.location.origin}/preview/${id}`;
+    };
+
+    const generateLink = async (): Promise<void> => {
+        try {
+            const shareString = v4();
+            const link = getUrl(shareString);
+            const openShareData = await toolSync.sharingData({
+                id: resultId,
+                shareString,
+            });
+
+            if (openShareData.status === 200) {
+                setIsGeneratedLink(true);
+                setShareLink(link);
+                // Mở snackbar
+            } else {
+                // Thông báo lỗi
+            }
+        } catch (error) {
+            // Mở snackbar thông tháo lỗi
+        }
+    };
+
+    const copyLink = async (): Promise<void> => {
+        if (shareLink && isGeneratedLink) {
+            try {
+                await navigator.clipboard.writeText(shareLink);
+                alert('Đã lưu vào bộ nhớ tạm');
+            } catch (error) {
+                alert('Xảy ra lỗi, vui lòng thử lại');
+            }
+        } else {
+            return;
+        }
+    };
+
     useEffect(() => {
         if (!calcData.bmi) {
             (async function () {
                 try {
-                    const res = await toolSync.getResult(resultId);
-                    console.log(res.data.toolData);
-                    if (res.status === 200) {
-                        setResultData(res.data.toolData);
-                        setRating(res.data.toolData.userLike);
-                        setMessage(formatInput(res.data.toolData.message));
+                    const { status, data } = await toolSync.getResult(resultId);
+                    console.log(data.toolData);
+                    if (status === 200) {
+                        setResultData(data.toolData);
+                        setRating(data.toolData.userLike);
+                        setMessage(formatInput(data.toolData.message));
+                        setIsGeneratedLink(data.toolData.share.public);
+                        setShareLink(data.toolData.share.shareString);
                     }
                 } catch (error) {
                     console.log((error as Error).message);
@@ -413,12 +464,102 @@ export default function Result({ params }: IResultProps) {
                     <Button
                         variant="contained"
                         className="bg-yellowPrimary hover:bg-yellowPrimary h-10 rounded-2xl"
+                        onClick={() => setOpenShare(true)}
                     >
                         <LinkIcon />
-                        <p className="ml-2">Sao chép đường dẫn</p>
+                        <p className="ml-2">Chia sẻ</p>
                     </Button>
                 </div>
             </section>
+            <Dialog isOpen={openShare} handleClose={handleCloseShare}>
+                <div className="min-w-[550px]">
+                    <div className="">
+                        <h3 className="text-2xl text-gray-700 font-medium">
+                            Chia sẻ kết quả của bạn
+                        </h3>
+                        <p className="text-sm text-gray-500 w-[350px] mt-2">
+                            Chia sẻ các chỉ số cơ thể thông qua đường dẫn liên
+                            kết hoặc mạng xã hội bạn đang sử dụng.
+                        </p>
+                    </div>
+                    <div className="mt-6">
+                        <div className="">
+                            <h4 className="text-gray-600 font-medium">
+                                Liên kết
+                            </h4>
+                            <div className="mt-3 center w-full h-12 border-[1px] border-gray-400 rounded-lg py-1 pr-1">
+                                <div className="h-full flex-grow">
+                                    <input
+                                        value={shareLink}
+                                        readOnly={true}
+                                        type="text"
+                                        className="h-full w-full px-2 py-1 border-none focus-visible:outline-none"
+                                        onClick={copyLink}
+                                    />
+                                </div>
+                                <div className="h-full center gap-2">
+                                    <button
+                                        disabled={isGeneratedLink}
+                                        style={{
+                                            backgroundColor:
+                                                'rgba(0, 78, 236, 0.2)',
+                                        }}
+                                        className={clsx(
+                                            isGeneratedLink
+                                                ? 'opacity-50 cursor-not-allowed'
+                                                : 'hover:!bg-[rgba(0,78,236,0.35)]',
+                                            'px-2 h-full center gap-1 text-sm font-medium transition-all text-[#004eec] border-none rounded-lg',
+                                        )}
+                                        onClick={generateLink}
+                                    >
+                                        <AddLinkIcon className="text-[18px]" />
+                                        <p className="">Tạo liên kết</p>
+                                    </button>
+                                    <button
+                                        disabled={!shareLink}
+                                        style={{
+                                            border: '1px solid rgba(107, 114, 128, 0.5)',
+                                        }}
+                                        className={clsx(
+                                            !shareLink
+                                                ? 'opacity-50 cursor-not-allowed'
+                                                : 'hover:bg-gray-100',
+                                            'px-2 h-full center gap-1 bg-transparent transition-all text-sm font-medium text-gray-500 rounded-lg mr-1',
+                                        )}
+                                        onClick={copyLink}
+                                    >
+                                        <ContentCopyIcon className="text-[18px]" />
+                                        <p className="">Sao chép</p>
+                                    </button>
+                                </div>
+                            </div>
+                            <p className="text-xs font-medium text-gray-400 mt-2">
+                                Bất cứ ai cũng có thể truy cập thông qua liên
+                                kết của bạn
+                            </p>
+                        </div>
+                        <div className="center gap-4 my-8">
+                            <div className="border-b-[1px] border-gray-300 w-40"></div>
+                            <div className="">
+                                <p className="text-sm font-medium text-gray-500">
+                                    Hoặc
+                                </p>
+                            </div>
+                            <div className="border-b-[1px] border-gray-300 w-40"></div>
+                        </div>
+                        <div className=""></div>
+                    </div>
+                    <div className="mt-6 center-y justify-end w-full">
+                        <Button
+                            className="rounded-2xl bg-[#004eec]"
+                            variant="contained"
+                            onClick={() => setOpenShare(false)}
+                        >
+                            XONG
+                        </Button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     );
 }
