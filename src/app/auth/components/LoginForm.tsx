@@ -11,6 +11,7 @@ import { ILoginData } from '@/types/authType';
 import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios, { AxiosError } from 'axios';
 
 interface ILoginForm {
     handleNavigate: () => void;
@@ -50,11 +51,17 @@ function LoginForm({ handleNavigate }: ILoginForm) {
             }
         } catch (error) {
             // Handle error
-            const { status, data } = error.response;
-            if (status === 404) {
-                setErrorMessage('Email không đúng, vui lòng thử lại!');
-            } else if (status === 401) {
-                setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
+                const { status, data } = axiosError.response || {};
+                if (status === 404) {
+                    setErrorMessage('Email không đúng, vui lòng thử lại!');
+                } else if (status === 401) {
+                    setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+                }
+            } else {
+                // Handle other types of errors
+                console.error(error);
             }
         } finally {
             setIsProgress(false);

@@ -1,5 +1,9 @@
 // utils/axios.ts
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, {
+    InternalAxiosRequestConfig,
+    AxiosResponse,
+    AxiosError,
+} from 'axios';
 
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, // Sử dụng biến môi trường
@@ -7,7 +11,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(
-    async (config: AxiosRequestConfig) => {
+    async (config: InternalAxiosRequestConfig) => {
         // Không cần thêm token vào headers ở đây
         return config;
     },

@@ -13,6 +13,7 @@ import { ISignupData } from '@/types/authType';
 import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios, { AxiosError } from 'axios';
 
 interface IFormData {
     username: string;
@@ -66,15 +67,20 @@ function SignupForm() {
                 setErrorMessage('');
             }
         } catch (error) {
-            const { status, data } = error.response;
-            if (status === 409) {
-                setErrorMessage(
-                    'Email đã tồn tại, vui lòng sử dụng email khác!',
-                );
-            } else if (status === 401) {
-                setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
-            } else if (status === 500) {
-                console.assert('Có lỗi xảy ra');
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
+                const { status, data } = axiosError.response || {};
+                if (status === 409) {
+                    setErrorMessage(
+                        'Email đã tồn tại, vui lòng sử dụng email khác!',
+                    );
+                } else if (status === 401) {
+                    setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+                } else if (status === 500) {
+                    console.assert('Có lỗi xảy ra');
+                }
+            } else {
+                console.error(error);
             }
         } finally {
             setIsProgress(false);

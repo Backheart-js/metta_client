@@ -1,15 +1,19 @@
 export function formatInput(inputString: string) {
     const lines = inputString.split('\n');
 
-    // Khởi tạo đối tượng kết quả
-    const resultObject = {
+    // Khởi tạo đối tượng kết quả với kiểu cụ thể
+    const resultObject: {
+        'Chế độ sinh hoạt': string[];
+        'Chế độ dinh dưỡng': string[];
+        'Phương pháp tập luyện': string[];
+    } = {
         'Chế độ sinh hoạt': [],
         'Chế độ dinh dưỡng': [],
         'Phương pháp tập luyện': [],
     };
 
     // Biến đếm để xác định loại chế độ
-    let currentMode = '';
+    let currentMode: keyof typeof resultObject = 'Chế độ sinh hoạt';
 
     // Duyệt qua từng dòng và thêm vào đối tượng kết quả
     lines.forEach((line) => {
