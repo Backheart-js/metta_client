@@ -1,0 +1,16 @@
+.container {
+    height: calc(100vh - 72px);
+}
+
+.hiddenScroll {
+
+    &::-webkit-scrollbar {
+        display: none;
+      }
+      
+      /* Handle */
+      &::-webkit-scrollbar-thumb {
+        display: none;
+      }
+      
+}

@@ -29,7 +29,7 @@ export const category = [
     {
         text: 'Kế hoạch',
         Icon: CalendarMonthOutlined,
-        path: '/plan',
+        path: '/planning',
         short_text: 'Kế hoạch',
     },
     {

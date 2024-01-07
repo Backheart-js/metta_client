@@ -19,7 +19,7 @@ export default function UserLayout({
             <nav className="flex md:hidden fixed bottom-0 left-0 right-0 z-50">
                 <MobileNavbar />
             </nav>
-            <main className="mt-14 sm:mt-16 md:mt-[56px]">
+            <main className="mt-0 sm:mt-16 md:mt-[56px]">
                 <Wrapper>{children}</Wrapper>
             </main>
         </div>

@@ -25,7 +25,7 @@ export default function Wrapper({ children }: IWrapperProps) {
     }, []);
 
     return (
-        <div>
+        <div className="bg-gray-100">
             {children}
             <LoadingModal text={text} showing={isProgress} />
         </div>
