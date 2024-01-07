@@ -1,4 +1,4 @@
-export type TFeature = 'planning' | 'remind';
+export type TFeature = 'planning' | 'remind' | '';
 
 export const remindType = {
     DRINK: 1,
@@ -15,4 +15,11 @@ export const optionType = {
 export interface IType {
     id: number;
     label: string;
+}
+
+export interface IPlanningData {
+    title: string | number;
+    noti?: string;
+    calender?: string;
+    note?: string;
 }

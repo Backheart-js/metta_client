@@ -3,11 +3,13 @@ import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import * as React from 'react';
 
 export interface ILabelContentProps {
+    data: number | string;
     feature: TFeature;
     handleChange: (type: number | string, optionType: number) => void;
 }
 
 export default function LabelContent({
+    data,
     feature,
     handleChange,
 }: ILabelContentProps) {
@@ -29,6 +31,7 @@ export default function LabelContent({
             ) : (
                 <div className="">
                     <RadioGroup
+                        defaultValue={data}
                         name="radio-buttons-group"
                         onChange={handleRadioChange}
                     >
