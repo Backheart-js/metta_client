@@ -15,6 +15,8 @@ import clsx from 'clsx';
 import { IPlanningData, IType, TFeature, optionType } from '@/types/planning';
 import LabelContent from './optionContent/LabelContent';
 import CloseIcon from '@mui/icons-material/Close';
+import NoteContent from './optionContent/NoteContent';
+import NotiContent from './optionContent/NotiContent';
 
 type Props = {};
 
@@ -36,12 +38,17 @@ const DrawerContent = ({}: Props) => {
     const [optionShowing, setOptionShowing] = useState<number>(0);
     const [planningData, setPlanningData] = useState<IPlanningData>({
         title: '',
+        note: '',
     });
+
+    const checkNotiOrCalendarExists = (): boolean =>
+        !!(planningData.noti || planningData.calender);
 
     const openFeatureCategory = (
         event: React.ChangeEvent<HTMLInputElement>,
     ): void => {
         setopenCategory(true);
+        clearData();
         setFeature((event.target as HTMLInputElement).value as TFeature);
     };
 
@@ -89,6 +96,22 @@ const DrawerContent = ({}: Props) => {
     const getTitleRemindOptionById = (id: number | string): string => {
         const result = notiTitleData.find((item) => item.id === id);
         return result ? result.label : '';
+    };
+
+    const getNote = (content: string): void => {
+        setPlanningData((prev) => {
+            return {
+                ...prev,
+                note: content,
+            };
+        });
+    };
+
+    const clearData = (): void => {
+        setPlanningData({
+            title: '',
+            note: '',
+        });
     };
 
     return (
@@ -150,13 +173,13 @@ const DrawerContent = ({}: Props) => {
                                 'h-14 w-full center-y overflow-x-scroll',
                             )}
                         >
-                            <div className="center-y gap-6 w-fit h-10">
+                            <div className="center-y gap-7 w-fit h-10">
                                 <div
                                     className={clsx(
                                         planningData.title
                                             ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
                                             : '',
-                                        'h-full smooth',
+                                        'h-full smooth w-10',
                                     )}
                                 >
                                     <button
@@ -185,14 +208,31 @@ const DrawerContent = ({}: Props) => {
                                             ))}
                                     </button>
                                     {planningData.title && (
-                                        <button className="w-6 h-full center">
+                                        <button
+                                            className="w-6 h-full center"
+                                            onClick={() => {
+                                                setPlanningData((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        title: '',
+                                                    };
+                                                });
+                                            }}
+                                        >
                                             <div className="rounded-full w-4 h-4 center bg-gray-700">
                                                 <CloseIcon className="text-sm text-lightgreen" />
                                             </div>
                                         </button>
                                     )}
                                 </div>
-                                <div className="smooth">
+                                <div
+                                    className={clsx(
+                                        checkNotiOrCalendarExists()
+                                            ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
+                                            : '',
+                                        'h-full smooth w-10',
+                                    )}
+                                >
                                     <button
                                         className="w-fit h-full center gap-2 smooth"
                                         onClick={() =>
@@ -214,8 +254,31 @@ const DrawerContent = ({}: Props) => {
                                             alt="icon"
                                         />
                                     </button>
+                                    {checkNotiOrCalendarExists() && (
+                                        <button
+                                            className="w-6 h-full center"
+                                            onClick={() => {
+                                                setPlanningData((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                    };
+                                                });
+                                            }}
+                                        >
+                                            <div className="rounded-full w-4 h-4 center bg-gray-700">
+                                                <CloseIcon className="text-sm text-lightgreen" />
+                                            </div>
+                                        </button>
+                                    )}
                                 </div>
-                                <div className="smooth">
+                                <div
+                                    className={clsx(
+                                        planningData.note
+                                            ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
+                                            : '',
+                                        'h-full smooth w-10',
+                                    )}
+                                >
                                     <button
                                         className="w-fit h-full center gap-2 smooth"
                                         onClick={() =>
@@ -228,7 +291,31 @@ const DrawerContent = ({}: Props) => {
                                             height={26}
                                             alt="icon"
                                         />
+                                        {planningData.note && (
+                                            <div className="center gap-2">
+                                                <p className="font-medium">
+                                                    Ghi chú
+                                                </p>
+                                            </div>
+                                        )}
                                     </button>
+                                    {planningData.note && (
+                                        <button
+                                            className="w-6 h-full center"
+                                            onClick={() => {
+                                                setPlanningData((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        note: '',
+                                                    };
+                                                });
+                                            }}
+                                        >
+                                            <div className="rounded-full w-4 h-4 center bg-gray-700">
+                                                <CloseIcon className="text-sm text-lightgreen" />
+                                            </div>
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -242,6 +329,7 @@ const DrawerContent = ({}: Props) => {
                     handleChange={handleTitleChange}
                 />
             )}
+            {step === 2 && optionShowing === optionType.NOTI && <NotiContent />}
             {step === 2 && feature === 'remind' && <div></div>}
         </div>
     );

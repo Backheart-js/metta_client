@@ -21,5 +21,5 @@ export interface IPlanningData {
     title: string | number;
     noti?: string;
     calender?: string;
-    note?: string;
+    note: string;
 }
