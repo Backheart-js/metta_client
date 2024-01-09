@@ -24,10 +24,23 @@ export default function LabelContent({
         }
     };
 
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        handleChange(event.target.value, optionType.TITLE);
+    };
+
     return (
         <div className="pl-2">
             {feature === 'planning' ? (
-                <div className=""></div>
+                <div className="center-y justify-start">
+                    <div className="w-full pt-3">
+                        <input
+                            type="text"
+                            className="w-full bg-transparent border-none font-medium focus-visible:outline-none"
+                            placeholder="Tiêu đề kế hoạch"
+                            onChange={handleInputChange}
+                        />
+                    </div>
+                </div>
             ) : (
                 <div className="">
                     <RadioGroup

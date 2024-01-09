@@ -17,6 +17,8 @@ import LabelContent from './optionContent/LabelContent';
 import CloseIcon from '@mui/icons-material/Close';
 import NoteContent from './optionContent/NoteContent';
 import NotiContent from './optionContent/NotiContent';
+import dayjs from 'dayjs';
+import CalendarContent from './optionContent/CalendarContent';
 
 type Props = {};
 
@@ -173,13 +175,13 @@ const DrawerContent = ({}: Props) => {
                                 'h-14 w-full center-y overflow-x-scroll',
                             )}
                         >
-                            <div className="center-y gap-7 w-fit h-10">
+                            <div className="center-y gap-7 w-fit h-12">
                                 <div
                                     className={clsx(
                                         planningData.title
                                             ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
-                                            : '',
-                                        'h-full smooth w-10',
+                                            : 'w-10',
+                                        'h-full smooth',
                                     )}
                                 >
                                     <button
@@ -196,7 +198,11 @@ const DrawerContent = ({}: Props) => {
                                         />
                                         {planningData.title &&
                                             (feature === 'planning' ? (
-                                                <div className=""></div>
+                                                <div className="center">
+                                                    <p className="font-medium">
+                                                        {planningData.title}
+                                                    </p>
+                                                </div>
                                             ) : (
                                                 <div className="center gap-2">
                                                     <p className="font-medium">
@@ -229,8 +235,8 @@ const DrawerContent = ({}: Props) => {
                                     className={clsx(
                                         checkNotiOrCalendarExists()
                                             ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
-                                            : '',
-                                        'h-full smooth w-10',
+                                            : 'w-10',
+                                        'h-full smooth',
                                     )}
                                 >
                                     <button
@@ -253,16 +259,39 @@ const DrawerContent = ({}: Props) => {
                                             height={26}
                                             alt="icon"
                                         />
+                                        {planningData.noti && (
+                                            <div className="center-x items-start flex-col">
+                                                <p className="font-normal">
+                                                    Nhắc tôi uống nước
+                                                </p>
+                                                <p className="text-xs text-gray-700 font-normal">
+                                                    {`Từ ${dayjs(
+                                                        planningData.noti
+                                                            .timeRange[0],
+                                                    ).format(
+                                                        'HH:mm',
+                                                    )} đến ${dayjs(
+                                                        planningData.noti
+                                                            .timeRange[1],
+                                                    ).format('HH:mm')}`}
+                                                </p>
+                                            </div>
+                                        )}
                                     </button>
                                     {checkNotiOrCalendarExists() && (
                                         <button
                                             className="w-6 h-full center"
                                             onClick={() => {
-                                                setPlanningData((prev) => {
-                                                    return {
-                                                        ...prev,
-                                                    };
-                                                });
+                                                console.log('click');
+                                                let newData = {
+                                                    ...planningData,
+                                                };
+                                                if (feature === 'remind') {
+                                                    delete newData.noti;
+                                                } else {
+                                                    delete newData.calender;
+                                                }
+                                                setPlanningData(newData);
                                             }}
                                         >
                                             <div className="rounded-full w-4 h-4 center bg-gray-700">
@@ -275,8 +304,8 @@ const DrawerContent = ({}: Props) => {
                                     className={clsx(
                                         planningData.note
                                             ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
-                                            : '',
-                                        'h-full smooth w-10',
+                                            : 'w-10',
+                                        'h-full smooth',
                                     )}
                                 >
                                     <button
@@ -329,8 +358,18 @@ const DrawerContent = ({}: Props) => {
                     handleChange={handleTitleChange}
                 />
             )}
-            {step === 2 && optionShowing === optionType.NOTI && <NotiContent />}
-            {step === 2 && feature === 'remind' && <div></div>}
+            {step === 2 && optionShowing === optionType.NOTI && (
+                <NotiContent handleChange={setPlanningData} />
+            )}
+            {step === 2 && optionShowing === optionType.NOTE && (
+                <NoteContent
+                    contentInput={planningData.note}
+                    handleChange={getNote}
+                />
+            )}
+            {step === 2 && optionShowing === optionType.CALENDAR && (
+                <CalendarContent />
+            )}
         </div>
     );
 };

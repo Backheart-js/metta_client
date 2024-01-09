@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export type TFeature = 'planning' | 'remind' | '';
 
 export const remindType = {
@@ -17,9 +19,15 @@ export interface IType {
     label: string;
 }
 
+export interface INoti {
+    amountWater: number;
+    timeRange: dayjs.Dayjs[];
+    timeGap: number;
+}
+
 export interface IPlanningData {
     title: string | number;
-    noti?: string;
+    noti?: INoti;
     calender?: string;
     note: string;
 }
