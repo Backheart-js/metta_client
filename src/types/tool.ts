@@ -14,9 +14,9 @@ export interface IBMIResult {
 
 export interface FormData {
     gender: number;
-    age: number | null;
-    height: number | null;
-    weight: number | null;
+    age: number;
+    height: number;
+    weight: number;
     activityLevel: string;
     goal: string;
 }
@@ -34,12 +34,11 @@ export interface IRating {
 }
 
 export interface ICombineData extends IBMIResult, TDEEResult, FormData {
-    userId?: string;
     message?: string;
     userLike?: IRating;
 }
 
-export const bmiRangeData = {
+export const bmiRangeData: BMILevels = {
     lever_1: {
         range: [0, 18.4],
         status: 'CÂN NẶNG THẤP',
@@ -65,4 +64,12 @@ export const bmiRangeData = {
         status: 'BÉO PHÌ ĐỘ II',
         advice: 'Bạn đang ở trong nhóm béo phì cấp độ 2, đây là tình trạng nghiêm trọng và có thể gây ra nhiều vấn đề sức khỏe nếu không được kiểm soát. Hãy tìm kiếm sự hỗ trợ từ chuyên gia dinh dưỡng và bác sĩ để lập kế hoạch giảm cân an toàn và hiệu quả. Áp dụng lối sống lành mạnh, thực đơn giảm calo và tập luyện đều đặn để cải thiện tình trạng sức khỏe của bạn.',
     },
+};
+
+type BMILevels = {
+    lever_1: { range: number[]; status: string; advice: string };
+    lever_2: { range: number[]; status: string; advice: string };
+    lever_3: { range: number[]; status: string; advice: string };
+    lever_4: { range: number[]; status: string; advice: string };
+    lever_5: { range: number[]; status: string; advice: string };
 };
