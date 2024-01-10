@@ -12,6 +12,7 @@ import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios, { AxiosError } from 'axios';
+import { signIn } from 'next-auth/react';
 
 interface ILoginForm {
     handleNavigate: () => void;
@@ -39,33 +40,24 @@ function LoginForm({ handleNavigate }: ILoginForm) {
     });
 
     const handleLogin = async (data: ILoginData) => {
-        try {
-            setIsProgress(true);
-            const res = await auth.login(data);
+        setIsProgress(true);
 
-            if (res.status === 200) {
-                localStorage.setItem('userId', res.data.userId);
-                sessionStorage.setItem('isLogin', true.toString());
-                setErrorMessage('');
-                handleNavigate();
-            }
-        } catch (error) {
-            // Handle error
-            if (axios.isAxiosError(error)) {
-                const axiosError = error as AxiosError;
-                const { status, data } = axiosError.response || {};
-                if (status === 404) {
-                    setErrorMessage('Email không đúng, vui lòng thử lại!');
-                } else if (status === 401) {
-                    setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
-                }
-            } else {
-                // Handle other types of errors
-                console.error(error);
-            }
-        } finally {
-            setIsProgress(false);
+        const res = await signIn('credentials', {
+            redirect: false,
+            email: formik.values.email,
+            password: formik.values.password,
+            callbackUrl: '/',
+        });
+
+        if (!res?.error) {
+            setErrorMessage('');
+            handleNavigate();
+        } else {
+            setErrorMessage(
+                'Email hoặc mật khẩu không đúng hoặc cả 2 sai hoặc có lỗi gì đó xảy ra',
+            );
         }
+        setIsProgress(false);
     };
 
     return (

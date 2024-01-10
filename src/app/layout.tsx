@@ -4,6 +4,7 @@ import './globals.css';
 import './GlobalStyle.scss';
 import './_variables.scss';
 import StoreProvider from './StoreProvider';
+import NextAuthSessionProvider from './wrapper/SessionProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +21,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body id="app" className={inter.className}>
-                <StoreProvider>{children}</StoreProvider>
+                <NextAuthSessionProvider>
+                    <StoreProvider>{children}</StoreProvider>
+                </NextAuthSessionProvider>
             </body>
         </html>
     );
