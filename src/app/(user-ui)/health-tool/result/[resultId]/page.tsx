@@ -25,7 +25,6 @@ import { formatInput } from '@/utils/tools/formatMessage';
 import Dialog from '@/components/Dialog/Dialog';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { usePathname } from 'next/navigation';
 import { useAppSelector } from '@/lib/hooks';
 
 export interface IResultProps {
