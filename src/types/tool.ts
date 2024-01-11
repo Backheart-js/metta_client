@@ -38,6 +38,25 @@ export interface ICombineData extends IBMIResult, TDEEResult, FormData {
     userLike?: IRating;
 }
 
+export interface IPreviewData {
+    userName: string;
+    bmi: number;
+    minWeight: number;
+    maxWeight: number;
+    idealWeight: number;
+    status: string;
+    gender: number;
+    age: number;
+    height: number;
+    weight: number;
+    goal: string;
+    brm: number;
+    tdee: number;
+    workoutDayCalo: number;
+    restDayCalo: number;
+    date: Date;
+}
+
 export const bmiRangeData: BMILevels = {
     lever_1: {
         range: [0, 18.4],

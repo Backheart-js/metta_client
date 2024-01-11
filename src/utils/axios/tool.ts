@@ -9,6 +9,9 @@ const toolSync = {
     getResult: (id: string) => {
         return axios.get(`/body-index/get-data-tool/${id}`);
     },
+    getPreviewResult: (id: string) => {
+        return axios.get(`body-index/get-share-data-tool/${id}`);
+    },
     saveResult: (data: ICombineData) => {
         return axios.post('/body-index/create-data-tool', data);
     },
