@@ -44,8 +44,13 @@ const Home: NextPage<HomeProps> = () => {
 
     return (
         <div className="">
-            <section id="thumbnail-mobile" className="">
-                <div className="w-full bg-lightgreen px-4 pt-10 pb-8">
+            <section id="thumbnail-mobile" className="md:hidden">
+                <div
+                    className="relative w-full bg-lightgreen px-4 pt-14"
+                    style={{
+                        borderRadius: 'border-radius: 50%/100px 100px 0 0',
+                    }}
+                >
                     <div className="px-2">
                         <p className="font-medium">
                             {isFirstTime ? 'Chào mừng' : randomWelcome}
@@ -72,12 +77,29 @@ const Home: NextPage<HomeProps> = () => {
                             </Button>
                         </div>
                     </div>
+                    <Image
+                        className="absolute top-0 right-0 w-[50%]"
+                        src={Dot}
+                        alt="doctor"
+                    />
                 </div>
+                <div
+                    className=""
+                    style={{
+                        width: '100%',
+                        height: '50px',
+                        border: 'solid 5px #000',
+                        backgroundColor: '#d1e7dd',
+                        borderColor: 'transparent',
+                        borderRadius: '100%/100px 100px 0 0',
+                        transform: 'rotate(180deg)',
+                    }}
+                ></div>
             </section>
             <section>
-                <div className="hidden md:block bg-white w-full h-[280px] md:h-[600px] relative shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
-                    <div className="absolute flex flex-col top-[50%] translate-y-[-50%] left-[24%] w-[400px]">
-                        <h2 className="text-greenPrimary font-semibold text-5xl">
+                <div className="hidden md:flex center bg-white w-full h-[280px] md:h-[600px] relative shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
+                    <div className="flex flex-col w-[400px]">
+                        <h2 className="text-boldGreen font-semibold text-4xl">
                             {isFirstTime ? 'Chào mừng' : randomWelcome}
                         </h2>
                         <p className="text-[#6d6d6d] text-base my-5">
@@ -87,19 +109,23 @@ const Home: NextPage<HomeProps> = () => {
                         <div className="">
                             <Button
                                 variant="contained"
-                                className="bg-[#252525]"
+                                className="bg-[#252525] rounded-2xl"
                             >
-                                Lên kế hoạch
+                                {havePlan
+                                    ? 'Theo dõi tiến độ kế hoạch'
+                                    : 'Lập kế hoạch'}
                             </Button>
                         </div>
                     </div>
+                    <div>
+                        <Image
+                            className="w-[450px]"
+                            src={DoctorBanner}
+                            alt="doctor"
+                        />
+                    </div>
                     <Image
-                        className="absolute top-[50%] translate-y-[-50%] right-[24%] w-[450px]"
-                        src={DoctorBanner}
-                        alt="doctor"
-                    />
-                    <Image
-                        className="absolute right-0"
+                        className="absolute right-0 top-0"
                         src={Dot}
                         alt="doctor"
                     />
@@ -173,7 +199,7 @@ const Home: NextPage<HomeProps> = () => {
                                 </p>
                             </div>
                             <div className="max-w-[80%]">
-                                <h4 className="uppercase text-xl text-gray-600 font-semibold">
+                                <h4 className="uppercase text-xl text-gray-600 font-semibold text-center">
                                     {fact.title}
                                 </h4>
                             </div>
