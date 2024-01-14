@@ -1,0 +1,47 @@
+.content {
+    margin-top: 6px;
+
+    & > blockquote {
+        position: relative;
+        font-size: 20px;
+        color: #097770;
+        padding-left: 12px;
+        margin-top: 28px;
+        margin-bottom: 8px;
+
+        &::before {
+            position: absolute;
+            content: "";
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 100%;
+            background-color: #097770;
+        }
+    }
+
+    & > p {
+        color: #444;
+        line-height: 140%;
+
+    }
+    p+p {
+        margin-top: 8px;
+    }
+
+    & > ul {
+        list-style-type: disc;
+        color: #444;
+        line-height: 140%;
+        margin-top: 12px;
+        margin-bottom: 8px;
+        padding-left: 28px;
+        margin-left: 16px;
+
+        li {
+
+        }
+    }
+}
+
