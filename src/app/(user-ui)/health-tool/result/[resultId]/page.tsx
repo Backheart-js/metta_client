@@ -20,13 +20,12 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownAltOutlinedIcon from '@mui/icons-material/ThumbDownAltOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
-import { useSelector } from 'react-redux';
 import toolSync from '@/utils/axios/tool';
 import { formatInput } from '@/utils/tools/formatMessage';
 import Dialog from '@/components/Dialog/Dialog';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { usePathname } from 'next/navigation';
+import { useAppSelector } from '@/lib/hooks';
 
 export interface IResultProps {
     params: {
@@ -34,14 +33,24 @@ export interface IResultProps {
     };
 }
 
+interface IMessage {
+    [key: string]: string[];
+    'Chế độ sinh hoạt': string[];
+    'Chế độ dinh dưỡng': string[];
+    'Phương pháp tập luyện': string[];
+}
+
 export default function Result({ params }: IResultProps) {
-    const calcData = useSelector((state) => state.tool);
+    const calcData = useAppSelector((state) => state.tool);
     const { resultId } = params;
-    const pathname = usePathname();
     const [resultData, setResultData] = useState<ICombineData>();
     const [openTDEE, setOpenTDEE] = useState(false);
     const [openBRM, setOpenBRM] = useState(false);
-    const [message, setMessage] = useState({});
+    const [message, setMessage] = useState<IMessage>({
+        'Chế độ sinh hoạt': [],
+        'Chế độ dinh dưỡng': [],
+        'Phương pháp tập luyện': [],
+    });
     const [rating, setRating] = useState<IRating>({
         isRated: false,
         status: 0,
@@ -58,7 +67,6 @@ export default function Result({ params }: IResultProps) {
 
     const handleRating = async (status: number): Promise<void> => {
         if ((rating.status !== status && rating.isRated) || !rating.isRated) {
-            console.log('rating', status);
             try {
                 setProgress(true);
                 setRating({
@@ -142,13 +150,13 @@ export default function Result({ params }: IResultProps) {
             (async function () {
                 try {
                     const { status, data } = await toolSync.getResult(resultId);
-                    console.log(data.toolData);
+
                     if (status === 200) {
                         setResultData(data.toolData);
                         setRating(data.toolData.userLike);
                         setMessage(formatInput(data.toolData.message));
                         setIsGeneratedLink(data.toolData.share.public);
-                        setShareLink(data.toolData.share.shareString);
+                        setShareLink(getUrl(data.toolData.share.shareString));
                     }
                 } catch (error) {
                     console.log((error as Error).message);
@@ -393,14 +401,14 @@ export default function Result({ params }: IResultProps) {
                     Lời khuyên
                 </h1>
                 <div className="md:px-4">
-                    {Object.keys(message).map((category, index) => (
+                    {Object.keys(message).map((category: string, index) => (
                         <div key={index} className={index > 0 ? 'mt-8' : ''}>
                             <h5 className="text-boldGreen font-semibold text-lg">
                                 {index + 1}. {category}
                             </h5>
                             <ul className="mt-4 md:pl-4">
                                 {message[category].map(
-                                    (content, index: number) => (
+                                    (content: any, index: number) => (
                                         <li
                                             key={index}
                                             className={clsx(
