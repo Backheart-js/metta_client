@@ -14,8 +14,8 @@ function Top() {
     const [statusScreen, setStatusScreen] = useState(0);
     const router = useRouter();
 
-    const navigateAfterLogin = () => {
-        router.push('/home');
+    const handleNavigate = (link: string): void => {
+        router.push(`/auth/${link}`);
     };
 
     return (
@@ -53,31 +53,21 @@ function Top() {
                                     <Button
                                         className="bg-greenPrimary text-white w-[250px] h-14 rounded-[50px] font-semibold"
                                         variant="contained"
-                                        onClick={() => setStatusScreen(1)}
+                                        onClick={() => handleNavigate('login')}
                                     >
-                                        Login
+                                        Đăng nhập
                                     </Button>
                                 </div>
                                 <div className="mt-4">
                                     <Button
                                         className="w-[250px] h-14 text-greenPrimary rounded-[50px] font-semibold"
                                         variant="outlined"
-                                        onClick={() => setStatusScreen(2)}
+                                        onClick={() => handleNavigate('signup')}
                                     >
-                                        Sign Up
+                                        Đăng ký
                                     </Button>
                                 </div>
                             </div>
-                        </div>
-                    )}
-                    {statusScreen === 1 && (
-                        <div className="top__login-form">
-                            <LoginForm handleNavigate={navigateAfterLogin} />
-                        </div>
-                    )}
-                    {statusScreen === 2 && (
-                        <div className="top__signup-form">
-                            <SignupForm />
                         </div>
                     )}
                 </div>
