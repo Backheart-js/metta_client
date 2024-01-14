@@ -67,7 +67,6 @@ export default function Result({ params }: IResultProps) {
 
     const handleRating = async (status: number): Promise<void> => {
         if ((rating.status !== status && rating.isRated) || !rating.isRated) {
-            console.log('rating', status);
             try {
                 setProgress(true);
                 setRating({
@@ -157,7 +156,7 @@ export default function Result({ params }: IResultProps) {
                         setRating(data.toolData.userLike);
                         setMessage(formatInput(data.toolData.message));
                         setIsGeneratedLink(data.toolData.share.public);
-                        setShareLink(data.toolData.share.shareString);
+                        setShareLink(getUrl(data.toolData.share.shareString));
                     }
                 } catch (error) {
                     console.log((error as Error).message);

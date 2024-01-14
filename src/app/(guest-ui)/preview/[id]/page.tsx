@@ -94,7 +94,7 @@ export default function Preview({ params }: IPreviewProps) {
                 </div>
             </section>
         </div>
-    ) : !notFoundData ? (
+    ) : notFoundData ? (
         <div className="pt-6">
             <NoData isLogin={isLogin} />
         </div>

@@ -1,6 +1,5 @@
 import { ICombineData, IRating } from '@/types/tool';
 import axios from './axios';
-import { ShareSharp } from '@mui/icons-material';
 
 const toolSync = {
     getMessageAI: (data: ICombineData) => {
