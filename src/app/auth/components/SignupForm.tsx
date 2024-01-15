@@ -15,6 +15,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface IFormData {
     username: string;
@@ -24,6 +25,7 @@ interface IFormData {
 }
 
 function SignupForm() {
+    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const [isProgress, setIsProgress] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -66,6 +68,7 @@ function SignupForm() {
 
             if (res.status === 201) {
                 setErrorMessage('');
+                router.push('/auth/verify-account');
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {

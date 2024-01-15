@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import auth from '@/utils/axios/auth';
 import Image from 'next/image';
 import { Button } from '@mui/material';
@@ -10,25 +10,27 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 export interface IVerifyProps {}
 
 export default function Verify(props: IVerifyProps) {
+    const router = useRouter();
     const [verifySuccessfully, setVerifySuccessfully] = useState<boolean>(true);
     const searchParams = useSearchParams();
-    const id = searchParams.get('id');
+    const id = searchParams.get('id'); // id của account
 
-    // useEffect(() => {
-    //     (async () => {
-    //         if (id) {
-    //             try {
-    //                 const resVerify = await auth.verifyEmail(id);
+    useEffect(() => {
+        (async () => {
+            if (id) {
+                try {
+                    const resVerify = await auth.verifyEmail(id);
 
-    //                 if (resVerify.status === 200) {
-    //                     setVerifySuccessfully(true);
-    //                 }
-    //             } catch (error) {
-    //                 setVerifySuccessfully(false);
-    //             }
-    //         }
-    //     })();
-    // }, []);
+                    if (resVerify.status === 200) {
+                        sessionStorage.setItem('isLogin', 'true');
+                        setVerifySuccessfully(true);
+                    }
+                } catch (error) {
+                    setVerifySuccessfully(false);
+                }
+            }
+        })();
+    }, []);
 
     return (
         <div className="center px-3 h-screen">
@@ -56,6 +58,7 @@ export default function Verify(props: IVerifyProps) {
                             className="w-full bg-boldGreen text-white py-2"
                             variant="contained"
                             endIcon={<ArrowForwardIosIcon />}
+                            onClick={() => router.push(`/new-user/${id}`)}
                         >
                             Tiếp theo
                         </Button>
