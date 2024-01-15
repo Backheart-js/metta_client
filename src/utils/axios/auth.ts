@@ -14,6 +14,9 @@ const auth = {
     isLogin: () => {
         return axios.get('/auth/is-login');
     },
+    verifyEmail: (id: string) => {
+        return axios.get(`/auth/verify-email?id=${id}`);
+    },
 };
 
 export default auth;
