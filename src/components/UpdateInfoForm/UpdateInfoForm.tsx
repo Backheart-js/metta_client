@@ -1,13 +1,5 @@
 import { IUserInfo } from '@/types/userType';
-import {
-    Button,
-    IconButton,
-    InputAdornment,
-    MenuItem,
-    OutlinedInput,
-    TextField,
-    styled,
-} from '@mui/material';
+import { Button, IconButton, TextField, styled } from '@mui/material';
 import React from 'react';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
@@ -15,9 +7,12 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip';
 import Slider from '@mui/material/Slider';
+import clsx from 'clsx';
 
 export interface IUpdateInfoFormProps {
     infoData: IUserInfo;
+    handleChangeValue: (e: any) => void;
+    handleChangeGender: (gender: 1 | 2) => void;
 }
 
 function ValueLabelComponent(props: any) {
@@ -30,7 +25,25 @@ function ValueLabelComponent(props: any) {
     );
 }
 
-export default function UpdateInfoForm({ infoData }: IUpdateInfoFormProps) {
+export default function UpdateInfoForm({
+    infoData,
+    handleChangeValue,
+    handleChangeGender,
+}: IUpdateInfoFormProps) {
+    const handleChangeAge = (e: any) => {
+        const currentYear = new Date().getFullYear();
+
+        // Tính năm sinh
+        const birthYear = currentYear - parseInt(e.target.value);
+        console.log('birthYear: ', birthYear);
+    };
+
+    const parseToAge = (year: number): number => {
+        const currentYear = new Date().getFullYear();
+
+        return currentYear - year;
+    };
+
     return (
         <div className="w-full max-w-[400px]">
             <div className="bg-white px-4 pt-8 pb-10 rounded-xl shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
@@ -42,7 +55,9 @@ export default function UpdateInfoForm({ infoData }: IUpdateInfoFormProps) {
                         <TextField
                             placeholder="Số buổi"
                             type="number"
+                            name="exerciseIntensity"
                             variant="standard"
+                            onChange={(e) => handleChangeValue(e)}
                         />
                         <p className="text-gray-500 font-medium text-base">
                             buổi/tuần
@@ -54,22 +69,42 @@ export default function UpdateInfoForm({ infoData }: IUpdateInfoFormProps) {
                 <div className="w-full">
                     <TextField
                         className="w-full rounded"
-                        id="outlined-basic"
+                        name="fullname"
                         label="Tên đầy đủ"
                         variant="outlined"
                     />
                 </div>
                 <div className="w-full center gap-4 my-8">
                     <div className="flex-1">
-                        <button className="center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100">
+                        <button
+                            name="gender"
+                            className={clsx(
+                                'center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100 text-gray-400',
+                                infoData.gender === 1
+                                    ? '!text-boldGreen font-bold bg-lightgreen'
+                                    : '',
+                            )}
+                            value={1}
+                            onClick={() => handleChangeGender(1)}
+                        >
                             <MaleIcon className="text-[60px]" />
-                            <p className="">Nam</p>
+                            <p className="text-lg">Nam</p>
                         </button>
                     </div>
                     <div className="flex-1">
-                        <button className="center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100">
+                        <button
+                            name="gender"
+                            className={clsx(
+                                'center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100 text-gray-400',
+                                infoData.gender === 2
+                                    ? '!text-boldGreen font-bold bg-lightgreen'
+                                    : '',
+                            )}
+                            value={2}
+                            onClick={() => handleChangeGender(2)}
+                        >
                             <FemaleIcon className="text-[60px]" />
-                            <p className="">Nữ</p>
+                            <p className="text-lg">Nữ</p>
                         </button>
                     </div>
                 </div>
@@ -86,6 +121,8 @@ export default function UpdateInfoForm({ infoData }: IUpdateInfoFormProps) {
                                     max={200}
                                     defaultValue={160}
                                     valueLabelDisplay="on"
+                                    name="height"
+                                    onChange={(e) => handleChangeValue(e)}
                                 />
                             </div>
                             <IconButton aria-label="delete">
@@ -99,8 +136,10 @@ export default function UpdateInfoForm({ infoData }: IUpdateInfoFormProps) {
                             <div className="center">
                                 <input
                                     value={infoData.weight}
+                                    name="weight"
                                     className="text-center text-xl md:text-2xl text-boldGreen font-semibold bg-transparent w-10 md:w-14 h-10 md:h-14"
                                     type="number"
+                                    onChange={(e) => handleChangeValue(e)}
                                 />
                             </div>
                             <div className="center gap-8">
@@ -122,9 +161,11 @@ export default function UpdateInfoForm({ infoData }: IUpdateInfoFormProps) {
                             <p className="center">Số tuổi</p>
                             <div className="center">
                                 <input
-                                    value={infoData.weight}
+                                    name="birthYear"
+                                    value={parseToAge(infoData.birthYear)}
                                     className="text-center text-xl md:text-2xl text-boldGreen font-semibold bg-transparent w-10 md:w-14 h-10 md:h-14"
                                     type="number"
+                                    onChange={(e) => handleChangeAge(e)}
                                 />
                             </div>
                             <div className="center gap-8">

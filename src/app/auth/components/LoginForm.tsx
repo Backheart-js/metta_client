@@ -13,6 +13,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios, { AxiosError } from 'axios';
 import Link from 'next/link';
+import { useAppDispatch } from '@/lib/hooks';
+import { updateIsLogin } from '@/lib/features/auth/authSlice';
 
 interface ILoginForm {
     handleNavigate: () => void;
@@ -21,6 +23,7 @@ interface ILoginForm {
 function LoginForm({ handleNavigate }: ILoginForm) {
     const [errorMessage, setErrorMessage] = useState('');
     const [isProgress, setIsProgress] = useState(false);
+    const dispatch = useAppDispatch();
 
     const validationSchema = Yup.object().shape({
         email: Yup.string()
@@ -47,6 +50,7 @@ function LoginForm({ handleNavigate }: ILoginForm) {
             if (res.status === 200) {
                 localStorage.setItem('userId', res.data.userId);
                 sessionStorage.setItem('isLogin', true.toString());
+                dispatch(updateIsLogin({ state: true }));
                 setErrorMessage('');
                 handleNavigate();
             }

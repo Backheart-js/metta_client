@@ -19,9 +19,9 @@ export default function Wrapper({ children }: IWrapperProps) {
         (async () => {
             try {
                 const { isLogin } = await checkLoginStatus();
-                console.log(isLogin);
                 if (!isLogin) {
                     router.push('/auth/login');
+                } else {
                     setIsLoading(false);
                 }
             } catch (error) {

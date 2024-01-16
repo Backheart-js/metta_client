@@ -16,7 +16,7 @@ export default function NewUser({ params }: INewUserProps) {
     const { accountId } = params;
     const router = useRouter();
     const [checkLogin, setCheckLogin] = useState(true);
-    const [newUserInfp, setNewUserInfp] = useState<IUserInfo>({
+    const [newUserInfo, setNewUserInfo] = useState<IUserInfo>({
         avatarUrl: '',
         fullname: '',
         gender: 1,
@@ -30,6 +30,28 @@ export default function NewUser({ params }: INewUserProps) {
         try {
             await auth.logout();
         } catch (error) {}
+    };
+
+    const handleChangeValue = (event: any) => {
+        console.log(event.target.name);
+        if (event.target.type === 'number' || event.target.name === 'gender') {
+            setNewUserInfo((prev) => ({
+                ...prev,
+                [event.target.name]: parseInt(event.target.value),
+            }));
+        } else {
+            setNewUserInfo((prev) => ({
+                ...prev,
+                [event.target.name]: event.target.value,
+            }));
+        }
+    };
+
+    const handleChangeGender = (value: 1 | 2) => {
+        setNewUserInfo((prev) => ({
+            ...prev,
+            gender: value,
+        }));
     };
 
     useEffect(() => {
@@ -60,13 +82,17 @@ export default function NewUser({ params }: INewUserProps) {
     return checkLogin ? (
         <div></div>
     ) : (
-        <div className="container-sp min-h-screen w-screen bg-gray-100 md:bg-white center-y flex-col px-6 pb-40">
+        <div className="container-sp min-h-screen w-screen bg-gray-100 md:bg-white center-y flex-col px-6 pb-10">
             <div className="mt-10 mb-2">
                 <h1 className="text-center font-medium text-gray-600 text-3xl">
                     Thông tin về bạn
                 </h1>
             </div>
-            <UpdateInfoForm infoData={newUserInfp}></UpdateInfoForm>
+            <UpdateInfoForm
+                infoData={newUserInfo}
+                handleChangeValue={handleChangeValue}
+                handleChangeGender={handleChangeGender}
+            ></UpdateInfoForm>
         </div>
     );
 }
