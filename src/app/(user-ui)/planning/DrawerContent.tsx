@@ -12,7 +12,13 @@ import React, { useState } from 'react';
 
 import styles from './Planning.module.scss';
 import clsx from 'clsx';
-import { IPlanningData, IType, TFeature, optionType } from '@/types/planning';
+import {
+    IPlanningData,
+    IType,
+    TFeature,
+    optionType,
+    remindType,
+} from '../../../types/planning';
 import LabelContent from './optionContent/LabelContent';
 import CloseIcon from '@mui/icons-material/Close';
 import NoteContent from './optionContent/NoteContent';
@@ -35,8 +41,7 @@ const DrawerContent = ({}: Props) => {
     ];
 
     const [step, setStep] = useState<number>(1);
-    const [feature, setFeature] = useState<TFeature>('');
-    const [openCategory, setopenCategory] = useState<boolean>(false);
+    const [feature, setFeature] = useState<TFeature>('planning');
     const [optionShowing, setOptionShowing] = useState<number>(0);
     const [planningData, setPlanningData] = useState<IPlanningData>({
         title: '',
@@ -49,7 +54,6 @@ const DrawerContent = ({}: Props) => {
     const openFeatureCategory = (
         event: React.ChangeEvent<HTMLInputElement>,
     ): void => {
-        setopenCategory(true);
         clearData();
         setFeature((event.target as HTMLInputElement).value as TFeature);
     };
@@ -73,7 +77,15 @@ const DrawerContent = ({}: Props) => {
         setOptionShowing(optionType);
     };
 
-    const handleGenerate = (): void => {};
+    const handleGenerate = (): void => {
+        if (
+            step === 1 &&
+            feature === 'remind' &&
+            planningData.title === remindType.DRINK
+        ) {
+        }
+        console.log('planningData: ', planningData);
+    };
 
     const renderTitle = (option: number): string => {
         if (option === optionType.NOTE) return 'Ghi chú';
@@ -140,6 +152,7 @@ const DrawerContent = ({}: Props) => {
                 <div className="pl-2">
                     <div className="">
                         <RadioGroup
+                            value={feature}
                             defaultValue={feature}
                             name="radio-buttons-group"
                             onChange={openFeatureCategory}
@@ -168,189 +181,189 @@ const DrawerContent = ({}: Props) => {
                             />
                         </RadioGroup>
                     </div>
-                    {openCategory && (
-                        <div
-                            className={clsx(
-                                styles.hiddenScroll,
-                                'h-14 w-full center-y overflow-x-scroll',
-                            )}
-                        >
-                            <div className="center-y gap-7 w-fit h-12">
-                                <div
-                                    className={clsx(
-                                        planningData.title
-                                            ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
-                                            : 'w-10',
-                                        'h-full smooth',
-                                    )}
+
+                    {/* Mở category bên dưới */}
+                    <div
+                        className={clsx(
+                            styles.hiddenScroll,
+                            'h-14 w-full overflow-x-scroll',
+                        )}
+                    >
+                        <div className="flex gap-7">
+                            <div
+                                className={clsx(
+                                    planningData.title
+                                        ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
+                                        : 'w-10',
+                                    'h-full smooth',
+                                )}
+                            >
+                                <button
+                                    className="w-fit h-12 center gap-2 smooth"
+                                    onClick={() =>
+                                        handleSelectOption(optionType.TITLE)
+                                    }
                                 >
-                                    <button
-                                        className="w-fit h-full center gap-2 smooth"
-                                        onClick={() =>
-                                            handleSelectOption(optionType.TITLE)
-                                        }
-                                    >
-                                        <Image
-                                            src="/icons/planning/label-title-icon.svg"
-                                            width={26}
-                                            height={26}
-                                            alt="icon"
-                                        />
-                                        {planningData.title &&
-                                            (feature === 'planning' ? (
-                                                <div className="center">
-                                                    <p className="font-medium">
-                                                        {planningData.title}
-                                                    </p>
-                                                </div>
-                                            ) : (
-                                                <div className="center gap-2">
-                                                    <p className="font-medium">
-                                                        {getTitleRemindOptionById(
-                                                            planningData.title,
-                                                        )}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                    </button>
-                                    {planningData.title && (
-                                        <button
-                                            className="w-6 h-full center"
-                                            onClick={() => {
-                                                setPlanningData((prev) => {
-                                                    return {
-                                                        ...prev,
-                                                        title: '',
-                                                    };
-                                                });
-                                            }}
-                                        >
-                                            <div className="rounded-full w-4 h-4 center bg-gray-700">
-                                                <CloseIcon className="text-sm text-lightgreen" />
-                                            </div>
-                                        </button>
-                                    )}
-                                </div>
-                                <div
-                                    className={clsx(
-                                        checkNotiOrCalendarExists()
-                                            ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
-                                            : 'w-10',
-                                        'h-full smooth',
-                                    )}
-                                >
-                                    <button
-                                        className="w-fit h-full center gap-2 smooth"
-                                        onClick={() =>
-                                            handleSelectOption(
-                                                feature === 'planning'
-                                                    ? optionType.CALENDAR
-                                                    : optionType.NOTI,
-                                            )
-                                        }
-                                    >
-                                        <Image
-                                            src={
-                                                feature === 'planning'
-                                                    ? '/icons/planning/calendar-icon.svg'
-                                                    : '/icons/planning/noti-icon.svg'
-                                            }
-                                            width={26}
-                                            height={26}
-                                            alt="icon"
-                                        />
-                                        {planningData.noti && (
-                                            <div className="center-x items-start flex-col">
-                                                <p className="font-normal">
-                                                    Nhắc tôi uống nước
-                                                </p>
-                                                <p className="text-xs text-gray-700 font-normal">
-                                                    {`Từ ${dayjs(
-                                                        planningData.noti
-                                                            .timeRange[0],
-                                                    ).format(
-                                                        'HH:mm',
-                                                    )} đến ${dayjs(
-                                                        planningData.noti
-                                                            .timeRange[1],
-                                                    ).format('HH:mm')}`}
+                                    <Image
+                                        src="/icons/planning/label-title-icon.svg"
+                                        width={26}
+                                        height={26}
+                                        alt="icon"
+                                    />
+                                    {planningData.title &&
+                                        (feature === 'planning' ? (
+                                            <div className="center">
+                                                <p className="font-medium">
+                                                    {planningData.title}
                                                 </p>
                                             </div>
-                                        )}
-                                    </button>
-                                    {checkNotiOrCalendarExists() && (
-                                        <button
-                                            className="w-6 h-full center"
-                                            onClick={() => {
-                                                console.log('click');
-                                                let newData = {
-                                                    ...planningData,
-                                                };
-                                                if (feature === 'remind') {
-                                                    delete newData.noti;
-                                                } else {
-                                                    delete newData.calender;
-                                                }
-                                                setPlanningData(newData);
-                                            }}
-                                        >
-                                            <div className="rounded-full w-4 h-4 center bg-gray-700">
-                                                <CloseIcon className="text-sm text-lightgreen" />
-                                            </div>
-                                        </button>
-                                    )}
-                                </div>
-                                <div
-                                    className={clsx(
-                                        planningData.note
-                                            ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
-                                            : 'w-10',
-                                        'h-full smooth',
-                                    )}
-                                >
-                                    <button
-                                        className="w-fit h-full center gap-2 smooth"
-                                        onClick={() =>
-                                            handleSelectOption(optionType.NOTE)
-                                        }
-                                    >
-                                        <Image
-                                            src="/icons/planning/note-icon.svg"
-                                            width={26}
-                                            height={26}
-                                            alt="icon"
-                                        />
-                                        {planningData.note && (
+                                        ) : (
                                             <div className="center gap-2">
                                                 <p className="font-medium">
-                                                    Ghi chú
+                                                    {getTitleRemindOptionById(
+                                                        planningData.title,
+                                                    )}
                                                 </p>
                                             </div>
-                                        )}
+                                        ))}
+                                </button>
+                                {planningData.title && (
+                                    <button
+                                        className="w-6 h-full center"
+                                        onClick={() => {
+                                            setPlanningData((prev) => {
+                                                return {
+                                                    ...prev,
+                                                    title: '',
+                                                };
+                                            });
+                                        }}
+                                    >
+                                        <div className="rounded-full w-4 h-4 center bg-gray-700">
+                                            <CloseIcon className="text-sm text-lightgreen" />
+                                        </div>
                                     </button>
-                                    {planningData.note && (
-                                        <button
-                                            className="w-6 h-full center"
-                                            onClick={() => {
-                                                setPlanningData((prev) => {
-                                                    return {
-                                                        ...prev,
-                                                        note: '',
-                                                    };
-                                                });
-                                            }}
-                                        >
-                                            <div className="rounded-full w-4 h-4 center bg-gray-700">
-                                                <CloseIcon className="text-sm text-lightgreen" />
-                                            </div>
-                                        </button>
+                                )}
+                            </div>
+                            <div
+                                className={clsx(
+                                    checkNotiOrCalendarExists()
+                                        ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
+                                        : 'w-10',
+                                    'h-full smooth',
+                                )}
+                            >
+                                <button
+                                    className="w-fit h-12 center gap-2 smooth"
+                                    onClick={() =>
+                                        handleSelectOption(
+                                            feature === 'planning'
+                                                ? optionType.CALENDAR
+                                                : optionType.NOTI,
+                                        )
+                                    }
+                                >
+                                    <Image
+                                        src={
+                                            feature === 'planning'
+                                                ? '/icons/planning/calendar-icon.svg'
+                                                : '/icons/planning/noti-icon.svg'
+                                        }
+                                        width={26}
+                                        height={26}
+                                        alt="icon"
+                                    />
+                                    {planningData.noti && (
+                                        <div className="center-x items-start flex-col">
+                                            <p className="font-normal">
+                                                Nhắc tôi uống nước
+                                            </p>
+                                            <p className="text-xs text-gray-700 font-normal">
+                                                {`Từ ${dayjs(
+                                                    planningData.noti
+                                                        .timeRange[0],
+                                                ).format('HH:mm')} đến ${dayjs(
+                                                    planningData.noti
+                                                        .timeRange[1],
+                                                ).format('HH:mm')}`}
+                                            </p>
+                                        </div>
                                     )}
-                                </div>
+                                </button>
+                                {checkNotiOrCalendarExists() && (
+                                    <button
+                                        className="w-6 h-full center"
+                                        onClick={() => {
+                                            console.log('click');
+                                            let newData = {
+                                                ...planningData,
+                                            };
+                                            if (feature === 'remind') {
+                                                delete newData.noti;
+                                            } else {
+                                                delete newData.calender;
+                                            }
+                                            setPlanningData(newData);
+                                        }}
+                                    >
+                                        <div className="rounded-full w-4 h-4 center bg-gray-700">
+                                            <CloseIcon className="text-sm text-lightgreen" />
+                                        </div>
+                                    </button>
+                                )}
+                            </div>
+                            <div
+                                className={clsx(
+                                    planningData.note
+                                        ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
+                                        : 'w-10',
+                                    'h-full smooth',
+                                )}
+                            >
+                                <button
+                                    className="w-fit h-12 center gap-2 smooth"
+                                    onClick={() =>
+                                        handleSelectOption(optionType.NOTE)
+                                    }
+                                >
+                                    <Image
+                                        src="/icons/planning/note-icon.svg"
+                                        width={26}
+                                        height={26}
+                                        alt="icon"
+                                    />
+                                    {planningData.note && (
+                                        <div className="center gap-2">
+                                            <p className="font-medium">
+                                                Ghi chú
+                                            </p>
+                                        </div>
+                                    )}
+                                </button>
+                                {planningData.note && (
+                                    <button
+                                        className="w-6 h-full center"
+                                        onClick={() => {
+                                            setPlanningData((prev) => {
+                                                return {
+                                                    ...prev,
+                                                    note: '',
+                                                };
+                                            });
+                                        }}
+                                    >
+                                        <div className="rounded-full w-4 h-4 center bg-gray-700">
+                                            <CloseIcon className="text-sm text-lightgreen" />
+                                        </div>
+                                    </button>
+                                )}
                             </div>
                         </div>
-                    )}
+                    </div>
                 </div>
             )}
+
+            {/* Chọn Tiêu đề cho planning hoặc option cho remind */}
             {step === 2 && optionShowing === optionType.TITLE && (
                 <LabelContent
                     data={planningData.title}
@@ -358,15 +371,21 @@ const DrawerContent = ({}: Props) => {
                     handleChange={handleTitleChange}
                 />
             )}
+
+            {/* Noti cho remind */}
             {step === 2 && optionShowing === optionType.NOTI && (
                 <NotiContent handleChange={setPlanningData} />
             )}
+
+            {/* Note cho cả planning và remind */}
             {step === 2 && optionShowing === optionType.NOTE && (
                 <NoteContent
                     contentInput={planningData.note}
                     handleChange={getNote}
                 />
             )}
+
+            {/* Calendar cho Planning */}
             {step === 2 && optionShowing === optionType.CALENDAR && (
                 <CalendarContent />
             )}

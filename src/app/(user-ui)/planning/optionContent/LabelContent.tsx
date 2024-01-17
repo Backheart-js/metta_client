@@ -45,6 +45,7 @@ export default function LabelContent({
                 <div className="">
                     <RadioGroup
                         defaultValue={data}
+                        value={data}
                         name="radio-buttons-group"
                         onChange={handleRadioChange}
                     >
