@@ -22,6 +22,7 @@ export async function checkLoginStatus() {
                 return response.data;
             } catch (error) {
                 console.log(error);
+                return { isLogin: false };
             }
         } else {
             return { isLogin };
@@ -41,6 +42,7 @@ export async function checkLoginStatus() {
             return response.data;
         } catch (error) {
             console.log(error);
+            return { isLogin: false };
         }
     }
 }

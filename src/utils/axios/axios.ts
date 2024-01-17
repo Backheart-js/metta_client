@@ -5,6 +5,10 @@ import axios, {
     AxiosError,
 } from 'axios';
 
+// const redirectToLogin = () => {
+//     window.location.replace('/auth');
+// };
+
 const instance = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL, // Sử dụng biến môi trường
     withCredentials: true, // Cho phép sử dụng cookies
@@ -30,6 +34,7 @@ instance.interceptors.response.use(
         if (error.response?.status === 401) {
             // Xử lý khi token hết hạn hoặc không hợp lệ
             // Đặt logic xử lý ở đây, ví dụ: đăng xuất người dùng
+            // redirectToLogin();
         }
         return Promise.reject(error);
     },

@@ -12,6 +12,9 @@ import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios, { AxiosError } from 'axios';
+import Link from 'next/link';
+import { useAppDispatch } from '@/lib/hooks';
+import { updateIsLogin } from '@/lib/features/auth/authSlice';
 
 interface ILoginForm {
     handleNavigate: () => void;
@@ -20,6 +23,7 @@ interface ILoginForm {
 function LoginForm({ handleNavigate }: ILoginForm) {
     const [errorMessage, setErrorMessage] = useState('');
     const [isProgress, setIsProgress] = useState(false);
+    const dispatch = useAppDispatch();
 
     const validationSchema = Yup.object().shape({
         email: Yup.string()
@@ -46,6 +50,7 @@ function LoginForm({ handleNavigate }: ILoginForm) {
             if (res.status === 200) {
                 localStorage.setItem('userId', res.data.userId);
                 sessionStorage.setItem('isLogin', true.toString());
+                dispatch(updateIsLogin({ state: true }));
                 setErrorMessage('');
                 handleNavigate();
             }
@@ -114,7 +119,7 @@ function LoginForm({ handleNavigate }: ILoginForm) {
                         <Typography color="error">{errorMessage}</Typography>
                     )}
                     <Button
-                        className="bg-greenPrimary mt-4"
+                        className="bg-boldGreen text-white mt-4 rounded-2xl"
                         type="button"
                         fullWidth
                         variant="contained"
@@ -128,6 +133,19 @@ function LoginForm({ handleNavigate }: ILoginForm) {
                             'Đăng nhập'
                         )}
                     </Button>
+                    <div className="my-5 center">
+                        <div className="text-gray-500">
+                            Bạn chưa có tài khoản
+                        </div>
+                    </div>
+                    <div className="center">
+                        <Link
+                            className="text-blue-500 underline"
+                            href={'/auth/signup'}
+                        >
+                            Đăng ký tài khoản mới
+                        </Link>
+                    </div>
                 </form>
             </div>
         </Container>
