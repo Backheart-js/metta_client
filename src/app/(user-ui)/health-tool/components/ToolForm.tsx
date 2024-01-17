@@ -38,12 +38,11 @@ const ToolForm: React.FC = ({}: Props) => {
     const router = useRouter();
     const dispatch = useDispatch<AppDispatch>();
 
-    const [userId, setUserId] = useState<string | null>('');
     const [formData, setFormData] = useState<FormData>({
         gender: 0,
-        age: null,
-        height: null,
-        weight: null,
+        age: 0,
+        height: 0,
+        weight: 0,
         activityLevel: '',
         goal: '',
     });
@@ -72,7 +71,6 @@ const ToolForm: React.FC = ({}: Props) => {
                     ...resultBMI,
                     ...resultTDEE,
                     ...formData,
-                    userId,
                     message: '',
                     userLike: {
                         isRated: false,
@@ -100,7 +98,7 @@ const ToolForm: React.FC = ({}: Props) => {
             }
         } else {
             // Nếu dữ liệu không hợp lệ, cập nhật trạng thái lỗi và xử lý theo ý của bạn
-            console.log('Dữ liệu không hợp lệ');
+            console.log('Invalid data');
             return;
         }
     };
@@ -108,9 +106,9 @@ const ToolForm: React.FC = ({}: Props) => {
     const handleClearData = (): void => {
         setFormData({
             gender: 0,
-            age: null,
-            height: null,
-            weight: null,
+            age: 0,
+            height: 0,
+            weight: 0,
             activityLevel: '',
             goal: '',
         });
@@ -150,7 +148,7 @@ const ToolForm: React.FC = ({}: Props) => {
         >,
     ): void => {
         const { name, value } = event.target;
-        const formatValue = !isNaN(value) ? Number(value) : value;
+        const formatValue = !isNaN(Number(value)) ? Number(value) : value;
         setFormData({
             ...formData,
             [name as string]: formatValue,
@@ -165,7 +163,7 @@ const ToolForm: React.FC = ({}: Props) => {
     };
 
     const handleSelectChange = (
-        event: React.ChangeEvent<{ value: string | unknown }>,
+        event: React.ChangeEvent<{ value: string }>,
         field: keyof FormData,
     ): void => {
         setFormData({
@@ -173,10 +171,6 @@ const ToolForm: React.FC = ({}: Props) => {
             [field]: event.target.value as string,
         });
     };
-
-    useEffect(() => {
-        setUserId(localStorage.getItem('userId'));
-    }, []);
 
     return (
         <form>
@@ -376,7 +370,12 @@ const ToolForm: React.FC = ({}: Props) => {
                                 size="small"
                                 value={formData.activityLevel}
                                 onChange={(e) =>
-                                    handleSelectChange(e, 'activityLevel')
+                                    handleSelectChange(
+                                        e as React.ChangeEvent<{
+                                            value: string;
+                                        }>,
+                                        'activityLevel',
+                                    )
                                 }
                                 error={!!formErrors.activityLevel}
                             >
@@ -417,7 +416,14 @@ const ToolForm: React.FC = ({}: Props) => {
                                 required
                                 size="small"
                                 value={formData.goal}
-                                onChange={(e) => handleSelectChange(e, 'goal')}
+                                onChange={(e) =>
+                                    handleSelectChange(
+                                        e as React.ChangeEvent<{
+                                            value: string;
+                                        }>,
+                                        'goal',
+                                    )
+                                }
                                 error={!!formErrors.goal}
                             >
                                 <MenuItem value="increased">Tăng cân</MenuItem>

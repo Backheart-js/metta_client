@@ -11,6 +11,8 @@ import { ILoginData } from '@/types/authType';
 import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import axios, { AxiosError } from 'axios';
+import Link from 'next/link';
 
 interface ILoginForm {
     handleNavigate: () => void;
@@ -50,11 +52,17 @@ function LoginForm({ handleNavigate }: ILoginForm) {
             }
         } catch (error) {
             // Handle error
-            const { status, data } = error.response;
-            if (status === 404) {
-                setErrorMessage('Email không đúng, vui lòng thử lại!');
-            } else if (status === 401) {
-                setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+            if (axios.isAxiosError(error)) {
+                const axiosError = error as AxiosError;
+                const { status, data } = axiosError.response || {};
+                if (status === 404) {
+                    setErrorMessage('Email không đúng, vui lòng thử lại!');
+                } else if (status === 401) {
+                    setErrorMessage('Mật khẩu không đúng, vui lòng thử lại!');
+                }
+            } else {
+                // Handle other types of errors
+                console.error(error);
             }
         } finally {
             setIsProgress(false);
@@ -107,7 +115,7 @@ function LoginForm({ handleNavigate }: ILoginForm) {
                         <Typography color="error">{errorMessage}</Typography>
                     )}
                     <Button
-                        className="bg-greenPrimary mt-4"
+                        className="bg-boldGreen text-white mt-4 rounded-2xl"
                         type="button"
                         fullWidth
                         variant="contained"
@@ -121,6 +129,19 @@ function LoginForm({ handleNavigate }: ILoginForm) {
                             'Đăng nhập'
                         )}
                     </Button>
+                    <div className="my-5 center">
+                        <div className="text-gray-500">
+                            Bạn chưa có tài khoản
+                        </div>
+                    </div>
+                    <div className="center">
+                        <Link
+                            className="text-blue-500 underline"
+                            href={'/auth/signup'}
+                        >
+                            Đăng ký tài khoản mới
+                        </Link>
+                    </div>
                 </form>
             </div>
         </Container>

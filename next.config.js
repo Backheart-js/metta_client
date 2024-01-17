@@ -4,15 +4,32 @@ const withPWA = require('next-pwa')({
     dest: 'public',
 });
 
-module.exports = withPWA(withVideos({
-    images: {
-        remotePatterns: [
-          {
-            protocol: 'https',
-            hostname: 'w0.peakpx.com',
-            port: '',
-            pathname: '/wallpaper/**',
-          },
-        ],
-      },
-}));
+module.exports = withPWA(
+    withVideos({
+        async redirects() {
+            return [
+                {
+                    source: '/',
+                    destination: '/home',
+                    permanent: true,
+                },
+            ];
+        },
+        images: {
+            remotePatterns: [
+                {
+                    protocol: 'https',
+                    port: '',
+                    pathname: '/v0/**',
+                    hostname: 'w0.peakpx.com',
+                },
+                {
+                    protocol: 'https',
+                    pathname: '/wallpaper/**',
+                    hostname: 'firebasestorage.googleapis.com',
+                    port: '',
+                },
+            ],
+        },
+    }),
+);
