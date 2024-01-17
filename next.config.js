@@ -5,6 +5,15 @@ const withPWA = require('next-pwa')({
 });
 
 module.exports = withPWA(withVideos({
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/home',
+        permanent: true,
+      },
+    ]
+  },
     images: {
         remotePatterns: [
           {

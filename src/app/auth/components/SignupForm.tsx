@@ -14,6 +14,8 @@ import auth from '@/utils/axios/auth';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios, { AxiosError } from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface IFormData {
     username: string;
@@ -23,6 +25,7 @@ interface IFormData {
 }
 
 function SignupForm() {
+    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
     const [isProgress, setIsProgress] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -65,6 +68,7 @@ function SignupForm() {
 
             if (res.status === 201) {
                 setErrorMessage('');
+                router.push('/auth/verify-account');
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -162,6 +166,12 @@ function SignupForm() {
                             ),
                         }}
                     />
+                    <div className="mb-2">
+                        <p className="text-gray-500 font-semibold text-xs">
+                            Độ dài từ 8-24 ký tự, chứa ít nhất 1 chữ hoa, chữ
+                            thường và số
+                        </p>
+                    </div>
                     <TextField
                         margin="normal"
                         fullWidth
@@ -199,7 +209,7 @@ function SignupForm() {
                         <Typography color="error">{errorMessage}</Typography>
                     )}
                     <Button
-                        className="bg-greenPrimary mt-4"
+                        className="bg-boldGreen text-white mt-4 rounded-2xl"
                         type="submit"
                         fullWidth
                         variant="contained"
@@ -211,6 +221,19 @@ function SignupForm() {
                             'Đăng ký'
                         )}
                     </Button>
+                    <div className="my-5 center gap-3">
+                        <div className="border-b-[1px] w-20 border-gray-400"></div>
+                        <div className="text-gray-500">Hoặc</div>
+                        <div className="border-b-[1px] w-20 border-gray-400"></div>
+                    </div>
+                    <div className="center">
+                        <Link
+                            className="text-blue-500 underline"
+                            href={'/auth/login'}
+                        >
+                            Đăng nhập
+                        </Link>
+                    </div>
                 </form>
             </div>
         </Container>
