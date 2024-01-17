@@ -1,8 +1,12 @@
+import { IUserInfo } from '@/types/userType';
 import axios from './axios';
 
 const userSync = {
-    getCurrentUser: (id: string) => {
-        return axios.get(`/user/current/${id}`);
+    getCurrentUser: () => {
+        return axios.get(`/user/current`);
+    },
+    updateUserInfo: (data: IUserInfo) => {
+        return axios.put(`/user/update`, data);
     },
 };
 

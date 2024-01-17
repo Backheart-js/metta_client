@@ -1,6 +1,8 @@
+'use client';
+
 import { IUserInfo } from '@/types/userType';
 import { Button, IconButton, TextField, styled } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -8,11 +10,10 @@ import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip';
 import Slider from '@mui/material/Slider';
 import clsx from 'clsx';
+import userSync from '@/utils/axios/user';
 
 export interface IUpdateInfoFormProps {
-    infoData: IUserInfo;
-    handleChangeValue: (e: any) => void;
-    handleChangeGender: (gender: 1 | 2) => void;
+    handleAfterUpdate?: () => void;
 }
 
 function ValueLabelComponent(props: any) {
@@ -26,16 +27,24 @@ function ValueLabelComponent(props: any) {
 }
 
 export default function UpdateInfoForm({
-    infoData,
-    handleChangeValue,
-    handleChangeGender,
+    handleAfterUpdate,
 }: IUpdateInfoFormProps) {
+    const [userData, setUserData] = useState<IUserInfo>({
+        avatarUrl: '',
+        fullname: '',
+        gender: 1,
+        birthYear: 0,
+        exerciseIntensity: 3,
+        weight: 0,
+        height: 0,
+    });
+    const [isProcessUpdate, setIsProcessUpdate] = useState(false);
+
     const handleChangeAge = (e: any) => {
         const currentYear = new Date().getFullYear();
 
         // Tính năm sinh
         const birthYear = currentYear - parseInt(e.target.value);
-        console.log('birthYear: ', birthYear);
     };
 
     const parseToAge = (year: number): number => {
@@ -43,6 +52,35 @@ export default function UpdateInfoForm({
 
         return currentYear - year;
     };
+
+    const handleUpdateData = async () => {
+        setIsProcessUpdate(true);
+        try {
+            const res = await userSync.updateUserInfo(userData);
+
+            if (res.status === 200) {
+                if (handleAfterUpdate) {
+                    handleAfterUpdate();
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsProcessUpdate(false);
+        }
+    };
+
+    // useEffect(() => {
+    //     (async () => {
+    //         const resData = await userSync.getCurrentUser();
+
+    //         if (resData.status === 200) {
+    //             setUserData(resData.data.result);
+    //         }
+    //     })();
+
+    //     return () => {};
+    // }, []);
 
     return (
         <div className="w-full max-w-[400px]">
@@ -54,10 +92,16 @@ export default function UpdateInfoForm({
                     <div className="center gap-6 mt-5">
                         <TextField
                             placeholder="Số buổi"
+                            value={userData.exerciseIntensity}
                             type="number"
                             name="exerciseIntensity"
                             variant="standard"
-                            onChange={(e) => handleChangeValue(e)}
+                            onChange={(e) =>
+                                setUserData((prev) => ({
+                                    ...prev,
+                                    exerciseIntensity: parseInt(e.target.value),
+                                }))
+                            }
                         />
                         <p className="text-gray-500 font-medium text-base">
                             buổi/tuần
@@ -68,10 +112,18 @@ export default function UpdateInfoForm({
             <div className="center flex-col bg-white mt-6 px-4 pt-8 pb-6 rounded-md">
                 <div className="w-full">
                     <TextField
+                        value={userData.fullname}
                         className="w-full rounded"
+                        type="text"
                         name="fullname"
                         label="Tên đầy đủ"
                         variant="outlined"
+                        onChange={(e) =>
+                            setUserData((prev) => ({
+                                ...prev,
+                                fullname: e.target.value,
+                            }))
+                        }
                     />
                 </div>
                 <div className="w-full center gap-4 my-8">
@@ -79,13 +131,17 @@ export default function UpdateInfoForm({
                         <button
                             name="gender"
                             className={clsx(
-                                'center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100 text-gray-400',
-                                infoData.gender === 1
+                                'center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100',
+                                userData.gender === 1
                                     ? '!text-boldGreen font-bold bg-lightgreen'
-                                    : '',
+                                    : 'text-gray-400',
                             )}
-                            value={1}
-                            onClick={() => handleChangeGender(1)}
+                            onClick={() =>
+                                setUserData((prev) => ({
+                                    ...prev,
+                                    gender: 1,
+                                }))
+                            }
                         >
                             <MaleIcon className="text-[60px]" />
                             <p className="text-lg">Nam</p>
@@ -95,13 +151,17 @@ export default function UpdateInfoForm({
                         <button
                             name="gender"
                             className={clsx(
-                                'center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100 text-gray-400',
-                                infoData.gender === 2
+                                'center flex-col gap-3 p-4 h-32 w-full rounded bg-gray-100',
+                                userData.gender === 2
                                     ? '!text-boldGreen font-bold bg-lightgreen'
-                                    : '',
+                                    : 'text-gray-400',
                             )}
-                            value={2}
-                            onClick={() => handleChangeGender(2)}
+                            onClick={() =>
+                                setUserData((prev) => ({
+                                    ...prev,
+                                    gender: 2,
+                                }))
+                            }
                         >
                             <FemaleIcon className="text-[60px]" />
                             <p className="text-lg">Nữ</p>
@@ -119,10 +179,16 @@ export default function UpdateInfoForm({
                                 <IOSSlider
                                     min={100}
                                     max={200}
-                                    defaultValue={160}
+                                    defaultValue={userData.height}
                                     valueLabelDisplay="on"
-                                    name="height"
-                                    onChange={(e) => handleChangeValue(e)}
+                                    onChange={(e, value: number | number[]) => {
+                                        if (typeof value === 'number') {
+                                            setUserData((prev) => ({
+                                                ...prev,
+                                                height: value,
+                                            }));
+                                        }
+                                    }}
                                 />
                             </div>
                             <IconButton aria-label="delete">
@@ -135,11 +201,16 @@ export default function UpdateInfoForm({
                             <p className="center">Cân nặng (kg)</p>
                             <div className="center">
                                 <input
-                                    value={infoData.weight}
+                                    value={userData.weight}
                                     name="weight"
                                     className="text-center text-xl md:text-2xl text-boldGreen font-semibold bg-transparent w-10 md:w-14 h-10 md:h-14"
                                     type="number"
-                                    onChange={(e) => handleChangeValue(e)}
+                                    onChange={(e) =>
+                                        setUserData((prev) => ({
+                                            ...prev,
+                                            weight: parseInt(e.target.value),
+                                        }))
+                                    }
                                 />
                             </div>
                             <div className="center gap-8">
@@ -162,10 +233,15 @@ export default function UpdateInfoForm({
                             <div className="center">
                                 <input
                                     name="birthYear"
-                                    value={parseToAge(infoData.birthYear)}
+                                    value={parseToAge(userData.birthYear)}
                                     className="text-center text-xl md:text-2xl text-boldGreen font-semibold bg-transparent w-10 md:w-14 h-10 md:h-14"
                                     type="number"
-                                    onChange={(e) => handleChangeAge(e)}
+                                    onChange={(e) =>
+                                        setUserData((prev) => ({
+                                            ...prev,
+                                            age: parseInt(e.target.value),
+                                        }))
+                                    }
                                 />
                             </div>
                             <div className="center gap-8">
@@ -186,10 +262,12 @@ export default function UpdateInfoForm({
                     </div>
                 </div>
             </div>
-            <div className="center mt-6 w-full">
+            <div className="center mt-6 w-full px-4">
                 <Button
+                    disabled={isProcessUpdate}
                     className="bg-boldGreen text-white hover:bg-boldGreen rounded-2xl w-full py-2"
                     variant="contained"
+                    onClick={handleUpdateData}
                 >
                     Xác nhận
                 </Button>
