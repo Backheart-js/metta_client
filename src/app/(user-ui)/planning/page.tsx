@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import 'moment/locale/vi';
 import { Button, Checkbox, IconButton } from '@mui/material';
@@ -53,6 +53,10 @@ export default function Planning(props: IPlanningProps) {
 
     // Định dạng ngày theo yêu cầu
     const formattedDate = currentDate.format('dddd, D [tháng] M');
+
+    useEffect(() => {
+        return () => {};
+    }, []);
 
     return (
         <div
@@ -222,7 +226,7 @@ export default function Planning(props: IPlanningProps) {
                                             >
                                                 <InvertColorsOutlinedIcon className="text-sm text-gray-400" />
                                                 <p className="text-sm text-gray-400 leading-[100%]">
-                                                    2200 lít
+                                                    2200 ml
                                                 </p>
                                             </div>
                                             <div
@@ -265,7 +269,7 @@ export default function Planning(props: IPlanningProps) {
                 isOpen={isOpenDrawer}
                 toggleDrawer={toggle}
             >
-                <DrawerContent />
+                <DrawerContent onCloseDrawer={() => setIsOpenDrawer(false)} />
             </CusDrawer>
         </div>
     );

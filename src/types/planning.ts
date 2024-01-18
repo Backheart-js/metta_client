@@ -24,10 +24,30 @@ export interface INoti {
     timeRange: dayjs.Dayjs[];
     timeGap: number;
 }
+export interface IExerciseNoti {
+    remindTime: number;
+    repeat: string[];
+    duration: number;
+}
 
-export interface IPlanningData {
-    title: string | number;
+export interface IRemindData {
+    title: number;
     noti?: INoti;
+    exerciseNoti?: IExerciseNoti;
     calender?: string;
     note: string;
+}
+export interface IPlanning {
+    title: string;
+    startDate: dayjs.Dayjs;
+    endDate?: dayjs.Dayjs;
+    note: string;
+}
+
+export interface IWaterReminderData {
+    waterAmount: number;
+    startTime: string;
+    endTime: string;
+    interval: number;
+    note?: string;
 }
