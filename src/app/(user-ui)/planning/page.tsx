@@ -100,9 +100,9 @@ export default function Planning(props: IPlanningProps) {
                                         <CalendarTodayOutlinedIcon className="text-gray-300 text-2xl" />
                                     </div>
                                     <div className="flex-grow pr-2 py-2">
-                                        <div className="center-y mb-1">
+                                        <div className="center-y mb-2">
                                             <div className="">
-                                                <p className="text-gray-300 font-medium text-lg">
+                                                <p className="text-gray-300 font-medium text-lg leading-[100%]">
                                                     Kế hoạch giảm cân để đón tết
                                                 </p>
                                             </div>
@@ -156,9 +156,9 @@ export default function Planning(props: IPlanningProps) {
                                         <FitnessCenterOutlinedIcon className="text-gray-300 text-2xl" />
                                     </div>
                                     <div className="flex-grow pr-2 py-2">
-                                        <div className="center-y mb-1">
+                                        <div className="center-y mb-2">
                                             <div className="">
-                                                <p className="text-gray-300 font-medium text-lg">
+                                                <p className="text-gray-300 font-medium text-lg leading-[100%]">
                                                     Nhắc tập thể dục
                                                 </p>
                                             </div>
@@ -207,9 +207,9 @@ export default function Planning(props: IPlanningProps) {
                                         <LocalDrinkOutlinedIcon className="text-gray-300 text-2xl" />
                                     </div>
                                     <div className="flex-grow pr-2 py-2">
-                                        <div className="center-y mb-1">
+                                        <div className="center-y mb-2">
                                             <div className="">
-                                                <p className="text-gray-300 font-medium text-lg">
+                                                <p className="text-gray-300 font-medium text-lg leading-[100%]">
                                                     Nhắc uống đủ nước
                                                 </p>
                                             </div>

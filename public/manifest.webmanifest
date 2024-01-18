@@ -1,11 +1,13 @@
 {
+    "id": "29",
     "theme_color": "#097770",
     "background_color": "#097770",
-    "display": "browser",
+    "display": "standalone",
     "scope": "/",
     "start_url": "/",
     "short_name": "Metta healthcare",
     "name": "Metta healthcare",
+    "orientation": "portrait",
     "icons": [
         {
             "src": "/icon-192x192.png",

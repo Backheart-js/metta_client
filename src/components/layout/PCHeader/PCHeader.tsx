@@ -56,7 +56,7 @@ function PCHeader() {
                 <div className="center-y justify-between container-sp">
                     {category.slice(0, -1).map((category, index) => {
                         const { Icon, path, short_text } = category;
-                        const isActive = pathname.includes(category.path);
+                        const isActive = pathname?.includes(category.path);
 
                         return (
                             <div

@@ -12,7 +12,7 @@ function MobileNavbar() {
         <div className="flex items-center h-[72px] w-full px-4 bg-gray-100 border-t-2 border-borderLightTheme shadow-[0_4px_12px_rgba(0,0,0,0.1)]">
             {category.map((category, index) => {
                 const { Icon } = category;
-                const isActive = pathname.includes(category.path);
+                const isActive = pathname?.includes(category.path);
 
                 return (
                     <div
