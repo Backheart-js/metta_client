@@ -25,9 +25,8 @@ export interface INoti {
     timeGap: number;
 }
 export interface IExerciseNoti {
-    remindTime: number;
-    repeat: string[];
-    duration: number;
+    remindTime: dayjs.Dayjs;
+    repeat: number[];
 }
 
 export interface IRemindData {
@@ -51,3 +50,47 @@ export interface IWaterReminderData {
     interval: number;
     note?: string;
 }
+
+export interface IExerciseReminderData {
+    remindTime: string;
+    repeat: number[];
+    note?: string;
+}
+
+export const dayOfWeek = [
+    {
+        value: 1,
+        label: 'Thứ 2',
+        shot_label: '2',
+    },
+    {
+        value: 2,
+        label: 'Thứ 3',
+        shot_label: '3',
+    },
+    {
+        value: 3,
+        label: 'Thứ 4',
+        shot_label: '4',
+    },
+    {
+        value: 4,
+        label: 'Thứ 5',
+        shot_label: '5',
+    },
+    {
+        value: 5,
+        label: 'Thứ 6',
+        shot_label: '6',
+    },
+    {
+        value: 6,
+        label: 'Thứ 7',
+        shot_label: '7',
+    },
+    {
+        value: 0,
+        label: 'Chủ nhật',
+        shot_label: 'CN',
+    },
+];

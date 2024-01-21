@@ -7,7 +7,7 @@ import Dialog from '@/components/Dialog/Dialog';
 import { StaticTimePicker } from '@mui/x-date-pickers/StaticTimePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { remindType } from '@/types/planning';
+import { dayOfWeek, remindType } from '@/types/planning';
 
 export interface INotiContentProps {
     remindTypeInput: number | string;
@@ -24,6 +24,24 @@ export default function NotiContent({
     const [endTime, setEndTime] = useState(dayjs('2022-04-17T22:00'));
     const [isSettingBeginTime, setIsSettingBeginTime] = useState(true);
     const [gapTimeNoti, setGapTimeNoti] = useState<number>(30);
+    const [exerciseTimeRemind, setExerciseTimeRemind] = useState(
+        dayjs('2022-04-17T7:00'),
+    );
+    const [dayRepeat, setDayRepeat] = useState<number[]>([0]);
+
+    // Hàm xử lý khi click chọn ngày trong tuần (nhắc tập thể dục)
+    const handleCheckboxChange = (dayValue: number) => {
+        // Kiểm tra xem ngày đã tồn tại trong mảng chưa
+        const isDaySelected = dayRepeat.includes(dayValue);
+
+        // Nếu đã tồn tại, loại bỏ khỏi mảng, ngược lại thì thêm vào mảng
+        const updatedDays = isDaySelected
+            ? dayRepeat.filter((day) => day !== dayValue)
+            : [...dayRepeat, dayValue];
+
+        // Cập nhật trạng thái dayRepeat
+        setDayRepeat(updatedDays);
+    };
 
     const addWater = (): void => {
         if (amountWater < 4000) {
@@ -42,10 +60,14 @@ export default function NotiContent({
     };
 
     const handleChangeTimePicker = (time: any): void => {
-        if (isSettingBeginTime) {
-            setBeginTime(time);
+        if (remindTypeInput === remindType.DRINK) {
+            if (isSettingBeginTime) {
+                setBeginTime(time);
+            } else {
+                setEndTime(time);
+            }
         } else {
-            setEndTime(time);
+            setExerciseTimeRemind(time);
         }
     };
 
@@ -63,6 +85,7 @@ export default function NotiContent({
             timeRange: [beginTime, endTime],
             timeGap: gapTimeNoti,
         };
+
         handleChange((prev: any) => {
             return {
                 ...prev,
@@ -73,6 +96,20 @@ export default function NotiContent({
         return () => {};
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [amountWater, beginTime, endTime, gapTimeNoti]);
+
+    useEffect(() => {
+        const notiData = {
+            remindTime: exerciseTimeRemind,
+            repeat: dayRepeat,
+        };
+        handleChange((prev: any) => {
+            return {
+                ...prev,
+                exerciseNoti: notiData,
+            };
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [exerciseTimeRemind, dayRepeat]);
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -168,7 +205,67 @@ export default function NotiContent({
                     </Dialog>
                 </div>
             ) : (
-                <div className=""></div>
+                <div className="">
+                    <section className="center-y justify-between h-12 my-4">
+                        <div className="">
+                            <p className="font-medium text-gray-600">
+                                Thời gian nhắc
+                            </p>
+                        </div>
+                        <div className="center gap-3">
+                            <button
+                                className="text-center text-lg font-normal w-16 bg-white !border-[1px_solid_#999] center h-8 rounded-3xl overflow-hidden"
+                                onClick={() => handleOpenTimePicker('begin')}
+                            >
+                                {formatTime(exerciseTimeRemind)}
+                            </button>
+                        </div>
+                    </section>
+                    <section className="">
+                        <div className="mb-2">
+                            <p className="font-medium text-gray-600">Lặp lại</p>
+                        </div>
+                        <div className="bg-lightgreen rounded-lg">
+                            {dayOfWeek.map((day) => {
+                                return (
+                                    <label
+                                        className="center-y justify-between px-4 py-3"
+                                        key={day.value}
+                                        htmlFor={day.label}
+                                    >
+                                        <p className="text-lg font-medium">
+                                            {day.label}
+                                        </p>
+                                        <input
+                                            className="border-none bg-transparent"
+                                            type="checkbox"
+                                            name=""
+                                            id={day.label}
+                                            checked={dayRepeat.includes(
+                                                day.value,
+                                            )}
+                                            onChange={() =>
+                                                handleCheckboxChange(day.value)
+                                            }
+                                        />
+                                    </label>
+                                );
+                            })}
+                        </div>
+                    </section>
+                    <Dialog
+                        isOpen={isOpenTimePicker}
+                        handleClose={() => setIsOpenTimePicker(false)}
+                    >
+                        <div className="">
+                            <StaticTimePicker
+                                value={exerciseTimeRemind}
+                                onChange={handleChangeTimePicker}
+                                onClose={() => setIsOpenTimePicker(false)}
+                            />
+                        </div>
+                    </Dialog>
+                </div>
             )}
         </LocalizationProvider>
     );

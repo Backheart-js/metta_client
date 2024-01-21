@@ -13,6 +13,7 @@ import React, { useState } from 'react';
 import styles from './Planning.module.scss';
 import clsx from 'clsx';
 import {
+    IExerciseReminderData,
     IPlanning,
     IRemindData,
     IType,
@@ -29,6 +30,7 @@ import dayjs from 'dayjs';
 import CalendarContent from './optionContent/CalendarContent';
 import waterReminderSync from '@/utils/axios/waterReminder';
 import { features } from 'process';
+import exerciseReminderSync from '@/utils/axios/exerciseReminder';
 
 type Props = {
     onCloseDrawer: () => void;
@@ -101,20 +103,36 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
     };
 
     const handleGenerate = (): void => {
-        if (
-            step === 1 &&
-            feature === 'remind' &&
-            remindData.title === remindType.DRINK
-        ) {
-            if (remindData.noti) {
-                const formatData: IWaterReminderData = {
-                    waterAmount: remindData.noti?.amountWater,
-                    startTime: formatToHour(remindData.noti?.timeRange[0]),
-                    endTime: formatToHour(remindData.noti?.timeRange[1]),
-                    interval: remindData.noti?.timeGap,
-                    note: remindData.note,
-                };
-                createWaterReminder(formatData);
+        console.log(
+            'remindData.title === remindType.DRINK: ',
+            remindData.title === remindType.DRINK,
+        );
+        if (step === 1 && feature === 'remind') {
+            if (remindData.title === remindType.DRINK) {
+                console.log('vào ', remindData.noti);
+                if (remindData.noti) {
+                    const formatData: IWaterReminderData = {
+                        waterAmount: remindData.noti?.amountWater,
+                        startTime: formatToHour(remindData.noti?.timeRange[0]),
+                        endTime: formatToHour(remindData.noti?.timeRange[1]),
+                        interval: remindData.noti?.timeGap,
+                        note: remindData.note,
+                    };
+                    console.log(formatData);
+                    createWaterReminder(formatData);
+                }
+            } else {
+                if (remindData.exerciseNoti) {
+                    const formatData: IExerciseReminderData = {
+                        remindTime: formatToHour(
+                            remindData.exerciseNoti.remindTime,
+                        ),
+                        repeat: remindData.exerciseNoti.repeat,
+                        note: remindData.note,
+                    };
+                    createExerciseReminder(formatData);
+                    console.log(formatData);
+                }
             }
         }
     };
@@ -125,6 +143,19 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
 
             if (res.status === 200) {
                 console.log('Tạo thành công');
+                clearData();
+                onCloseDrawer();
+            }
+        } catch (error) {
+            console.log('Báo lỗi');
+        }
+    };
+    const createExerciseReminder = async (data: IExerciseReminderData) => {
+        try {
+            const res = await exerciseReminderSync.createExerciseReminder(data);
+
+            if (res.status === 200) {
+                console.log('tạo thành công');
                 clearData();
                 onCloseDrawer();
             }
@@ -524,11 +555,11 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                                             ) : (
                                                 <div className="">
                                                     <p className="">
-                                                        {
+                                                        {dayjs(
                                                             remindData
                                                                 .exerciseNoti
-                                                                ?.remindTime
-                                                        }
+                                                                ?.remindTime,
+                                                        ).format('HH:mm')}
                                                     </p>
                                                 </div>
                                             ))}
