@@ -59,13 +59,9 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
     // Data tổng cho planning
     const [planningData, setPlanningData] = useState<IPlanning>({
         title: '',
-        startDate: dayjs(),
-        endDate: dayjs().add(3, 'month'),
+        dateRange: [dayjs(), dayjs().add(3, 'month')],
         note: '',
     });
-
-    const checkNotiOrCalendarExists = (): boolean =>
-        !!(remindData.noti || remindData.calender);
 
     const openFeatureCategory = (
         event: React.ChangeEvent<HTMLInputElement>,
@@ -103,10 +99,6 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
     };
 
     const handleGenerate = (): void => {
-        console.log(
-            'remindData.title === remindType.DRINK: ',
-            remindData.title === remindType.DRINK,
-        );
         if (step === 1 && feature === 'remind') {
             if (remindData.title === remindType.DRINK) {
                 console.log('vào ', remindData.noti);
@@ -214,8 +206,7 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
     const clearData = (): void => {
         setPlanningData({
             title: '',
-            startDate: dayjs(),
-            endDate: dayjs().add(3, 'month'),
+            dateRange: [dayjs(), dayjs().add(3, 'month')],
             note: '',
         });
         setRemindData({
@@ -323,7 +314,7 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                                                 setRemindData((prev) => {
                                                     return {
                                                         ...prev,
-                                                        title: '',
+                                                        title: 0,
                                                     };
                                                 });
                                             }}
@@ -336,7 +327,7 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                                 </div>
                                 <div
                                     className={clsx(
-                                        planningData.startDate
+                                        planningData.dateRange[0]
                                             ? 'center rounded-2xl gap-2 px-3 bg-lightgreen'
                                             : 'w-10',
                                         'h-full smooth',
@@ -358,21 +349,20 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                                             height={26}
                                             alt="icon"
                                         />
-                                        {planningData.startDate &&
-                                            planningData.endDate && (
-                                                <div className="center-y">
-                                                    <p className="flex text-xs text-gray-700 font-normal">
-                                                        {`Từ ${planningData.startDate.format(
-                                                            'DD:MM',
-                                                        )} đến ${planningData.endDate.format(
-                                                            'DD:MM',
-                                                        )}`}
-                                                    </p>
-                                                </div>
-                                            )}
+                                        {planningData.dateRange && (
+                                            <div className="center-y">
+                                                <p className="flex text-xs text-gray-700 font-normal">
+                                                    {`Từ ${planningData.dateRange[0].format(
+                                                        'DD:MM',
+                                                    )} đến ${planningData.dateRange[1].format(
+                                                        'DD:MM',
+                                                    )}`}
+                                                </p>
+                                            </div>
+                                        )}
                                     </button>
-                                    {planningData.startDate &&
-                                        planningData.endDate && (
+                                    {planningData.dateRange[0] &&
+                                        planningData.dateRange[1] && (
                                             <button
                                                 className="w-6 h-full center"
                                                 onClick={() => {
@@ -676,7 +666,10 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
 
             {/* Calendar cho Planning */}
             {step === 2 && optionShowing === optionType.CALENDAR && (
-                <CalendarContent />
+                <CalendarContent
+                    dateRangeInput={planningData.dateRange}
+                    handleChange={setPlanningData}
+                />
             )}
         </div>
     );

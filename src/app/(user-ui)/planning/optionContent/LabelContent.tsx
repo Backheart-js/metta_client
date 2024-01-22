@@ -32,7 +32,7 @@ export default function LabelContent({
         <div className="pl-2">
             {feature === 'planning' ? (
                 <div className="center-y justify-start">
-                    <div className="w-full pt-3">
+                    <div className="w-full pt-3 pb-3">
                         <input
                             type="text"
                             className="w-full bg-transparent border-none font-medium focus-visible:outline-none"

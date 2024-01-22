@@ -118,22 +118,7 @@ export default function Planning(props: IPlanningProps) {
                                                 )}
                                             >
                                                 <CalendarTodayOutlinedIcon className="text-sm text-gray-400" />
-                                                <p className="text-sm text-gray-400 mr-1 leading-[100%]">
-                                                    Th
-                                                </p>
-                                                <p className="text-sm text-gray-400 leading-[100%]">
-                                                    2, 3, CN
-                                                </p>
-                                            </div>
-                                            <div
-                                                className={clsx(
-                                                    styles.card__optionWrapper,
-                                                )}
-                                            >
-                                                <NotificationsActiveOutlinedIcon className="text-sm text-gray-400" />
-                                                <p className="text-sm text-gray-400 leading-[100%]">
-                                                    04:00 PM
-                                                </p>
+                                                <div className=""></div>
                                             </div>
                                             <div
                                                 className={clsx(

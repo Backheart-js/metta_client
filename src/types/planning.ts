@@ -38,8 +38,7 @@ export interface IRemindData {
 }
 export interface IPlanning {
     title: string;
-    startDate: dayjs.Dayjs;
-    endDate?: dayjs.Dayjs;
+    dateRange: dayjs.Dayjs[];
     note: string;
 }
 

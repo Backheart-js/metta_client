@@ -20,12 +20,12 @@ export default function NotiContent({
 }: INotiContentProps) {
     const [amountWater, setAmountWarter] = useState<number>(2000);
     const [isOpenTimePicker, setIsOpenTimePicker] = useState<boolean>(false);
-    const [beginTime, setBeginTime] = useState(dayjs('2022-04-17T7:00'));
-    const [endTime, setEndTime] = useState(dayjs('2022-04-17T22:00'));
+    const [beginTime, setBeginTime] = useState(dayjs('2024-01-17T7:00'));
+    const [endTime, setEndTime] = useState(dayjs('2024-01-17T22:00'));
     const [isSettingBeginTime, setIsSettingBeginTime] = useState(true);
     const [gapTimeNoti, setGapTimeNoti] = useState<number>(30);
     const [exerciseTimeRemind, setExerciseTimeRemind] = useState(
-        dayjs('2022-04-17T7:00'),
+        dayjs('2024-01-17T7:00'),
     );
     const [dayRepeat, setDayRepeat] = useState<number[]>([0]);
 
