@@ -5,6 +5,7 @@ import LoadingModal from '@/components/LoadingModal/LoadingModal';
 import { checkLoginStatus } from '@/middlewares/checkLogin.middleware';
 import { useAppSelector } from '@/lib/hooks';
 import { useRouter } from 'next/navigation';
+import { registerServiceWorker } from '@/utils/serviceWorker/serviceWorker';
 
 export interface IWrapperProps {
     children: React.ReactNode;
@@ -16,14 +17,17 @@ export default function Wrapper({ children }: IWrapperProps) {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker
-                .register('/service.js')
-                .then((registration) =>
-                    console.log('scope is: ', registration.scope),
-                );
-        }
+        // Connect service worker
+        (async () => {
+            try {
+                await registerServiceWorker();
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+    }, []);
 
+    useEffect(() => {
         (async () => {
             try {
                 const { isLogin } = await checkLoginStatus();

@@ -19,6 +19,10 @@ import StickyNote2OutlinedIcon from '@mui/icons-material/StickyNote2Outlined';
 // Icon nhắc tập luyện
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
+import {
+    registerPushNotifications,
+    unregisterPushNotifications,
+} from '@/utils/notifications/pushService';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -53,6 +57,22 @@ export default function Planning(props: IPlanningProps) {
 
     // Định dạng ngày theo yêu cầu
     const formattedDate = currentDate.format('dddd, D [tháng] M');
+
+    async function setPushNotificationEnabled(enabled: boolean) {
+        try {
+            if (enabled) {
+                await registerPushNotifications();
+            } else {
+                unregisterPushNotifications();
+            }
+        } catch (error) {
+            if (enabled && Notification.permission === 'denied') {
+                alert('Turn on');
+            } else {
+                alert('Please try again');
+            }
+        }
+    }
 
     useEffect(() => {
         return () => {};
@@ -249,6 +269,14 @@ export default function Planning(props: IPlanningProps) {
                     </div>
                 )}
             </section>
+            <div className="">
+                <Button onClick={() => setPushNotificationEnabled(true)}>
+                    Bật thông báo
+                </Button>
+                <Button onClick={() => setPushNotificationEnabled(false)}>
+                    Tắt thông báo
+                </Button>
+            </div>
             <CusDrawer
                 anchor={anchor}
                 isOpen={isOpenDrawer}
