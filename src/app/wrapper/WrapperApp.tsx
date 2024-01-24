@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoadingModal from '@/components/LoadingModal/LoadingModal';
 import { checkLoginStatus } from '@/middlewares/checkLogin.middleware';
 import { useAppSelector } from '@/lib/hooks';
@@ -15,7 +15,15 @@ export default function Wrapper({ children }: IWrapperProps) {
     const { isProgress, text } = useAppSelector((state) => state.loading);
     const [isLoading, setIsLoading] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('/service.js')
+                .then((registration) =>
+                    console.log('scope is: ', registration.scope),
+                );
+        }
+
         (async () => {
             try {
                 const { isLogin } = await checkLoginStatus();
