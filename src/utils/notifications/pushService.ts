@@ -5,14 +5,26 @@ export async function getCurrentPushSubscription(): Promise<PushSubscription | n
     return sw.pushManager.getSubscription();
 }
 
+export async function requestNotificationsPermission() {
+    const permistion = await window.Notification.requestPermission();
+    console.log('Yêu cầu mở thông báo', permistion);
+
+    if (permistion !== 'granted') {
+        throw Error('Notification permission not granted');
+    } else {
+        new window.Notification('Hello');
+    }
+}
+
 export async function registerPushNotifications() {
     if (!('PushManager' in window)) {
         throw Error('Push notifications are not supported by this browser');
     }
     const existingSubscription = await getCurrentPushSubscription();
-    console.log('existingSubscription: ', existingSubscription);
     if (existingSubscription) {
         throw Error('Existing push subscription found');
+    } else {
+        await requestNotificationsPermission();
     }
 
     const sw = await getReadyServiceWorker();
@@ -30,7 +42,6 @@ export async function registerPushNotifications() {
 
 export async function unregisterPushNotifications() {
     const existingSubscription = await getCurrentPushSubscription();
-    console.log('existingSubscription: ', existingSubscription);
 
     if (!existingSubscription) {
         throw Error('No existing push subscription found');
