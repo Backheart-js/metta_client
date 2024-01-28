@@ -21,16 +21,20 @@ const activateEvent = () => {
 };
 activateEvent();
 
-const fetchData = () => {
-    self.addEventListener('fetch', (e) => {
-        console.log('fetch: ', e);
-    });
-    console.log('fetched');
-};
-fetchData();
+// const fetchData = () => {
+//     self.addEventListener('fetch', (e) => {
+//         console.log('fetch: ', e);
+//     });
+// };
+// fetchData();
 
-// self.addEventListener('sync', (event) => {
-//     if (event.tag === 'sync-reminders') {
-//       // TODO: Lấy thông tin nhắc nhở từ Local Storage hoặc IndexedDB và gửi yêu cầu đến máy chủ
-//     }
-// });
+self.addEventListener('push', e => {
+    const data = e.data.json();
+    self.registration.showNotification(
+        data.title,
+        {
+            body: data.body,
+            icon: '/icon-192x192.png'
+        }
+    )
+})

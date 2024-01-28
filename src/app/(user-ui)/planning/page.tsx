@@ -87,7 +87,7 @@ export default function Planning(props: IPlanningProps) {
         >
             <section className="pt-4">
                 <div className="center-y justify-between">
-                    <h1 className="text-3xl font-bold my-0 uppercase text-gray-700">
+                    <h1 className="text-3xl md:text-2xl font-bold my-0 uppercase text-gray-700">
                         Lịch của tôi
                     </h1>
                     <div>
@@ -112,7 +112,9 @@ export default function Planning(props: IPlanningProps) {
                 ) : (
                     <div className="">
                         <div className="">
-                            <h2 className={clsx(styles.title, '')}>Kế hoạch</h2>
+                            <h2 className={clsx(styles.title, 'md:text-lg')}>
+                                Kế hoạch
+                            </h2>
                             <div className="mt-5">
                                 <div
                                     className={clsx(
@@ -153,7 +155,9 @@ export default function Planning(props: IPlanningProps) {
                             </div>
                         </div>
                         <div className="mt-8">
-                            <h2 className={clsx(styles.title, '')}>Lời nhắc</h2>
+                            <h2 className={clsx(styles.title, 'md:text-lg')}>
+                                Lời nhắc
+                            </h2>
                             <div className="mt-5">
                                 <div
                                     className={clsx(

@@ -1,3 +1,4 @@
+import notificationSync from '../axios/notification';
 import { getReadyServiceWorker } from '../serviceWorker/serviceWorker';
 
 export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
@@ -7,7 +8,6 @@ export async function getCurrentPushSubscription(): Promise<PushSubscription | n
 
 export async function requestNotificationsPermission() {
     const permistion = await window.Notification.requestPermission();
-    console.log('Yêu cầu mở thông báo', permistion);
 
     if (permistion !== 'granted') {
         throw Error('Notification permission not granted');
@@ -34,6 +34,7 @@ export async function registerPushNotifications() {
             userVisibleOnly: true,
             applicationServerKey: process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
         });
+        console.log('subscription: ', subscription);
         await sendPushSubscriptionToServer(subscription);
     } catch (error) {
         console.log('error: ', error);
@@ -55,7 +56,13 @@ export async function unregisterPushNotifications() {
 export async function sendPushSubscriptionToServer(
     subscription: PushSubscription,
 ) {
-    console.log();
+    try {
+        const res = await notificationSync.subcribe(subscription);
+
+        console.log(res);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export async function deletePushSubscriptionFromServer(
