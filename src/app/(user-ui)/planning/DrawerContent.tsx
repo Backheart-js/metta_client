@@ -34,9 +34,10 @@ import exerciseReminderSync from '@/utils/axios/exerciseReminder';
 
 type Props = {
     onCloseDrawer: () => void;
+    onRefreshData: () => void;
 };
 
-const DrawerContent = ({ onCloseDrawer }: Props) => {
+const DrawerContent = ({ onCloseDrawer, onRefreshData }: Props) => {
     const notiTitleData: IType[] = [
         {
             id: 1,
@@ -101,7 +102,6 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
     const handleGenerate = (): void => {
         if (step === 1 && feature === 'remind') {
             if (remindData.title === remindType.DRINK) {
-                console.log('vào ', remindData.noti);
                 if (remindData.noti) {
                     const formatData: IWaterReminderData = {
                         waterAmount: remindData.noti?.amountWater,
@@ -110,7 +110,6 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                         interval: remindData.noti?.timeGap,
                         note: remindData.note,
                     };
-                    console.log(formatData);
                     createWaterReminder(formatData);
                 }
             } else {
@@ -123,7 +122,6 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                         note: remindData.note,
                     };
                     createExerciseReminder(formatData);
-                    console.log(formatData);
                 }
             }
         }
@@ -134,9 +132,9 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
             const res = await waterReminderSync.createWaterReminder(data);
 
             if (res.status === 200) {
-                console.log('Tạo thành công');
                 clearData();
                 onCloseDrawer();
+                onRefreshData();
             }
         } catch (error) {
             console.log('Báo lỗi');
@@ -150,6 +148,7 @@ const DrawerContent = ({ onCloseDrawer }: Props) => {
                 console.log('tạo thành công');
                 clearData();
                 onCloseDrawer();
+                onRefreshData();
             }
         } catch (error) {
             console.log('Báo lỗi');

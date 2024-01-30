@@ -11,6 +11,9 @@ import DoctorBanner from '@/assets/image/banner-ai.png';
 import Dot from '@/assets/image/dots-banner.png';
 import { Button } from '@mui/material';
 import { facts } from '@/mock/facts';
+import { IExerciseReminder, IWaterReminder } from '@/types/reminderType';
+import exerciseReminderSync from '@/utils/axios/exerciseReminder';
+import AddIcon from '@mui/icons-material/Add';
 
 interface IFact {
     id: number;
@@ -22,16 +25,65 @@ interface HomeProps {}
 const Home: NextPage<HomeProps> = () => {
     const isFirstTime = false;
     const [havePlan, setHavePlan] = useState(false);
-    const [haveRemindWater, setHaveRemindWater] = useState(true);
-    const [haveRemindWorkout, setHaveRemindWorkout] = useState(true);
+    const [haveRemindWater, setHaveRemindWater] = useState(false);
+    const [haveRemindWorkout, setHaveRemindWorkout] = useState(false);
     const [randomWelcome, setrandomWelcome] = useState('');
     const [fact, setFact] = useState<IFact>({
         id: 1,
         title: '',
         content: '',
     });
+    const [dataWaterReminder, setDataWaterReminder] = useState<IWaterReminder>({
+        amountWaterPerTime: 0,
+        createdAt: '',
+        endTime: '',
+        interval: 0,
+        note: '',
+        remindTime: [''],
+        startTime: '',
+        updateAt: '',
+        waterAmount: 0,
+    });
+    const [dataExerciseReminder, setDataExerciseReminder] = useState<
+        IExerciseReminder[]
+    >([
+        {
+            note: '',
+            remindTime: '',
+            repeat: [0],
+        },
+    ]);
 
     useEffect(() => {
+        (async () => {
+            try {
+                const reminderData =
+                    await exerciseReminderSync.getAllReminders();
+                console.log(reminderData.data);
+                if (reminderData.status === 200) {
+                    setDataExerciseReminder(reminderData.data.exerciseReminder);
+                    setDataWaterReminder(reminderData.data.waterReminder);
+
+                    if (reminderData.data.exerciseReminder) {
+                        setHaveRemindWorkout(true);
+                        sessionStorage.setItem(
+                            'dataExerciseReminder',
+                            JSON.stringify(reminderData.data.exerciseReminder),
+                        );
+                    }
+                    if (reminderData.data.waterReminder) {
+                        setHaveRemindWater(true);
+                        sessionStorage.setItem(
+                            'dataWaterReminder',
+                            JSON.stringify(reminderData.data.waterReminder),
+                        );
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        })();
+
         setFact(
             _.sample(facts) || {
                 id: 1,
@@ -132,18 +184,18 @@ const Home: NextPage<HomeProps> = () => {
                 </div>
             </section>
             <main className="container-sp mt-5 md:mt-20 pb-28">
-                <section id="remind" className="px-3">
-                    <div className="center-y justify-between gap-2 py-1">
-                        <p className="text-gray-700 font-medium text-lg">
-                            Đặt lời nhắc
-                        </p>
-                        <Button size="large" className="text-boldGreen">
-                            Đi tới
-                        </Button>
-                    </div>
-                    <section className="">
-                        <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                            {haveRemindWorkout && haveRemindWater && (
+                {!haveRemindWorkout && !haveRemindWater && (
+                    <section id="remind" className="px-3">
+                        <div className="center-y justify-between gap-2 py-1">
+                            <p className="text-gray-700 font-medium text-lg">
+                                Đặt lời nhắc
+                            </p>
+                            <Button size="large" className="text-boldGreen">
+                                Đi tới
+                            </Button>
+                        </div>
+                        <section className="">
+                            <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
                                 <div className="flex items-start justify-between gap-2">
                                     <div className="pt-2">
                                         <span className="text-gray-500 font-medium text-sm">
@@ -161,11 +213,49 @@ const Home: NextPage<HomeProps> = () => {
                                         />
                                     </div>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        </section>
+                        <section></section>
                     </section>
-                    <section></section>
-                </section>
+                )}
+                {haveRemindWater && (
+                    <section id="remind" className="px-3">
+                        <div className="center-y justify-between gap-2 py-1">
+                            <p className="text-gray-700 font-medium text-lg">
+                                Lượng nước uống trong hôm nay
+                            </p>
+                            <p className="font-medium text-boldGreen">
+                                1750 ml
+                            </p>
+                        </div>
+                        <section className="">
+                            <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+                                <div className="grid grid-cols-5 gap-2">
+                                    <div className="pt-2">
+                                        <Image
+                                            src="/images/fill-water-cup.png"
+                                            alt="water"
+                                            width={100}
+                                            height={100}
+                                        />
+                                    </div>
+                                    <button className="relative pt-2">
+                                        <Image
+                                            src="/images/empty-cup.png"
+                                            alt="water"
+                                            width={100}
+                                            height={100}
+                                        />
+                                        <div className="absolute left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%]">
+                                            <AddIcon className="text-4xl"></AddIcon>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </section>
+                        <section></section>
+                    </section>
+                )}
                 <section id="knowledge" className="my-8">
                     <div className="bg-white pt-4 pb-2">
                         <div className="center-y py-1 px-3">
