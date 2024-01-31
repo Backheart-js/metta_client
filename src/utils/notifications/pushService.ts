@@ -34,7 +34,6 @@ export async function registerPushNotifications() {
             userVisibleOnly: true,
             applicationServerKey: process.env.NEXT_PUBLIC_WEB_PUSH_PUBLIC_KEY,
         });
-        console.log('subscription: ', subscription);
         await sendPushSubscriptionToServer(subscription);
     } catch (error) {
         console.log('error: ', error);
