@@ -116,7 +116,7 @@ export default function Reminder({ params }: IReminderProps) {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div className="container-sp pt-6 pb-10">
+            <div className="container-sp pt-4 pb-10">
                 <div className="px-1">
                     <Button
                         variant="text"

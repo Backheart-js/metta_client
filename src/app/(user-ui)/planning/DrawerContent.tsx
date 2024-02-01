@@ -29,9 +29,8 @@ import NotiContent from './optionContent/NotiContent';
 import dayjs from 'dayjs';
 import CalendarContent from './optionContent/CalendarContent';
 import waterReminderSync from '@/utils/axios/waterReminder';
-import { features } from 'process';
 import exerciseReminderSync from '@/utils/axios/exerciseReminder';
-import { IInitPlaningData } from '@/types/planningType';
+import { IInitPlaningData } from '@/types/planning';
 import planningSync from '@/utils/axios/planning';
 
 type Props = {

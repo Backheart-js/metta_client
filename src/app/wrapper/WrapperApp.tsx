@@ -2,9 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import LoadingModal from '@/components/LoadingModal/LoadingModal';
-import { checkLoginStatus } from '@/middlewares/checkLogin.middleware';
 import { useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
 import { registerServiceWorker } from '@/utils/serviceWorker/serviceWorker';
 
 export interface IWrapperProps {

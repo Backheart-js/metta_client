@@ -31,7 +31,6 @@ export const calcTDEE = (data: FormData) => {
         default:
             throw new Error();
     }
-
     switch (goal) {
         case 'increased':
             averageCalo = calcTdee + 200;

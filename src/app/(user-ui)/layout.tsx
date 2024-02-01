@@ -6,6 +6,7 @@ import Wrapper from '../wrapper/WrapperApp';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { checkLoginStatus } from '@/middlewares/checkLogin.middleware';
+import userSync from '@/utils/axios/user';
 
 export default function UserLayout({
     children,
@@ -20,11 +21,21 @@ export default function UserLayout({
         (async () => {
             try {
                 const { isLogin } = await checkLoginStatus();
+                const res = await userSync.getCurrentUser();
+
+                console.log('user: ', res.data.result);
                 if (!isLogin) {
                     router.push('/auth/login');
                 } else {
                     setIsLoading(false);
                     setIsLoginState(isLogin);
+                }
+
+                if (res.status === 200) {
+                    sessionStorage.setItem(
+                        'userInfo',
+                        JSON.stringify(res.data.result),
+                    );
                 }
             } catch (error) {
                 console.log('Lỗi: ', error);

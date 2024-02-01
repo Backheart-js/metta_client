@@ -27,6 +27,9 @@ import exerciseReminderSync from '@/utils/axios/exerciseReminder';
 import { IWaterReminder, IExerciseReminder } from '@/types/reminderType';
 import { useRouter } from 'next/navigation';
 import HelpOutlinedIcon from '@mui/icons-material/HelpOutlined';
+import planningSync from '@/utils/axios/planning';
+import { IFullyPlanningData } from '@/types/planning';
+import dayjs from 'dayjs';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 interface IThuMap {
@@ -37,7 +40,17 @@ export interface IPlanningProps {}
 export default function Planning(props: IPlanningProps) {
     const router = useRouter();
     const currentDate = moment();
-    const [dataPlanningList, setDataPlanningList] = useState([]);
+    const [dataPlanningList, setDataPlanningList] = useState<
+        IFullyPlanningData[]
+    >([
+        {
+            _id: '',
+            title: '',
+            startTime: new Date(),
+            endTime: new Date(),
+            status: 0,
+        },
+    ]);
     const [dataWaterReminder, setDataWaterReminder] = useState<IWaterReminder>({
         amountWaterPerTime: 0,
         createdAt: '',
@@ -151,24 +164,38 @@ export default function Planning(props: IPlanningProps) {
 
     const fetchData = async () => {
         const reminderData = await exerciseReminderSync.getAllReminders();
+        const planningData = await planningSync.getAll();
         setDataExerciseReminder(reminderData.data.exerciseReminder);
         setDataWaterReminder(reminderData.data.waterReminder);
+
+        if (planningData.data.results.length > 0) {
+            sessionStorage.setItem(
+                'dataPlanning',
+                JSON.stringify(planningData.data.results),
+            );
+            setDataPlanningList(planningData.data.results);
+        }
 
         if (reminderData.data.exerciseReminder) {
             sessionStorage.setItem(
                 'dataExerciseReminder',
                 JSON.stringify(reminderData.data.exerciseReminder),
             );
+            setDataExerciseReminder(reminderData.data.exerciseReminder);
         }
         if (reminderData.data.waterReminder) {
             sessionStorage.setItem(
                 'dataWaterReminder',
                 JSON.stringify(reminderData.data.waterReminder),
             );
+            setDataWaterReminder(reminderData.data.waterReminder);
         }
     };
 
     useEffect(() => {
+        const dataPlanning = JSON.parse(
+            sessionStorage.getItem('dataPlanning') || 'null',
+        );
         const dataExerciseFromStorage = JSON.parse(
             sessionStorage.getItem('dataExerciseReminder') || 'null',
         );
@@ -179,6 +206,7 @@ export default function Planning(props: IPlanningProps) {
         if (!dataWaterFromStorage && !dataExerciseFromStorage) {
             fetchData();
         } else {
+            setDataPlanningList(dataPlanning);
             setDataExerciseReminder(dataExerciseFromStorage);
             setDataWaterReminder(dataWaterFromStorage);
         }
@@ -227,42 +255,73 @@ export default function Planning(props: IPlanningProps) {
                         </div>
                         <div className="mt-5">
                             {dataPlanningList.length !== 0 ? (
-                                <div
-                                    className={clsx(
-                                        styles.remind__card,
-                                        'center rounded-lg bg-gray-900 h-16 w-full',
-                                    )}
-                                >
-                                    <div className="w-14 h-full center">
-                                        <CalendarTodayOutlinedIcon className="text-gray-300 text-2xl" />
-                                    </div>
-                                    <div className="flex-grow pr-2 py-2">
-                                        <div className="center-y mb-2">
-                                            <div className="">
-                                                <p className="text-gray-300 font-medium text-lg leading-[100%]">
-                                                    Kế hoạch giảm cân để đón tết
-                                                </p>
+                                dataPlanningList.map(
+                                    (
+                                        planningList: IFullyPlanningData,
+                                        index,
+                                    ) => (
+                                        <div
+                                            key={index}
+                                            className={clsx(
+                                                styles.remind__card,
+                                                'center rounded-lg bg-gray-900 h-16 w-full',
+                                            )}
+                                        >
+                                            <div className="w-14 h-full center">
+                                                <CalendarTodayOutlinedIcon className="text-gray-300 text-2xl" />
                                             </div>
-                                        </div>
-                                        <div className="center-y">
-                                            <div
-                                                className={clsx(
-                                                    styles.card__optionWrapper,
-                                                )}
+                                            <button
+                                                className="flex-grow pr-2 py-2"
+                                                onClick={() => {
+                                                    router.push(
+                                                        `/planning/${planningList._id}`,
+                                                    );
+                                                }}
                                             >
-                                                <CalendarTodayOutlinedIcon className="text-sm text-gray-400" />
-                                                <div className=""></div>
-                                            </div>
-                                            <div
-                                                className={clsx(
-                                                    styles.card__optionWrapper,
-                                                )}
-                                            >
-                                                <StickyNote2OutlinedIcon className="text-sm text-gray-400" />
-                                            </div>
+                                                <div className="center-y mb-2">
+                                                    <div className="">
+                                                        <p className="text-gray-300 font-medium text-lg leading-[100%]">
+                                                            {planningList.title}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="center-y">
+                                                    <div
+                                                        className={clsx(
+                                                            styles.card__optionWrapper,
+                                                        )}
+                                                    >
+                                                        <CalendarTodayOutlinedIcon className="text-sm text-gray-400" />
+                                                        <div className="ml-1">
+                                                            <p className="text-sm text-gray-400 leading-[100%]">
+                                                                {dayjs(
+                                                                    planningList.startTime,
+                                                                ).format(
+                                                                    'DD/MM/YYYY',
+                                                                )}{' '}
+                                                                -{' '}
+                                                                {dayjs(
+                                                                    planningList.endTime,
+                                                                ).format(
+                                                                    'DD/MM/YYYY',
+                                                                )}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    {planningList.note && (
+                                                        <div
+                                                            className={clsx(
+                                                                styles.card__optionWrapper,
+                                                            )}
+                                                        >
+                                                            <StickyNote2OutlinedIcon className="text-sm text-gray-400" />
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </button>
                                         </div>
-                                    </div>
-                                </div>
+                                    ),
+                                )
                             ) : (
                                 <div className=" center">
                                     <p className="">

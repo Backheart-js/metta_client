@@ -56,6 +56,22 @@ export interface IExerciseReminderData {
     note?: string;
 }
 
+export interface IInitPlaningData {
+    _id: string;
+    title: string;
+    startTime: Date;
+    endTime: Date;
+    note?: string;
+    status: Number;
+}
+
+export interface IFullyPlanningData extends IInitPlaningData {
+    goal?: string;
+    initWeight?: number;
+    goalWeight?: number;
+    caloPerDay?: number;
+}
+
 export const dayOfWeek = [
     {
         value: 1,
