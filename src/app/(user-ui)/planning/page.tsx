@@ -25,6 +25,7 @@ import {
 } from '@/utils/notifications/pushService';
 import exerciseReminderSync from '@/utils/axios/exerciseReminder';
 import { IWaterReminder, IExerciseReminder } from '@/types/reminderType';
+import { useRouter } from 'next/navigation';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 interface IThuMap {
@@ -33,6 +34,7 @@ interface IThuMap {
 export interface IPlanningProps {}
 
 export default function Planning(props: IPlanningProps) {
+    const router = useRouter();
     const currentDate = moment();
     const [dataPlanningList, setDataPlanningList] = useState([]);
     const [dataWaterReminder, setDataWaterReminder] = useState<IWaterReminder>({
@@ -283,7 +285,14 @@ export default function Planning(props: IPlanningProps) {
                                             <div className="w-14 h-full center">
                                                 <FitnessCenterOutlinedIcon className="text-gray-300 text-2xl" />
                                             </div>
-                                            <div className="flex-grow pr-2 py-2">
+                                            <button
+                                                className="flex-grow pr-2 py-2"
+                                                onClick={() => {
+                                                    router.push(
+                                                        '/reminder-detail/workout',
+                                                    );
+                                                }}
+                                            >
                                                 <div className="center-y mb-2">
                                                     <div className="">
                                                         <p className="text-gray-300 font-medium text-lg leading-[100%]">
@@ -329,7 +338,7 @@ export default function Planning(props: IPlanningProps) {
                                                         </div>
                                                     )}
                                                 </div>
-                                            </div>
+                                            </button>
                                         </div>
                                     )}
                                     {dataWaterReminder?.createdAt && (
@@ -342,7 +351,14 @@ export default function Planning(props: IPlanningProps) {
                                             <div className="w-14 h-full center">
                                                 <LocalDrinkOutlinedIcon className="text-gray-300 text-2xl" />
                                             </div>
-                                            <div className="flex-grow pr-2 py-2">
+                                            <button
+                                                className="flex-grow pr-2 py-2"
+                                                onClick={() => {
+                                                    router.push(
+                                                        '/reminder-detail/drink-water',
+                                                    );
+                                                }}
+                                            >
                                                 <div className="center-y mb-2">
                                                     <div className="">
                                                         <p className="text-gray-300 font-medium text-lg leading-[100%]">
@@ -403,7 +419,7 @@ export default function Planning(props: IPlanningProps) {
                                                         </div>
                                                     )}
                                                 </div>
-                                            </div>
+                                            </button>
                                         </div>
                                     )}
                                 </div>

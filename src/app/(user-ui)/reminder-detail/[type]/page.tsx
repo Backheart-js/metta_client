@@ -1,7 +1,7 @@
 'use client';
 import Dialog from '@/components/Dialog/Dialog';
 import { IExerciseReminder, IWaterReminder } from '@/types/reminderType';
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { LocalizationProvider, StaticTimePicker } from '@mui/x-date-pickers';
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
@@ -9,6 +9,8 @@ import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { dayOfWeek } from '@/types/planning';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { useRouter } from 'next/navigation';
 
 export interface IReminderProps {
     params: {
@@ -18,6 +20,7 @@ export interface IReminderProps {
 
 export default function Reminder({ params }: IReminderProps) {
     const { type } = params;
+    const router = useRouter();
     const [dataWaterReminder, setDataWaterReminder] = useState<IWaterReminder>({
         amountWaterPerTime: 0,
         createdAt: '',
@@ -113,9 +116,26 @@ export default function Reminder({ params }: IReminderProps) {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div>
+            <div className="container-sp pt-6 pb-10">
+                <div className="px-1">
+                    <Button
+                        variant="text"
+                        startIcon={<ArrowBackIosIcon />}
+                        className="text-boldGreen text-lg"
+                        onClick={() => {
+                            router.push('/planning');
+                        }}
+                    >
+                        Lịch của tôi
+                    </Button>
+                </div>
                 {type === 'drink-water' ? (
-                    <div className="">
+                    <div className="px-3 mt-5">
+                        <div className="">
+                            <h1 className="text-xl font-semibold my-0">
+                                Đặt lời nhắc uống nước
+                            </h1>
+                        </div>
                         <div className="px-2 py-3">
                             <section className="center-y justify-between h-12">
                                 <div className="">
@@ -192,7 +212,7 @@ export default function Reminder({ params }: IReminderProps) {
                                             onChange={handleChangeGapTime}
                                         />
                                     </div>
-                                    <p className="ml-2 font-medium text-base text-gray-600">
+                                    <p className="mr-2 font-medium text-base text-gray-600">
                                         phút
                                     </p>
                                 </div>
@@ -218,8 +238,13 @@ export default function Reminder({ params }: IReminderProps) {
                         </div>
                     </div>
                 ) : (
-                    <div className="">
-                        <section className="center-y justify-between h-12 my-4">
+                    <div className="px-3 mt-5">
+                        <div className="">
+                            <h1 className="text-xl font-semibold my-0">
+                                Đặt lời nhắc tập thể dục
+                            </h1>
+                        </div>
+                        <section className="center-y justify-between h-10 mt-2 mb-4">
                             <div className="">
                                 <p className="font-medium text-gray-600">
                                     Thời gian nhắc

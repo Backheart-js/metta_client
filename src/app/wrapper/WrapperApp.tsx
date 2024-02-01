@@ -38,6 +38,7 @@ export default function Wrapper({ children }: IWrapperProps) {
                 }
             } catch (error) {
                 console.log('Lỗi: ', error);
+                router.push('/auth/login');
             }
         })();
     }, []);
