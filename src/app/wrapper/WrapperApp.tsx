@@ -47,12 +47,19 @@ export default function Wrapper({ children }: IWrapperProps) {
             {isLoading ? (
                 <div className="fixed center bg-white inset-0 z-[99]">
                     <video
-                        src={require('../../assets/video/medicalife.mp4')}
                         autoPlay
                         muted
                         loop
+                        controls={false}
+                        playsInline
+                        preload="auto"
                         width="500"
-                    ></video>
+                    >
+                        <source
+                            src={require('../../assets/video/medicalife.mp4')}
+                            type="video/mp4"
+                        />
+                    </video>
                 </div>
             ) : (
                 children
