@@ -191,7 +191,7 @@ const Home: NextPage<HomeProps> = () => {
                         backgroundColor: '#d1e7dd',
                         borderColor: 'transparent',
                         borderRadius: '100%/100px 100px 0 0',
-                        transform: 'rotate(180deg)',
+                        transform: 'rotate(180deg) translateY(4px',
                     }}
                 ></div>
             </section>
@@ -281,7 +281,10 @@ const Home: NextPage<HomeProps> = () => {
                                     {dataWaterReminder.remindTime.map(
                                         (time, index: number) => {
                                             return index < totalDrunkCup ? (
-                                                <div className="pt-2 center flex-col">
+                                                <div
+                                                    className="pt-2 center flex-col"
+                                                    key={index}
+                                                >
                                                     <Image
                                                         src="/images/fill-water-cup.png"
                                                         alt="water"
@@ -294,6 +297,7 @@ const Home: NextPage<HomeProps> = () => {
                                                 </div>
                                             ) : (
                                                 <button
+                                                    key={index}
                                                     disabled={
                                                         !(
                                                             index ===

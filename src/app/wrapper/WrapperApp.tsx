@@ -9,12 +9,11 @@ import { registerServiceWorker } from '@/utils/serviceWorker/serviceWorker';
 
 export interface IWrapperProps {
     children: React.ReactNode;
+    isLoading: boolean;
 }
 
-export default function Wrapper({ children }: IWrapperProps) {
-    const router = useRouter();
+export default function Wrapper({ children, isLoading }: IWrapperProps) {
     const { isProgress, text } = useAppSelector((state) => state.loading);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         // Connect service worker
@@ -23,22 +22,6 @@ export default function Wrapper({ children }: IWrapperProps) {
                 await registerServiceWorker();
             } catch (error) {
                 console.error(error);
-            }
-        })();
-    }, []);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const { isLogin } = await checkLoginStatus();
-                if (!isLogin) {
-                    router.push('/auth/login');
-                } else {
-                    setIsLoading(false);
-                }
-            } catch (error) {
-                console.log('Lỗi: ', error);
-                router.push('/auth/login');
             }
         })();
     }, []);
