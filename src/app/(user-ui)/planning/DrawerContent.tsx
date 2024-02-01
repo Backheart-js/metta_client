@@ -31,6 +31,8 @@ import CalendarContent from './optionContent/CalendarContent';
 import waterReminderSync from '@/utils/axios/waterReminder';
 import { features } from 'process';
 import exerciseReminderSync from '@/utils/axios/exerciseReminder';
+import { IInitPlaningData } from '@/types/planningType';
+import planningSync from '@/utils/axios/planning';
 
 type Props = {
     onCloseDrawer: () => void;
@@ -124,6 +126,32 @@ const DrawerContent = ({ onCloseDrawer, onRefreshData }: Props) => {
                     createExerciseReminder(formatData);
                 }
             }
+        } else if (step === 1 && feature === 'planning') {
+            console.log('planning data: ', planningData);
+            initPlan();
+        }
+    };
+
+    const initPlan = async () => {
+        try {
+            const startTime = planningData.dateRange[0].toDate();
+            const endTime = planningData.dateRange[1].toDate();
+
+            const res = await planningSync.initPlaning({
+                title: planningData.title,
+                startTime,
+                endTime,
+                note: planningData.note,
+            });
+
+            if (res.status === 201) {
+                // Show snackbar tạo thành công
+                clearData();
+                onCloseDrawer();
+                onRefreshData();
+            }
+        } catch (error) {
+            console.log('Lỗi tạo');
         }
     };
 
