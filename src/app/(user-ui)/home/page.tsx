@@ -14,6 +14,7 @@ import { facts } from '@/mock/facts';
 import { IExerciseReminder, IWaterReminder } from '@/types/reminderType';
 import exerciseReminderSync from '@/utils/axios/exerciseReminder';
 import AddIcon from '@mui/icons-material/Add';
+import appDataSync from '@/utils/axios/appData';
 
 interface IFact {
     id: number;
@@ -54,12 +55,31 @@ const Home: NextPage<HomeProps> = () => {
         },
     ]);
 
+    const [waterDrunk, setWaterDrunk] = useState<number>(0);
+    const [totalDrunkCup, setTotalDrunkCup] = useState<number>(0);
+
+    const handleAddWaterCup = async () => {
+        setTotalDrunkCup((prev) => prev + 1);
+
+        const newWaterDrunkAmound =
+            waterDrunk + dataWaterReminder.amountWaterPerTime;
+        setWaterDrunk(newWaterDrunkAmound);
+
+        try {
+            const res = await appDataSync.updateDailyReminderData({
+                waterAmount: newWaterDrunkAmound,
+            });
+        } catch (error) {
+            console.log('Lỗi update data uống nước');
+        }
+    };
+
     useEffect(() => {
         (async () => {
             try {
                 const reminderData =
                     await exerciseReminderSync.getAllReminders();
-                console.log(reminderData.data);
+
                 if (reminderData.status === 200) {
                     setDataExerciseReminder(reminderData.data.exerciseReminder);
                     setDataWaterReminder(reminderData.data.waterReminder);
@@ -76,6 +96,33 @@ const Home: NextPage<HomeProps> = () => {
                         sessionStorage.setItem(
                             'dataWaterReminder',
                             JSON.stringify(reminderData.data.waterReminder),
+                        );
+                    }
+                }
+
+                // Lấy data uống nước hôm nay
+                const appData = await appDataSync.getCurrentDateData();
+                if (appData.status === 200) {
+                    if (appData.data.data.waterAmount) {
+                        setWaterDrunk(appData.data.data.waterAmount);
+                        console.log(
+                            'Lượng nước đã uống: ',
+                            appData.data.data.waterAmount,
+                        );
+                        console.log(
+                            'Lượng 1 lần: ',
+                            reminderData.data.waterReminder.amountWaterPerTime,
+                        );
+                        console.log(
+                            'Số cốc: ',
+                            appData.data.data.waterAmount /
+                                reminderData.data.waterReminder
+                                    .amountWaterPerTime,
+                        );
+                        setTotalDrunkCup(
+                            appData.data.data.waterAmount /
+                                reminderData.data.waterReminder
+                                    .amountWaterPerTime,
                         );
                     }
                 }
@@ -125,7 +172,7 @@ const Home: NextPage<HomeProps> = () => {
                             >
                                 {havePlan
                                     ? 'Theo dõi tiến độ kế hoạch'
-                                    : 'Lập kế hoạch'}
+                                    : 'Lập kế hoạch mới'}
                             </Button>
                         </div>
                     </div>
@@ -165,7 +212,7 @@ const Home: NextPage<HomeProps> = () => {
                             >
                                 {havePlan
                                     ? 'Theo dõi tiến độ kế hoạch'
-                                    : 'Lập kế hoạch'}
+                                    : 'Lập kế hoạch mới'}
                             </Button>
                         </div>
                     </div>
@@ -225,31 +272,58 @@ const Home: NextPage<HomeProps> = () => {
                                 Lượng nước uống trong hôm nay
                             </p>
                             <p className="font-medium text-boldGreen">
-                                1750 ml
+                                {waterDrunk.toString()} ml
                             </p>
                         </div>
                         <section className="">
                             <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                                <div className="grid grid-cols-5 gap-2">
-                                    <div className="pt-2">
-                                        <Image
-                                            src="/images/fill-water-cup.png"
-                                            alt="water"
-                                            width={100}
-                                            height={100}
-                                        />
-                                    </div>
-                                    <button className="relative pt-2">
-                                        <Image
-                                            src="/images/empty-cup.png"
-                                            alt="water"
-                                            width={100}
-                                            height={100}
-                                        />
-                                        <div className="absolute left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%]">
-                                            <AddIcon className="text-4xl"></AddIcon>
-                                        </div>
-                                    </button>
+                                <div className="grid grid-cols-5 sm:grid-cols-6 gap-2">
+                                    {dataWaterReminder.remindTime.map(
+                                        (time, index: number) => {
+                                            return index < totalDrunkCup ? (
+                                                <div className="pt-2 center flex-col">
+                                                    <Image
+                                                        src="/images/fill-water-cup.png"
+                                                        alt="water"
+                                                        width={80}
+                                                        height={80}
+                                                    />
+                                                    <p className="mt-2">
+                                                        {time}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    disabled={
+                                                        !(
+                                                            index ===
+                                                            totalDrunkCup
+                                                        )
+                                                    }
+                                                    className="pt-2"
+                                                    onClick={handleAddWaterCup}
+                                                >
+                                                    <div className="relative">
+                                                        <Image
+                                                            src="/images/empty-cup.png"
+                                                            alt="water"
+                                                            width={80}
+                                                            height={80}
+                                                        />
+                                                        {index ===
+                                                            totalDrunkCup && (
+                                                            <div className="absolute left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%]">
+                                                                <AddIcon className="text-gray-800 text-2xl md:text-4xl"></AddIcon>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <p className="mt-2">
+                                                        {time}
+                                                    </p>
+                                                </button>
+                                            );
+                                        },
+                                    )}
                                 </div>
                             </div>
                         </section>
