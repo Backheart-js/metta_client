@@ -172,7 +172,7 @@ const Home: NextPage<HomeProps> = () => {
                             >
                                 {havePlan
                                     ? 'Theo dõi tiến độ kế hoạch'
-                                    : 'Lập kế hoạch'}
+                                    : 'Lập kế hoạch mới'}
                             </Button>
                         </div>
                     </div>
@@ -212,7 +212,7 @@ const Home: NextPage<HomeProps> = () => {
                             >
                                 {havePlan
                                     ? 'Theo dõi tiến độ kế hoạch'
-                                    : 'Lập kế hoạch'}
+                                    : 'Lập kế hoạch mới'}
                             </Button>
                         </div>
                     </div>
