@@ -1,7 +1,7 @@
 'use client';
 import Search from '@/components/Search/Search';
 import { category } from '@/types/category';
-import { Button, IconButton } from '@mui/material';
+import { Avatar, Button, IconButton } from '@mui/material';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import styles from './PCHeader.module.scss';
@@ -50,7 +50,13 @@ function PCHeader({ isLogin }: IPCHeaderProps) {
     return (
         <div className="">
             <header className="center-y justify-between h-[56px] px-6 bg-lightgreen">
-                <div className="w-[120px]">Logo</div>
+                <div className="w-[120px]">
+                    <Avatar
+                        alt="Assistant"
+                        src="/icon-256x256.png"
+                        sx={{ width: 44, height: 44 }}
+                    />
+                </div>
                 <div className="center-y justify-between container-sp">
                     {category.slice(0, -1).map((category, index) => {
                         const { Icon, path, short_text } = category;

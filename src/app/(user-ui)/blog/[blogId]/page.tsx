@@ -113,14 +113,14 @@ export default function Blog({ params }: IBlogProps) {
                     }
                 />
             </div>
-            <div className="">
+            {/* <div className="">
                 <div className="my-6">
                     <p className="text-boldGreen font-semibold text-lg">
                         Có thể bạn cần đọc
                     </p>
                 </div>
                 <div className=""></div>
-            </div>
+            </div> */}
         </div>
     );
 }

@@ -1,12 +1,13 @@
 import axios from './axios';
 
 const completionSync = {
-    createAICompletion: () => {
-        return axios.post('/openai/completion/create', null, {
-            headers: {
-                'Content-Type': 'text/event-stream',
-            },
+    createAICompletion: (content: string) => {
+        return axios.post('/openai/completion/create', {
+            content,
         });
+    },
+    getChat: () => {
+        return axios.get('/openai/completion/get');
     },
 };
 
