@@ -15,12 +15,8 @@ export default function Wrapper({ children, isLoading }: IWrapperProps) {
 
     useEffect(() => {
         // Connect service worker
-        (async () => {
-            try {
-                await registerServiceWorker();
-            } catch (error) {
-                console.error(error);
-            }
+        (() => {
+            registerServiceWorker();
         })();
     }, []);
 
