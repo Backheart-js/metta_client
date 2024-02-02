@@ -57,12 +57,12 @@ export interface IExerciseReminderData {
 }
 
 export interface IInitPlaningData {
-    _id: string;
+    _id?: string;
     title: string;
     startTime: Date;
     endTime: Date;
     note?: string;
-    status: Number;
+    status?: Number;
 }
 
 export interface IFullyPlanningData extends IInitPlaningData {

@@ -258,7 +258,7 @@ export default function PlanningDetail({ params }: IPlanningDetailProps) {
                                 width: '100%',
                                 height: '50px',
                                 border: 'solid 5px #000',
-                                backgroundColor: '#d1e7dd',
+                                backgroundColor: '#d5f2d6',
                                 borderColor: 'transparent',
                                 borderRadius: '100%/100px 100px 0 0',
                                 transform: 'rotate(180deg) translateY(4px',

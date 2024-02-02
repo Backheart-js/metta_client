@@ -16,7 +16,7 @@ export default function CalendarContent({
     dateRangeInput,
     handleChange,
 }: ICalendarContentProps) {
-    const handleDateChange = (newDateRange: Date[]) => {
+    const handleDateChange = (newDateRange: [Date | null, Date | null]) => {
         console.log(newDateRange.map((date) => dayjs(date)));
         handleChange((prev: IPlanning) => ({
             ...prev,
@@ -29,12 +29,12 @@ export default function CalendarContent({
             <div className="center-x flex-col gap-5 pt-5 pb-3">
                 <div className="center w-full">
                     <MobileDateRangePicker
-                        value={dateRangeInput}
+                        value={[
+                            dateRangeInput[0]?.toDate() || null,
+                            dateRangeInput[1]?.toDate() || null,
+                        ]}
                         onChange={handleDateChange}
                         autoFocus
-                        inputProps={{
-                            readOnly: true, // Ngăn chặn hiển thị bàn phím
-                        }}
                     />
                 </div>
                 <div className="">
