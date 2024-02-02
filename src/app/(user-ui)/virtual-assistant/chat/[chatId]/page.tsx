@@ -28,7 +28,7 @@ export default function Chat(props: IChatProps) {
                 setResMessage((prev) => prev + value);
             }
         } catch (error) {
-            console.log(error.message);
+            console.log(error);
         }
         setMessageValue('');
     };
@@ -38,7 +38,7 @@ export default function Chat(props: IChatProps) {
             <div className="assistant__wrapper center-y gap-2 flex-col justify-between w-full md:py-6">
                 <section
                     id="top"
-                    className="w-full center md:px-6 py-2 bg-lightgreen rounded"
+                    className="w-full center px-4 md:px-6 py-2 bg-lightgreen rounded"
                 >
                     <div className="w-full center-y justify-between">
                         <div className="center">
@@ -60,7 +60,10 @@ export default function Chat(props: IChatProps) {
                         </div>
                     </div>
                 </section>
-                <section id="chat-frame" className="flex-grow w-full md:px-6">
+                <section
+                    id="chat-frame"
+                    className="flex-grow w-full px-4 md:px-6"
+                >
                     <div className="flex flex-col w-full h-full gap-4">
                         <div className="frame flex-grow w-full">
                             {!resMessage ? (
@@ -138,7 +141,7 @@ export default function Chat(props: IChatProps) {
                         </div>
                     </div>
                 </section>
-                <section id="interactive" className="w-full mt-2 md:px-6">
+                <section id="interactive" className="w-full mt-2 px-4 md:px-6">
                     <div className="center gap-4">
                         <Button
                             className="bg-black text-white flex-1"
