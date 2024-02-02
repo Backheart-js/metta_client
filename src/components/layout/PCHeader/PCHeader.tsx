@@ -15,11 +15,13 @@ import useSessionStorage from '@/hooks/useSessionStorage';
 import Dropdown from '@/components/Dropdown/Dropdown';
 import auth from '@/utils/axios/auth';
 
-function PCHeader() {
+interface IPCHeaderProps {
+    isLogin: boolean;
+}
+
+function PCHeader({ isLogin }: IPCHeaderProps) {
     const pathname = usePathname();
     const router = useRouter();
-    const isLoginFromSession = useSessionStorage('isLogin');
-    const [isLogin, setIsLogin] = useState<boolean>(isLoginFromSession);
     const options = [
         { value: 'profile', label: 'Thông tin cá nhân' },
         { value: 'settings', label: 'Cài đặt' },
@@ -31,7 +33,7 @@ function PCHeader() {
             const res = await auth.logout();
             if (res.status === 200) {
                 sessionStorage.setItem('isLogin', false.toString());
-                setIsLogin(false);
+                router.push('/auth');
             }
         } catch (error) {
             // Thông báo lỗi
@@ -45,10 +47,6 @@ function PCHeader() {
         }
     };
 
-    useEffect(() => {
-        setIsLogin(isLoginFromSession);
-    }, [isLoginFromSession]);
-
     return (
         <div className="">
             <header className="center-y justify-between h-[56px] px-6 bg-lightgreen">
@@ -56,7 +54,7 @@ function PCHeader() {
                 <div className="center-y justify-between container-sp">
                     {category.slice(0, -1).map((category, index) => {
                         const { Icon, path, short_text } = category;
-                        const isActive = pathname.includes(category.path);
+                        const isActive = pathname?.includes(category.path);
 
                         return (
                             <div

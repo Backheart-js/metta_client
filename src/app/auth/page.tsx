@@ -91,29 +91,4 @@ function Auth({}: IAuthProps) {
     );
 }
 
-export async function checkLogin() {
-    try {
-        const res = await auth.isLogin();
-        console.log(res.data);
-        if (res.status === 200) {
-            return {
-                props: {
-                    checkLogin: res.data.isLogin,
-                },
-            };
-        }
-        return {
-            props: {
-                checkLogin: false,
-            },
-        };
-    } catch (error) {
-        return {
-            props: {
-                checkLogin: false,
-            },
-        };
-    }
-}
-
 export default Auth;

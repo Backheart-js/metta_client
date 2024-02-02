@@ -51,13 +51,7 @@ export const facts = [
         id: 9,
         title: 'Quả hồng có lợi cho tim mạch',
         content:
-            'Chúng ta thường nghĩ về quả lựu như là một loại trái cây tốt cho sức khỏe, nhưng nó cũng có thể giúp giảm huyết áp và cải thiện sức khỏe tim mạch.',
-    },
-    {
-        id: 10,
-        title: 'Quả hồng có lợi cho tim mạch',
-        content:
-            'Chúng ta thường nghĩ về quả lựu như là một loại trái cây tốt cho sức khỏe, nhưng nó cũng có thể giúp giảm huyết áp và cải thiện sức khỏe tim mạch.',
+            'Chúng ta thường nghĩ về quả hồng như là một loại trái cây tốt cho sức khỏe, nhưng nó cũng có thể giúp giảm huyết áp và cải thiện sức khỏe tim mạch.',
     },
     {
         id: 11,
