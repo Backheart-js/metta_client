@@ -19,7 +19,7 @@ export default function GuestLayout({
     return isLogin ? (
         <UserLayout>{children}</UserLayout>
     ) : (
-        <div className={clsx(styles.wrapper)}>
+        <div className={clsx(styles.wrapper, 'bg-gray-100')}>
             <MobileHeader />
             <main className={clsx(styles.content, 'mt-14')}>{children}</main>
             {!isLogin && showTable && (

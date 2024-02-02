@@ -9,7 +9,7 @@ function Tool({}: Props) {
     useEffect(() => {}, []);
 
     return (
-        <div className="container-sp pt-16 sm:pt-10 md:pt-0">
+        <div className="container-sp pt-6 sm:pt-4 md:pt-0">
             <Intro />
         </div>
     );

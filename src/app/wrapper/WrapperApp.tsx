@@ -1,31 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoadingModal from '@/components/LoadingModal/LoadingModal';
-import { checkLoginStatus } from '@/middlewares/checkLogin.middleware';
 import { useAppSelector } from '@/lib/hooks';
-import { useRouter } from 'next/navigation';
+import { registerServiceWorker } from '@/utils/serviceWorker/serviceWorker';
 
 export interface IWrapperProps {
     children: React.ReactNode;
+    isLoading: boolean;
 }
 
-export default function Wrapper({ children }: IWrapperProps) {
-    const router = useRouter();
+export default function Wrapper({ children, isLoading }: IWrapperProps) {
     const { isProgress, text } = useAppSelector((state) => state.loading);
-    const [isLoading, setIsLoading] = useState(true);
 
-    React.useEffect(() => {
+    useEffect(() => {
+        // Connect service worker
         (async () => {
             try {
-                const { isLogin } = await checkLoginStatus();
-                console.log(isLogin);
-                if (!isLogin) {
-                    router.push('/auth/login');
-                    setIsLoading(false);
-                }
+                await registerServiceWorker();
             } catch (error) {
-                console.log('Lỗi: ', error);
+                console.error(error);
             }
         })();
     }, []);
@@ -35,12 +29,19 @@ export default function Wrapper({ children }: IWrapperProps) {
             {isLoading ? (
                 <div className="fixed center bg-white inset-0 z-[99]">
                     <video
-                        src={require('../../assets/video/medicalife.mp4')}
                         autoPlay
                         muted
                         loop
+                        controls={false}
+                        playsInline
+                        preload="auto"
                         width="500"
-                    ></video>
+                    >
+                        <source
+                            src={require('../../assets/video/medicalife.mp4')}
+                            type="video/mp4"
+                        />
+                    </video>
                 </div>
             ) : (
                 children

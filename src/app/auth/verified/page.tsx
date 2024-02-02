@@ -13,7 +13,7 @@ export default function Verify(props: IVerifyProps) {
     const router = useRouter();
     const [verifySuccessfully, setVerifySuccessfully] = useState<boolean>(true);
     const searchParams = useSearchParams();
-    const id = searchParams.get('id'); // id của account
+    const id = searchParams?.get('id'); // id của account
 
     useEffect(() => {
         (async () => {

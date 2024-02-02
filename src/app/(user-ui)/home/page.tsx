@@ -9,8 +9,20 @@ import ListKnowledge from '@/components/ListPage/ListKnowledge';
 import { welcomeMessage } from '@/mock/welcomeText';
 import DoctorBanner from '@/assets/image/banner-ai.png';
 import Dot from '@/assets/image/dots-banner.png';
-import { Button } from '@mui/material';
+import {
+    Button,
+    InputAdornment,
+    OutlinedInput,
+    TextField,
+} from '@mui/material';
 import { facts } from '@/mock/facts';
+import { IExerciseReminder, IWaterReminder } from '@/types/reminderType';
+import exerciseReminderSync from '@/utils/axios/exerciseReminder';
+import AddIcon from '@mui/icons-material/Add';
+import appDataSync from '@/utils/axios/appData';
+import planningSync from '@/utils/axios/planning';
+import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
 
 interface IFact {
     id: number;
@@ -21,9 +33,10 @@ interface HomeProps {}
 
 const Home: NextPage<HomeProps> = () => {
     const isFirstTime = false;
+    const router = useRouter();
     const [havePlan, setHavePlan] = useState(false);
-    const [haveRemindWater, setHaveRemindWater] = useState(true);
-    const [haveRemindWorkout, setHaveRemindWorkout] = useState(true);
+    const [haveRemindWater, setHaveRemindWater] = useState(false);
+    const [haveRemindWorkout, setHaveRemindWorkout] = useState(false);
     const [randomWelcome, setrandomWelcome] = useState('');
     const [fact, setFact] = useState<IFact>({
         id: 1,
@@ -31,7 +44,156 @@ const Home: NextPage<HomeProps> = () => {
         content: '',
     });
 
+    // Data
+    const [dataWaterReminder, setDataWaterReminder] = useState<IWaterReminder>({
+        amountWaterPerTime: 0,
+        createdAt: '',
+        endTime: '',
+        interval: 0,
+        note: '',
+        remindTime: [''],
+        startTime: '',
+        updateAt: '',
+        waterAmount: 0,
+    });
+    const [dataExerciseReminder, setDataExerciseReminder] = useState<
+        IExerciseReminder[]
+    >([
+        {
+            note: '',
+            remindTime: '',
+            repeat: [0],
+        },
+    ]);
+
+    const [waterDrunk, setWaterDrunk] = useState<number>(0);
+    const [exerciseTimeToday, setExerciseTimeToday] = useState<number>(0);
+
+    const [totalDrunkCup, setTotalDrunkCup] = useState<number>(0);
+    const [isExercisetime, setIsExercisetime] = useState<{
+        isToday: boolean;
+        isExpired: boolean;
+    }>({
+        isToday: false,
+        isExpired: true,
+    });
+
+    const handleAddWaterCup = async () => {
+        setTotalDrunkCup((prev) => prev + 1);
+
+        const newWaterDrunkAmound =
+            waterDrunk + dataWaterReminder.amountWaterPerTime;
+        setWaterDrunk(newWaterDrunkAmound);
+
+        try {
+            const res = await appDataSync.updateDailyReminderData({
+                waterAmount: newWaterDrunkAmound,
+            });
+        } catch (error) {
+            console.log('Lỗi update data uống nước');
+        }
+    };
+
+    const updateExerciseToday = async () => {
+        try {
+            const res = await appDataSync.updateDailyReminderData({
+                exerciseInterval: exerciseTimeToday,
+            });
+        } catch (error) {
+            console.log('Lỗi update data thời gian tập luyện');
+        }
+    };
+
+    const checkTimeExercise = (data: IExerciseReminder[]): boolean => {
+        if (data.length === 0) return false;
+        else {
+            const currentDayOfWeek = dayjs().day();
+            const currentTime = dayjs();
+            const target = dayjs(data[0].remindTime, 'HH:mm');
+
+            const isToday = data[0].repeat.includes(currentDayOfWeek);
+            const isExpired = !currentTime.isBefore(target);
+            setIsExercisetime({
+                isToday,
+                isExpired,
+            });
+        }
+
+        return true;
+    };
+
     useEffect(() => {
+        (async () => {
+            try {
+                const reminderData =
+                    await exerciseReminderSync.getAllReminders();
+
+                if (reminderData.status === 200) {
+                    setDataExerciseReminder(reminderData.data.exerciseReminder);
+                    setDataWaterReminder(reminderData.data.waterReminder);
+
+                    // Hàm check hôm nay có phải tập thể dục không
+                    checkTimeExercise(reminderData.data.exerciseReminder);
+
+                    if (reminderData.data.exerciseReminder.length > 0) {
+                        setHaveRemindWorkout(true);
+                        sessionStorage.setItem(
+                            'dataExerciseReminder',
+                            JSON.stringify(reminderData.data.exerciseReminder),
+                        );
+                    }
+                    if (reminderData.data.waterReminder) {
+                        setHaveRemindWater(true);
+                        sessionStorage.setItem(
+                            'dataWaterReminder',
+                            JSON.stringify(reminderData.data.waterReminder),
+                        );
+                    }
+                }
+
+                const planningData = await planningSync.getAll();
+
+                if (planningData.status === 200) {
+                    if (planningData.data.results.length > 0) {
+                        setHavePlan(true);
+                        sessionStorage.setItem(
+                            'dataPlanning',
+                            JSON.stringify(planningData.data.results),
+                        );
+                    }
+                }
+
+                // Lấy data uống nước hôm nay
+                const appData = await appDataSync.getCurrentDateData();
+                if (appData.status === 200) {
+                    if (appData.data.data.waterAmount) {
+                        setWaterDrunk(appData.data.data.waterAmount);
+                        console.log(
+                            'Lượng nước đã uống: ',
+                            appData.data.data.waterAmount,
+                        );
+                        console.log(
+                            'Lượng 1 lần: ',
+                            reminderData.data.waterReminder.amountWaterPerTime,
+                        );
+                        console.log(
+                            'Số cốc: ',
+                            appData.data.data.waterAmount /
+                                reminderData.data.waterReminder
+                                    .amountWaterPerTime,
+                        );
+                        setTotalDrunkCup(
+                            appData.data.data.waterAmount /
+                                reminderData.data.waterReminder
+                                    .amountWaterPerTime,
+                        );
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        })();
+
         setFact(
             _.sample(facts) || {
                 id: 1,
@@ -73,7 +235,7 @@ const Home: NextPage<HomeProps> = () => {
                             >
                                 {havePlan
                                     ? 'Theo dõi tiến độ kế hoạch'
-                                    : 'Lập kế hoạch'}
+                                    : 'Lập kế hoạch mới'}
                             </Button>
                         </div>
                     </div>
@@ -92,7 +254,7 @@ const Home: NextPage<HomeProps> = () => {
                         backgroundColor: '#d1e7dd',
                         borderColor: 'transparent',
                         borderRadius: '100%/100px 100px 0 0',
-                        transform: 'rotate(180deg)',
+                        transform: 'rotate(180deg) translateY(4px',
                     }}
                 ></div>
             </section>
@@ -113,7 +275,7 @@ const Home: NextPage<HomeProps> = () => {
                             >
                                 {havePlan
                                     ? 'Theo dõi tiến độ kế hoạch'
-                                    : 'Lập kế hoạch'}
+                                    : 'Lập kế hoạch mới'}
                             </Button>
                         </div>
                     </div>
@@ -132,18 +294,22 @@ const Home: NextPage<HomeProps> = () => {
                 </div>
             </section>
             <main className="container-sp mt-5 md:mt-20 pb-28">
-                <section id="remind" className="px-3">
-                    <div className="center-y justify-between gap-2 py-1">
-                        <p className="text-gray-700 font-medium text-lg">
-                            Đặt lời nhắc
-                        </p>
-                        <Button size="large" className="text-boldGreen">
-                            Đi tới
-                        </Button>
-                    </div>
-                    <section className="">
-                        <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
-                            {haveRemindWorkout && haveRemindWater && (
+                {!haveRemindWorkout && !haveRemindWater && (
+                    <section id="remind-water" className="px-3">
+                        <div className="center-y justify-between gap-2 py-1">
+                            <p className="text-gray-700 font-medium text-lg">
+                                Đặt lời nhắc
+                            </p>
+                            <Button
+                                size="large"
+                                className="text-boldGreen"
+                                onClick={() => router.push('/planning')}
+                            >
+                                Đi tới
+                            </Button>
+                        </div>
+                        <section className="">
+                            <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
                                 <div className="flex items-start justify-between gap-2">
                                     <div className="pt-2">
                                         <span className="text-gray-500 font-medium text-sm">
@@ -161,11 +327,138 @@ const Home: NextPage<HomeProps> = () => {
                                         />
                                     </div>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        </section>
+                        <section></section>
                     </section>
-                    <section></section>
-                </section>
+                )}
+                {haveRemindWater && (
+                    <section id="remind" className="px-3">
+                        <div className="center-y justify-between gap-2 py-1">
+                            <p className="text-gray-700 font-medium text-lg">
+                                Lượng nước uống trong hôm nay
+                            </p>
+                            <p className="font-medium text-boldGreen">
+                                {waterDrunk.toString()} ml
+                            </p>
+                        </div>
+                        <section className="">
+                            <div className="bg-white px-4 pt-3 pb-4 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+                                <div className="grid grid-cols-5 sm:grid-cols-6 gap-2">
+                                    {dataWaterReminder.remindTime.map(
+                                        (time, index: number) => {
+                                            return index < totalDrunkCup ? (
+                                                <div
+                                                    className="pt-2 center flex-col"
+                                                    key={index}
+                                                >
+                                                    <Image
+                                                        src="/images/fill-water-cup.png"
+                                                        alt="water"
+                                                        width={80}
+                                                        height={80}
+                                                    />
+                                                    <p className="mt-2">
+                                                        {time}
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    key={index}
+                                                    disabled={
+                                                        !(
+                                                            index ===
+                                                            totalDrunkCup
+                                                        )
+                                                    }
+                                                    className="pt-2"
+                                                    onClick={handleAddWaterCup}
+                                                >
+                                                    <div className="relative">
+                                                        <Image
+                                                            src="/images/empty-cup.png"
+                                                            alt="water"
+                                                            width={80}
+                                                            height={80}
+                                                        />
+                                                        {index ===
+                                                            totalDrunkCup && (
+                                                            <div className="absolute left-[50%] top-[50%] translate-y-[-50%] translate-x-[-50%]">
+                                                                <AddIcon className="text-gray-800 text-2xl md:text-4xl"></AddIcon>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <p className="mt-2">
+                                                        {time}
+                                                    </p>
+                                                </button>
+                                            );
+                                        },
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                        <section></section>
+                    </section>
+                )}
+                {isExercisetime.isToday && (
+                    <section id="remind-workout" className="px-3 my-8">
+                        <div className="center-y justify-between gap-2 py-1">
+                            <p className="text-gray-700 font-medium text-lg">
+                                Tập thể dục hôm nay
+                            </p>
+                        </div>
+                        <section className="">
+                            <div className="bg-white px-4 pt-5 pb-6 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+                                {isExercisetime.isExpired ? (
+                                    <div className="center-y flex-col">
+                                        <div className="center-y justify-between w-full mb-6">
+                                            <p className="font-medium text-lg text-gray-800">
+                                                Thời gian tập luyện:
+                                            </p>
+                                            <div className="">
+                                                <OutlinedInput
+                                                    value={exerciseTimeToday}
+                                                    className="w-[120px]"
+                                                    id="outlined-adornment-weight"
+                                                    endAdornment={
+                                                        <InputAdornment position="end">
+                                                            phút
+                                                        </InputAdornment>
+                                                    }
+                                                    onChange={(e) => {
+                                                        setExerciseTimeToday(
+                                                            Number(
+                                                                e.target.value,
+                                                            ),
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="center">
+                                            <Button
+                                                disabled={
+                                                    exerciseTimeToday === 0
+                                                }
+                                                className="rounded-2xl bg-boldGreen h-10"
+                                                variant="contained"
+                                                onClick={updateExerciseToday}
+                                            >
+                                                Xác nhận
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="">
+                                        Nhắc bạn hôm nay có lịch tập lúc{' '}
+                                        {dataExerciseReminder[0].remindTime}
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    </section>
+                )}
                 <section id="knowledge" className="my-8">
                     <div className="bg-white pt-4 pb-2">
                         <div className="center-y py-1 px-3">

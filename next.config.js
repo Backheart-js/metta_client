@@ -2,6 +2,7 @@
 const withVideos = require('next-videos');
 const withPWA = require('next-pwa')({
     dest: 'public',
+    swSrc: 'service-worker.js',
 });
 
 module.exports = withPWA(
@@ -19,15 +20,9 @@ module.exports = withPWA(
             remotePatterns: [
                 {
                     protocol: 'https',
-                    port: '',
-                    pathname: '/v0/**',
-                    hostname: 'w0.peakpx.com',
-                },
-                {
-                    protocol: 'https',
-                    pathname: '/wallpaper/**',
                     hostname: 'firebasestorage.googleapis.com',
                     port: '',
+                    pathname: '/v0/**',
                 },
             ],
         },
