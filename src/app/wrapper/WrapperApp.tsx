@@ -4,6 +4,10 @@ import React, { useEffect, useState } from 'react';
 import LoadingModal from '@/components/LoadingModal/LoadingModal';
 import { useAppSelector } from '@/lib/hooks';
 import { registerServiceWorker } from '@/utils/serviceWorker/serviceWorker';
+import {
+    registerPushNotifications,
+    unregisterPushNotifications,
+} from '@/utils/notifications/pushService';
 
 export interface IWrapperProps {
     children: React.ReactNode;
@@ -12,11 +16,26 @@ export interface IWrapperProps {
 
 export default function Wrapper({ children, isLoading }: IWrapperProps) {
     const { isProgress, text } = useAppSelector((state) => state.loading);
-
+    async function setPushNotificationEnabled(enabled: boolean) {
+        try {
+            if (enabled) {
+                await registerPushNotifications();
+            } else {
+                unregisterPushNotifications();
+            }
+        } catch (error) {
+            if (enabled && Notification.permission === 'denied') {
+                alert('Turn on');
+            } else {
+                alert('Please try again');
+            }
+        }
+    }
     useEffect(() => {
         // Connect service worker
         (() => {
             registerServiceWorker();
+            setPushNotificationEnabled(true);
         })();
     }, []);
 

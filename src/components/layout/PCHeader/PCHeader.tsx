@@ -1,17 +1,14 @@
 'use client';
-import Search from '@/components/Search/Search';
 import { category } from '@/types/category';
 import { Avatar, Button, IconButton } from '@mui/material';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import styles from './PCHeader.module.scss';
 import clsx from 'clsx';
 import { usePathname, useRouter } from 'next/navigation';
 import {
     AccountCircleOutlined,
     NotificationsNoneOutlined,
 } from '@mui/icons-material';
-import useSessionStorage from '@/hooks/useSessionStorage';
 import Dropdown from '@/components/Dropdown/Dropdown';
 import auth from '@/utils/axios/auth';
 
@@ -44,6 +41,10 @@ function PCHeader({ isLogin }: IPCHeaderProps) {
         switch (option) {
             case 'logout':
                 handleLogout();
+                break;
+            case 'profile' || 'settings':
+                router.push('/profile');
+                break;
         }
     };
 
@@ -88,11 +89,11 @@ function PCHeader({ isLogin }: IPCHeaderProps) {
                 <div className="center gap-3">
                     {isLogin ? (
                         <>
-                            <IconButton aria-label="noti">
+                            {/* <IconButton aria-label="noti">
                                 <NotificationsNoneOutlined
                                     style={{ fontSize: 28, color: '#555' }}
                                 />
-                            </IconButton>
+                            </IconButton> */}
                             <Dropdown
                                 options={options}
                                 onSelect={handleSelectDropdown}

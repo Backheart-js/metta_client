@@ -1,4 +1,5 @@
 import useClickOutside from '@/hooks/useClickOutside';
+import { useRouter } from 'next/navigation';
 import React, { useRef, useState } from 'react';
 
 export interface IDropdownProps {

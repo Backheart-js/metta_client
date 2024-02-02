@@ -11,8 +11,6 @@ export async function requestNotificationsPermission() {
 
     if (permistion !== 'granted') {
         throw Error('Notification permission not granted');
-    } else {
-        new window.Notification('Hello');
     }
 }
 

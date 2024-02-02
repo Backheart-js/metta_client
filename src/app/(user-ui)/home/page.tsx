@@ -9,12 +9,7 @@ import ListKnowledge from '@/components/ListPage/ListKnowledge';
 import { welcomeMessage } from '@/mock/welcomeText';
 import DoctorBanner from '@/assets/image/banner-ai.png';
 import Dot from '@/assets/image/dots-banner.png';
-import {
-    Button,
-    InputAdornment,
-    OutlinedInput,
-    TextField,
-} from '@mui/material';
+import { Button, InputAdornment, OutlinedInput } from '@mui/material';
 import { facts } from '@/mock/facts';
 import { IExerciseReminder, IWaterReminder } from '@/types/reminderType';
 import exerciseReminderSync from '@/utils/axios/exerciseReminder';
