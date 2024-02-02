@@ -1,0 +1,14 @@
+.assistant__wrapper {
+    height: calc(100vh - 70px - 55px);
+}
+
+.chat__input {
+    &:focus-visible {
+        outline: none;
+      }
+    &::placeholder {
+        font-size: 14px;
+        font-weight: 500;
+        color: #8e8e8e;
+    }
+}
