@@ -69,6 +69,7 @@ export interface IFullyPlanningData extends IInitPlaningData {
     goal?: string;
     initWeight?: number;
     goalWeight?: number;
+    currentWeight?: number;
     caloPerDay?: number;
 }
 

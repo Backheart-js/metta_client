@@ -203,7 +203,7 @@ export default function Planning(props: IPlanningProps) {
             sessionStorage.getItem('dataWaterReminder') || 'null',
         );
 
-        if (!dataWaterFromStorage && !dataExerciseFromStorage) {
+        if (!dataWaterFromStorage || !dataExerciseFromStorage) {
             fetchData();
         } else {
             setDataPlanningList(dataPlanning);
@@ -331,7 +331,7 @@ export default function Planning(props: IPlanningProps) {
                             )}
                         </div>
                     </div>
-                    {(dataExerciseReminder[0]?.remindTime ||
+                    {(dataExerciseReminder.length > 0 ||
                         dataWaterReminder?.createdAt) && (
                         <div className="mt-10">
                             <h2 className={clsx(styles.title, 'md:text-lg')}>

@@ -9,12 +9,20 @@ import ListKnowledge from '@/components/ListPage/ListKnowledge';
 import { welcomeMessage } from '@/mock/welcomeText';
 import DoctorBanner from '@/assets/image/banner-ai.png';
 import Dot from '@/assets/image/dots-banner.png';
-import { Button } from '@mui/material';
+import {
+    Button,
+    InputAdornment,
+    OutlinedInput,
+    TextField,
+} from '@mui/material';
 import { facts } from '@/mock/facts';
 import { IExerciseReminder, IWaterReminder } from '@/types/reminderType';
 import exerciseReminderSync from '@/utils/axios/exerciseReminder';
 import AddIcon from '@mui/icons-material/Add';
 import appDataSync from '@/utils/axios/appData';
+import planningSync from '@/utils/axios/planning';
+import { useRouter } from 'next/navigation';
+import dayjs from 'dayjs';
 
 interface IFact {
     id: number;
@@ -25,6 +33,7 @@ interface HomeProps {}
 
 const Home: NextPage<HomeProps> = () => {
     const isFirstTime = false;
+    const router = useRouter();
     const [havePlan, setHavePlan] = useState(false);
     const [haveRemindWater, setHaveRemindWater] = useState(false);
     const [haveRemindWorkout, setHaveRemindWorkout] = useState(false);
@@ -34,6 +43,8 @@ const Home: NextPage<HomeProps> = () => {
         title: '',
         content: '',
     });
+
+    // Data
     const [dataWaterReminder, setDataWaterReminder] = useState<IWaterReminder>({
         amountWaterPerTime: 0,
         createdAt: '',
@@ -56,7 +67,16 @@ const Home: NextPage<HomeProps> = () => {
     ]);
 
     const [waterDrunk, setWaterDrunk] = useState<number>(0);
+    const [exerciseTimeToday, setExerciseTimeToday] = useState<number>(0);
+
     const [totalDrunkCup, setTotalDrunkCup] = useState<number>(0);
+    const [isExercisetime, setIsExercisetime] = useState<{
+        isToday: boolean;
+        isExpired: boolean;
+    }>({
+        isToday: false,
+        isExpired: true,
+    });
 
     const handleAddWaterCup = async () => {
         setTotalDrunkCup((prev) => prev + 1);
@@ -74,6 +94,34 @@ const Home: NextPage<HomeProps> = () => {
         }
     };
 
+    const updateExerciseToday = async () => {
+        try {
+            const res = await appDataSync.updateDailyReminderData({
+                exerciseInterval: exerciseTimeToday,
+            });
+        } catch (error) {
+            console.log('Lỗi update data thời gian tập luyện');
+        }
+    };
+
+    const checkTimeExercise = (data: IExerciseReminder[]): boolean => {
+        if (data.length === 0) return false;
+        else {
+            const currentDayOfWeek = dayjs().day();
+            const currentTime = dayjs();
+            const target = dayjs(data[0].remindTime, 'HH:mm');
+
+            const isToday = data[0].repeat.includes(currentDayOfWeek);
+            const isExpired = !currentTime.isBefore(target);
+            setIsExercisetime({
+                isToday,
+                isExpired,
+            });
+        }
+
+        return true;
+    };
+
     useEffect(() => {
         (async () => {
             try {
@@ -84,7 +132,10 @@ const Home: NextPage<HomeProps> = () => {
                     setDataExerciseReminder(reminderData.data.exerciseReminder);
                     setDataWaterReminder(reminderData.data.waterReminder);
 
-                    if (reminderData.data.exerciseReminder) {
+                    // Hàm check hôm nay có phải tập thể dục không
+                    checkTimeExercise(reminderData.data.exerciseReminder);
+
+                    if (reminderData.data.exerciseReminder.length > 0) {
                         setHaveRemindWorkout(true);
                         sessionStorage.setItem(
                             'dataExerciseReminder',
@@ -96,6 +147,18 @@ const Home: NextPage<HomeProps> = () => {
                         sessionStorage.setItem(
                             'dataWaterReminder',
                             JSON.stringify(reminderData.data.waterReminder),
+                        );
+                    }
+                }
+
+                const planningData = await planningSync.getAll();
+
+                if (planningData.status === 200) {
+                    if (planningData.data.results.length > 0) {
+                        setHavePlan(true);
+                        sessionStorage.setItem(
+                            'dataPlanning',
+                            JSON.stringify(planningData.data.results),
                         );
                     }
                 }
@@ -232,12 +295,16 @@ const Home: NextPage<HomeProps> = () => {
             </section>
             <main className="container-sp mt-5 md:mt-20 pb-28">
                 {!haveRemindWorkout && !haveRemindWater && (
-                    <section id="remind" className="px-3">
+                    <section id="remind-water" className="px-3">
                         <div className="center-y justify-between gap-2 py-1">
                             <p className="text-gray-700 font-medium text-lg">
                                 Đặt lời nhắc
                             </p>
-                            <Button size="large" className="text-boldGreen">
+                            <Button
+                                size="large"
+                                className="text-boldGreen"
+                                onClick={() => router.push('/planning')}
+                            >
                                 Đi tới
                             </Button>
                         </div>
@@ -332,6 +399,64 @@ const Home: NextPage<HomeProps> = () => {
                             </div>
                         </section>
                         <section></section>
+                    </section>
+                )}
+                {isExercisetime.isToday && (
+                    <section id="remind-workout" className="px-3 my-8">
+                        <div className="center-y justify-between gap-2 py-1">
+                            <p className="text-gray-700 font-medium text-lg">
+                                Tập thể dục hôm nay
+                            </p>
+                        </div>
+                        <section className="">
+                            <div className="bg-white px-4 pt-5 pb-6 rounded-lg shadow-[rgba(50,50,93,0.25)_0px_6px_12px_-2px,rgba(0,0,0,0.3)_0px_3px_7px_-3px]">
+                                {isExercisetime.isExpired ? (
+                                    <div className="center-y flex-col">
+                                        <div className="center-y justify-between w-full mb-6">
+                                            <p className="font-medium text-lg text-gray-800">
+                                                Thời gian tập luyện:
+                                            </p>
+                                            <div className="">
+                                                <OutlinedInput
+                                                    value={exerciseTimeToday}
+                                                    className="w-[120px]"
+                                                    id="outlined-adornment-weight"
+                                                    endAdornment={
+                                                        <InputAdornment position="end">
+                                                            phút
+                                                        </InputAdornment>
+                                                    }
+                                                    onChange={(e) => {
+                                                        setExerciseTimeToday(
+                                                            Number(
+                                                                e.target.value,
+                                                            ),
+                                                        );
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="center">
+                                            <Button
+                                                disabled={
+                                                    exerciseTimeToday === 0
+                                                }
+                                                className="rounded-2xl bg-boldGreen h-10"
+                                                variant="contained"
+                                                onClick={updateExerciseToday}
+                                            >
+                                                Xác nhận
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="">
+                                        Nhắc bạn hôm nay có lịch tập lúc{' '}
+                                        {dataExerciseReminder[0].remindTime}
+                                    </div>
+                                )}
+                            </div>
+                        </section>
                     </section>
                 )}
                 <section id="knowledge" className="my-8">
