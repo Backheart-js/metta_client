@@ -8,8 +8,17 @@ const auth = {
     signup: (data: ISignupData) => {
         return axios.post('/auth/signup', data);
     },
+    logout: () => {
+        return axios.post('/auth/logout');
+    },
     isLogin: () => {
         return axios.get('/auth/is-login');
+    },
+    verifyEmail: (id: string) => {
+        return axios.get(`/auth/verify-email?id=${id}`);
+    },
+    checkFirstTime: (accountId: string) => {
+        return axios.get(`/auth/check-first-time/${accountId}`);
     },
 };
 

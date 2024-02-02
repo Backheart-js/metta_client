@@ -1,68 +1,53 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import styles from './CardItem.module.scss';
+import clsx from 'clsx';
 
 interface ICardItem {
     path: string;
     thumbnailUrl?: string;
-    mainTitle?: string;
-    subText1?: string;
-    description?: string;
-    subText2?: string;
+    title?: string;
+    summary?: string;
+    author?: string;
 }
 
-function CardItem({
-    path,
-    thumbnailUrl,
-    mainTitle,
-    subText1,
-    description,
-    subText2,
-}: ICardItem) {
+function CardItem({ path, thumbnailUrl, title, summary, author }: ICardItem) {
     return (
-        <Link href={path}>
-            <Card>
-                {thumbnailUrl && (
-                    <CardMedia
-                        component="img"
-                        sx={{ width: '100%', paddingTop: '66.666%' }}
-                        image="../../assets/image/fakethumbnail.jpg"
-                        alt={mainTitle}
-                    />
-                )}
-                <CardContent>
-                    {mainTitle && (
-                        <Typography gutterBottom variant="h5" component="div">
-                            {mainTitle}
-                        </Typography>
-                    )}
-                    {description && (
-                        <Typography
-                            variant="body2"
-                            paragraph
-                            color="text.secondary"
+        <Link href={path} className="">
+            <div className="w-[180px] shadow-[rgba(99,99,99,0.2)_0px_2px_8px_0px] overflow-hidden rounded-xl">
+                <div
+                    className="w-full pt-[100%] bg-center bg-cover bg-no-repeat"
+                    style={{ backgroundImage: `url(${thumbnailUrl})` }}
+                ></div>
+                <div className="px-2 py-4">
+                    <div className="">
+                        <h3
+                            className={clsx(
+                                styles.title,
+                                'text-base text-boldGreen font-medium',
+                            )}
                         >
-                            {description}
-                        </Typography>
-                    )}
-                    {subText1 && (
-                        <Typography variant="body2" color="#999">
-                            {subText1}
-                        </Typography>
-                    )}
-                    {subText2 && (
-                        <Typography variant="body2" color="text.secondary">
-                            {subText2}
-                        </Typography>
-                    )}
-                </CardContent>
-            </Card>
+                            {title}
+                        </h3>
+                    </div>
+                    <div className="mt-2">
+                        <p
+                            className={clsx(
+                                styles.summary,
+                                'text-xs text-gray-500',
+                            )}
+                        >
+                            {summary}
+                        </p>
+                    </div>
+                    <div className="mt-2">
+                        <p className="text-sm font-medium text-gray-500">
+                            {author}
+                        </p>
+                    </div>
+                </div>
+            </div>
         </Link>
     );
 }

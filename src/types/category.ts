@@ -11,7 +11,7 @@ export const category = [
     {
         text: 'Trang chủ',
         Icon: HomeOutlined,
-        path: '/',
+        path: '/home',
         short_text: 'Trang chủ',
     },
     {
@@ -29,7 +29,7 @@ export const category = [
     {
         text: 'Kế hoạch',
         Icon: CalendarMonthOutlined,
-        path: '/plan',
+        path: '/planning',
         short_text: 'Kế hoạch',
     },
     {
@@ -37,11 +37,5 @@ export const category = [
         Icon: PersonOutlineOutlined,
         path: '/profile',
         short_text: 'Thông tin',
-    },
-    {
-        text: 'Đăng xuất',
-        Icon: LogoutOutlined,
-        path: '/',
-        short_text: 'Đăng xuất',
     },
 ];
