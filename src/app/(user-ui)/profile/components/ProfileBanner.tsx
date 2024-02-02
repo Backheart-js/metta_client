@@ -19,15 +19,6 @@ const ProfileBanner: React.FC<ProfileBannerProps> = (props) => {
                     alt={name}
                     src={avatar}
                 />
-                <div className="absolute center bottom-[5%] right-0 bg-lightgreen border-2 border-white rounded-full w-8 h-8">
-                    <Image
-                        src="/icons/setting/camera-icon.svg"
-                        alt="icon"
-                        className=""
-                        width={18}
-                        height={18}
-                    />
-                </div>
             </div>
             <div className="flex flex-col items-center gap-1">
                 <div className="text-[18px] font-semibold">{name}</div>

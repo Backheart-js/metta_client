@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProfileButton from './Common/ProfileButton';
 import ProfileTitle from './Common/ProfileTitle';
 import Image from 'next/image';
+import {
+    getCurrentPushSubscription,
+    registerPushNotifications,
+    unregisterPushNotifications,
+} from '@/utils/notifications/pushService';
 
 interface ProfileInfoProps {}
 
 const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
-    const [isToggled, setToggled] = useState(false);
+    const [toggledEnabledNoti, setToggledEnabledNoti] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState({
         label: 'Tiếng Việt',
         value: 'vi',
@@ -14,7 +19,8 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
     });
 
     const handleToggle = () => {
-        setToggled(!isToggled);
+        setPushNotificationEnabled(!toggledEnabledNoti);
+        setToggledEnabledNoti(!toggledEnabledNoti);
     };
 
     const handleLanguageSelect = (item: any): void => {
@@ -33,6 +39,34 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
             id: 2,
         },
     ];
+
+    async function setPushNotificationEnabled(enabled: boolean) {
+        try {
+            if (enabled) {
+                await registerPushNotifications();
+            } else {
+                unregisterPushNotifications();
+            }
+        } catch (error) {
+            if (enabled && Notification.permission === 'denied') {
+                alert('Turn on');
+            } else {
+                alert('Please try again');
+            }
+        }
+    }
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const checkSubscription = await getCurrentPushSubscription();
+
+                setToggledEnabledNoti(!!checkSubscription);
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+    }, []);
 
     return (
         <div className="py-5 flex flex-col gap-4">
@@ -65,12 +99,14 @@ const ProfileInfo: React.FC<ProfileInfoProps> = ({}) => {
                 <button
                     onClick={handleToggle}
                     className={`relative w-[48px] h-[24px] rounded-full transition-all duration-500 ease-in-out ${
-                        isToggled ? 'bg-boldGreen' : 'bg-gray-200'
+                        toggledEnabledNoti ? 'bg-boldGreen' : 'bg-gray-200'
                     }`}
                 >
                     <div
                         className={`absolute inset-0 rounded-full transition-transform duration-500 ease-in-out transform ${
-                            isToggled ? 'translate-x-[24px]' : 'translate-x-0'
+                            toggledEnabledNoti
+                                ? 'translate-x-[24px]'
+                                : 'translate-x-0'
                         }`}
                     >
                         <div className="absolute inset-0 w-[24px] h-[24px] bg-white rounded-full shadow-md"></div>

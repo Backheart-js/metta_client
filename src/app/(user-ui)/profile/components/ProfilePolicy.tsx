@@ -19,6 +19,7 @@ const ProfilePolicy: React.FC<ProfilePolicyProps> = (props) => {
                 label="Trợ giúp"
             />
             <ProfileButton
+                href="/feedback"
                 startIcon="/icons/setting/letter-icon.svg"
                 label="Gửi phản hồi, góp ý"
             />

@@ -48,8 +48,6 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({
         }
     };
 
-    console.log('selectedItem: ', selectedItem);
-
     return isSelect ? (
         <div className="relative">
             <div
