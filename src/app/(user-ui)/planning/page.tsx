@@ -146,22 +146,6 @@ export default function Planning(props: IPlanningProps) {
         return true;
     };
 
-    async function setPushNotificationEnabled(enabled: boolean) {
-        try {
-            if (enabled) {
-                await registerPushNotifications();
-            } else {
-                unregisterPushNotifications();
-            }
-        } catch (error) {
-            if (enabled && Notification.permission === 'denied') {
-                alert('Turn on');
-            } else {
-                alert('Please try again');
-            }
-        }
-    }
-
     const fetchData = async () => {
         const reminderData = await exerciseReminderSync.getAllReminders();
         const planningData = await planningSync.getAll();
@@ -490,14 +474,6 @@ export default function Planning(props: IPlanningProps) {
                     )}
                 </div>
             </section>
-            <div className="">
-                <Button onClick={() => setPushNotificationEnabled(true)}>
-                    Bật thông báo
-                </Button>
-                <Button onClick={() => setPushNotificationEnabled(false)}>
-                    Tắt thông báo
-                </Button>
-            </div>
             <CusDrawer
                 anchor={anchor}
                 isOpen={isOpenDrawer}

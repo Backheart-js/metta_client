@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CardItem from '../CardItem/CardItem';
 import blogSync from '@/utils/axios/blog';
 import { IBlogData } from '@/types/blogType';
+import './Style.scss';
 
 interface IListIssuePage {}
 
@@ -28,7 +29,7 @@ function ListKnowledge({}: IListIssuePage) {
     // }, [type]);
 
     return (
-        <div className="w-full overflow-x-scroll py-4 pl-3">
+        <div className="scroll w-full overflow-x-scroll py-4 pl-3">
             <div className="flex gap-4">
                 {data.map((data, index) => (
                     <div key={index} className="">

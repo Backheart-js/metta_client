@@ -441,7 +441,7 @@ const Home: NextPage<HomeProps> = () => {
                                                 disabled={
                                                     exerciseTimeToday === 0
                                                 }
-                                                className="rounded-2xl bg-boldGreen h-10"
+                                                className="rounded-2xl text-white bg-boldGreen h-10 disabled:opacity-60"
                                                 variant="contained"
                                                 onClick={updateExerciseToday}
                                             >
